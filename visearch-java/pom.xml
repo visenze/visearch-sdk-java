@@ -5,7 +5,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>visearch-java-sdk</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <name>ViSearch Java SDK</name>
     <packaging>jar</packaging>
     <url>http://www.visenze.com/doc</url>
@@ -17,7 +16,7 @@
     <parent>
         <groupId>com.visenze</groupId>
         <artifactId>visearch-java-sdk-pom</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <properties>
@@ -59,4 +58,12 @@
             <version>${com.fasterxml.jackson.core.version}</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
