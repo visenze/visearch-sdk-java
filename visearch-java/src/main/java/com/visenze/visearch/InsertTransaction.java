@@ -16,14 +16,17 @@ public class InsertTransaction {
 
     private Date updateTime;
 
+    private String error;
+
     public InsertTransaction(String transactionId, Integer total, Integer failedCount, Integer successCount,
-                             Date startTime, Date updateTime) {
+                             Date startTime, Date updateTime, String error) {
         this.transactionId = transactionId;
         this.total = total;
         this.failedCount = failedCount;
         this.successCount = successCount;
         this.startTime = startTime;
         this.updateTime = updateTime;
+        this.error = error;
     }
 
     public String getTransactionId() {
@@ -48,6 +51,10 @@ public class InsertTransaction {
 
     public Date getUpdateTime() {
         return updateTime;
+    }
+
+    public String getError() {
+        return error;
     }
 
 }

@@ -34,7 +34,7 @@ libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.0.0"
 
 ## Initialize
 ```java
-ViSearch viSearch = new ViSearchFactory("your_access_key", "your_secret_key").build();
+ViSearch viSearch = new ViSearch("your_access_key", "your_secret_key");
 ```
 
 ## Data API

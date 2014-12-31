@@ -1,11 +1,9 @@
 package com.visenze.visearch.internal.http;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.visenze.visearch.ViSearchException;
-import com.visenze.visearch.internal.util.AuthGenerator;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -37,12 +35,10 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     private final CloseableHttpClient httpClient;
     private final String accessKey;
     private final String secretKey;
-    private final ObjectMapper mapper;
 
-    public ViSearchHttpClientImpl(String accessKey, String secretKey, ObjectMapper mapper) {
+    public ViSearchHttpClientImpl(String accessKey, String secretKey) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
-        this.mapper = mapper;
         RequestConfig conf = RequestConfig
                 .custom()
                 .setConnectTimeout(5000)
@@ -57,43 +53,32 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     }
 
     @Override
-    public <T> T getForObject(String url, Multimap<String, String> params, Class<T> clazz) throws ViSearchException {
+    public String get(String url, Multimap<String, String> params) {
         params = addAuthParams(params);
         HttpUriRequest request = buildGetRequest(url, params);
-        String response = executeRequest(request);
-        return parseJsonForObject(response, clazz);
+        return executeRequest(request);
     }
 
 
     @Override
-    public <T> T postForObject(String url, Multimap<String, String> params, Class<T> clazz) throws ViSearchException {
+    public String post(String url, Multimap<String, String> params) {
         params = addAuthParams(params);
         HttpUriRequest request = buildPostRequest(url, params);
-        String response = executeRequest(request);
-        return parseJsonForObject(response, clazz);
+        return executeRequest(request);
     }
 
     @Override
-    public <T> T postForObject(String url, Multimap<String, String> params, File imageFile, Class<T> clazz) {
+    public String postImage(String url, Multimap<String, String> params, File file) {
         params = addAuthParams(params);
-        HttpUriRequest request = buildPostRequest(url, params, imageFile);
-        String response = executeRequest(request);
-        return parseJsonForObject(response, clazz);
+        HttpUriRequest request = buildPostRequest(url, params, file);
+        return executeRequest(request);
     }
 
     @Override
-    public <T> T postForObject(String url, Multimap<String, String> params, byte[] imageByteArray, Class<T> clazz) {
+    public String postImage(String url, Multimap<String, String> params, byte[] byteArray) {
         params = addAuthParams(params);
-        HttpUriRequest request = buildPostRequest(url, params, imageByteArray);
-        String response = executeRequest(request);
-        return parseJsonForObject(response, clazz);
-    }
-
-    @Override
-    public void post(String url, Multimap<String, String> params) {
-        params = addAuthParams(params);
-        HttpUriRequest request = buildPostRequest(url, params);
-        executeRequest(request);
+        HttpUriRequest request = buildPostRequest(url, params, byteArray);
+        return executeRequest(request);
     }
 
     private HttpUriRequest buildGetRequest(String url, Multimap<String, String> params) {
@@ -109,15 +94,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                     .addParameters(nameValuePairList)
                     .build();
         } catch (URISyntaxException e) {
-            throw new ViSearchException("Error: UIRSyntaxException url=" + url + ", params=" + nameValuePairList.toString() + ", error=" + e.getMessage());
-        }
-    }
-
-    private <T> T parseJsonForObject(String json, Class<T> clazz) {
-        try {
-            return mapper.reader(clazz).readValue(json);
-        } catch (Exception e) {
-            throw new ViSearchException("Error: Failed to process json=" + json + ", error=" + e.getMessage());
+            throw new ViSearchException("Error: URISyntaxException url=" + url + ", params=" + nameValuePairList.toString() + ", error=" + e.getMessage());
         }
     }
 
@@ -126,7 +103,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
             return new URIBuilder(url)
                     .build();
         } catch (URISyntaxException e) {
-            throw new ViSearchException("Error: UIRSyntaxException url=" + url + ", error=" + e.getMessage());
+            throw new ViSearchException("Error: URISyntaxException url=" + url + ", error=" + e.getMessage());
         }
     }
 
@@ -176,13 +153,13 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity);
         } catch (Exception e) {
-            throw new ViSearchException("Error: Failed to execute request request=" + request.toString() + ", error=" + e.getMessage());
+            throw new ViSearchException("Error: Failed to execute request=" + request.toString() + ", error=" + e.getMessage());
         }
     }
 
     private Multimap<String, String> addAuthParams(Multimap<String, String> params) {
         Preconditions.checkNotNull(params);
-        params.putAll(Multimaps.forMap(AuthGenerator.getAuthParams(accessKey, secretKey)));
+        params.putAll(Multimaps.forMap(ViSearchAuthGenerator.getAuthParams(accessKey, secretKey)));
         return params;
     }
 

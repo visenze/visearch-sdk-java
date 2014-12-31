@@ -3,10 +3,10 @@ package com.visenze.visearch.internal.json;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.visenze.visearch.*;
 
-public class ViSenzeModule extends SimpleModule {
+public class ViSearchModule extends SimpleModule {
 
-    public ViSenzeModule() {
-        super("ViSenzeModule");
+    public ViSearchModule() {
+        super("ViSearchModule");
     }
 
     @Override
