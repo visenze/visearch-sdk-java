@@ -9,8 +9,7 @@ import java.util.Map;
 public class ViSearchSDKExample {
 
     public static void main(String[] args) {
-        ViSearch visearch = new ViSearchFactory("your_access_key", "your_secret_key").
-                build();
+        ViSearch visearch = ViSearch.Builder.create("your_access_key", "your_secret_key").build();
 
         SearchParams searchParam = new SearchParams("imName");
         Map<String, String> fq = new HashMap<String, String>();

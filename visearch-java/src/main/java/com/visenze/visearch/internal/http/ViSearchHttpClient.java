@@ -6,14 +6,12 @@ import java.io.File;
 
 public interface ViSearchHttpClient {
 
-    <T> T getForObject(String url, Multimap<String, String> params, Class<T> responseType);
+    String get(String url, Multimap<String, String> params);
 
-    <T> T postForObject(String url, Multimap<String, String> params, Class<T> responseType);
+    String post(String url, Multimap<String, String> params);
 
-    <T> T postForObject(String url, Multimap<String, String> params, File imageFile, Class<T> responseType);
+    String postImage(String url, Multimap<String, String> params, File file);
 
-    <T> T postForObject(String url, Multimap<String, String> params, byte[] imageByteArray, Class<T> responseType);
-
-    void post(String url, Multimap<String, String> params);
+    String postImage(String url, Multimap<String, String> params, byte[] byteArray);
 
 }

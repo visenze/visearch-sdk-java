@@ -1,6 +1,6 @@
 package com.visenze.visearch.internal;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -13,16 +13,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class DataOperationsImpl extends AbstractViSenzeOperations implements DataOperations {
+public class DataOperationsImpl extends BaseViSearchOperations implements DataOperations {
 
-    public DataOperationsImpl(ViSearchHttpClient viSearchHttpClient, String endpoint) {
-        super(viSearchHttpClient, endpoint);
+    public DataOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper, String endpoint) {
+        super(viSearchHttpClient, objectMapper, endpoint);
     }
 
     @Override
     public InsertTransaction insert(List<Image> imageList) {
         Multimap<String, String> params = Multimaps.forMap(imageListToParams(imageList));
-        return viSearchHttpClient.postForObject(endpoint + "/insert", params, InsertTransaction.class);
+        String response = viSearchHttpClient.post(endpoint + "/insert", params);
+        return deserializeObjectResult(response, InsertTransaction.class);
     }
 
     private Map<String, String> imageListToParams(List<Image> imageList) {
@@ -55,13 +56,14 @@ class DataOperationsImpl extends AbstractViSenzeOperations implements DataOperat
         params.put("page", page.toString());
         params.put("limit", limit.toString());
 
-        JsonNode node = viSearchHttpClient.getForObject(endpoint + "/insert/status", params, JsonNode.class);
-        return pagify(node, InsertTransaction.class);
+        String response = viSearchHttpClient.get(endpoint + "/insert/status", params);
+        return pagify(response, InsertTransaction.class);
     }
 
     @Override
     public InsertTransaction getStatus(String transactionId) {
-        return viSearchHttpClient.getForObject(endpoint + "/insert/status/" + transactionId, null, InsertTransaction.class);
+        String response = viSearchHttpClient.get(endpoint + "/insert/status/" + transactionId, null);
+        return deserializeObjectResult(response, InsertTransaction.class);
     }
 
     @Override

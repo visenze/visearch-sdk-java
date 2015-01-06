@@ -11,9 +11,30 @@ The SDK provides the following APIs for your ViSearch Apps:
 * Search API
 
 ## Setup
-Initialize:
+You may include the SDK into your project using your favorite build tools:
+
+Maven
+```
+<dependency>
+    <groupId>com.visenze</groupId>
+    <artifactId>visearch-java-sdk</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+Gradle
+```
+compile 'com.visenze:visearch-java-sdk:1.0.0'
+```
+
+SBT
+```
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.0.0"
+```
+
+## Initialize
 ```java
-ViSearch viSearch = new ViSearchFactory("your_access_key", "your_secret_key").build();
+ViSearch viSearch = ViSearch.Builder.create("your_access_key", "your_secret_key").build();
 ```
 
 ## Data API
