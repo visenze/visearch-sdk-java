@@ -1,6 +1,7 @@
 package com.visenze.visearch.internal;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 
@@ -8,10 +9,10 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-class SearchOperationsImpl extends AbstractViSenzeOperations implements SearchOperations {
+public class SearchOperationsImpl extends BaseViSearchOperations implements SearchOperations {
 
-    public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, String endpoint) {
-        super(viSearchHttpClient, endpoint);
+    public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper, String endpoint) {
+        super(viSearchHttpClient, objectMapper, endpoint);
     }
 
     @Override
@@ -20,8 +21,8 @@ class SearchOperationsImpl extends AbstractViSenzeOperations implements SearchOp
         if (imageId == null || imageId.isEmpty()) {
             throw new ViSearchException("Missing parameter");
         }
-        JsonNode node = viSearchHttpClient.getForObject(endpoint + "/search", searchParams.toMap(), JsonNode.class);
-        return getResult(node);
+        String response = viSearchHttpClient.get(endpoint + "/search", searchParams.toMap());
+        return getPagedResult(response);
     }
 
     @Override
@@ -33,8 +34,8 @@ class SearchOperationsImpl extends AbstractViSenzeOperations implements SearchOp
         if (!color.matches("^[0-9a-fA-F]{6}$")) {
             throw new ViSearchException("Invalid parameter");
         }
-        JsonNode node = viSearchHttpClient.getForObject(endpoint + "/colorsearch", colorSearchParams.toMap(), JsonNode.class);
-        return getResult(node);
+        String response = viSearchHttpClient.get(endpoint + "/colorsearch", colorSearchParams.toMap());
+        return getPagedResult(response);
     }
 
     @Override
@@ -42,22 +43,28 @@ class SearchOperationsImpl extends AbstractViSenzeOperations implements SearchOp
         File imageFile = uploadSearchParams.getImageFile();
         byte[] imageBytes = uploadSearchParams.getImageBytes();
         String imageUrl = uploadSearchParams.getImageUrl();
-        JsonNode node;
+        String response;
         if (imageFile == null && imageBytes == null && (imageUrl == null || imageUrl.isEmpty())) {
-            throw new ViSearchException("Missing parameter");
+            throw new ViSearchException("Missing image parameter for upload search");
         } else if (imageFile != null) {
-            node = viSearchHttpClient.postForObject(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageFile, JsonNode.class);
+            response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageFile);
         } else if (imageBytes != null) {
-            node = viSearchHttpClient.postForObject(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageBytes, JsonNode.class);
+            response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageBytes);
         } else {
-            node = viSearchHttpClient.postForObject(endpoint + "/uploadsearch", uploadSearchParams.toMap(), JsonNode.class);
+            response = viSearchHttpClient.post(endpoint + "/uploadsearch", uploadSearchParams.toMap());
         }
-        return getResult(node);
+        return getPagedResult(response);
     }
 
-    private PagedSearchResult<ImageResult> getResult(JsonNode node) {
+    private PagedSearchResult<ImageResult> getPagedResult(String json) {
+        JsonNode node;
+        try {
+            node = objectMapper.readTree(json);
+        } catch (Exception e) {
+            throw new ViSearchException("Error deserializing json=" + json);
+        }
         checkStatus(node);
-        PagedResult<ImageResult> pagedResult = pagify(node, ImageResult.class);
+        PagedResult<ImageResult> pagedResult = pagify(json, ImageResult.class);
         PagedSearchResult<ImageResult> result = new PagedSearchResult<ImageResult>(pagedResult);
         JsonNode facetsNode = node.get("facets");
         if (facetsNode != null) {

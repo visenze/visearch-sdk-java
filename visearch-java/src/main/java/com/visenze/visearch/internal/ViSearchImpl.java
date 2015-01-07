@@ -1,22 +1,20 @@
 package com.visenze.visearch.internal;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
-import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
-import com.visenze.visearch.internal.json.ViSenzeModule;
 
 import java.util.List;
 
-public class ViSearchClient implements ViSearch {
+public class ViSearchImpl implements ViSearch {
 
     private final DataOperations dataOperations;
     private final SearchOperations searchOperations;
 
-    public ViSearchClient(String accessKey, String secretKey, String dataApiUrl, String searchApiUrl) {
-        ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(accessKey, secretKey, new ObjectMapper().registerModule(new ViSenzeModule()));
-        this.dataOperations = new DataOperationsImpl(viSearchHttpClient, dataApiUrl);
-        this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, searchApiUrl);
+    public ViSearchImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper, String endpoint) {
+        this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper, endpoint);
+        this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper, endpoint);
     }
 
     @Override

@@ -26,11 +26,12 @@ class InsertTransactionDeserializer extends JsonDeserializer<InsertTransaction> 
     public InsertTransaction deserialize(JsonNode node) throws IOException {
         String tid;
         Integer total;
-        Integer failCount;
-        Integer successCount;
+        Integer failCount = null;
+        Integer successCount = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         Date startTime = null;
         Date updateTime = null;
+        String error = null;
         JsonNode resultNode = node.path("result").path(0);
         try {
             if (!resultNode.isMissingNode()) {
@@ -38,6 +39,7 @@ class InsertTransactionDeserializer extends JsonDeserializer<InsertTransaction> 
                 total = resultNode.path("total").asInt();
                 failCount = resultNode.path("fail_count").asInt();
                 successCount = resultNode.path("success_count").asInt();
+                error = resultNode.path("error_list").asText();
                 try {
                     startTime = sdf.parse(resultNode.path("start_time").asText());
                     updateTime = sdf.parse(resultNode.path("update_time").asText());
@@ -47,10 +49,17 @@ class InsertTransactionDeserializer extends JsonDeserializer<InsertTransaction> 
             } else {
                 tid = node.path("trans_id").asText();
                 total = node.path("total").asInt();
-                failCount = node.path("fail_count").asInt();
-                successCount = node.path("success_count").asInt();
+                if (!node.path("fail_count").isMissingNode()) {
+                    failCount = node.path("fail_count").asInt();
+                }
+                if (!node.path("success_count").isMissingNode()) {
+                    successCount = node.path("success_count").asInt();
+                }
                 String startTimeStr = node.path("start_time").asText();
                 String endTimeStr = node.path("update_time").asText();
+                if (!node.path("error").isMissingNode()) {
+                    error = node.path("error").toString();
+                }
                 try {
                     if (null != startTimeStr && !startTimeStr.isEmpty()) {
                         startTime = sdf.parse(startTimeStr);
@@ -65,6 +74,6 @@ class InsertTransactionDeserializer extends JsonDeserializer<InsertTransaction> 
         } catch (Exception e) {
             throw new ViSearchException("Error deserializing InsertTransaction");
         }
-        return new InsertTransaction(tid, total, failCount, successCount, startTime, updateTime);
+        return new InsertTransaction(tid, total, failCount, successCount, startTime, updateTime, error);
     }
 }

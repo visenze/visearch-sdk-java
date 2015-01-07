@@ -7,7 +7,7 @@
     <artifactId>visearch-java-sdk</artifactId>
     <name>ViSearch Java SDK</name>
     <packaging>jar</packaging>
-    <url>http://www.visenze.com/doc</url>
+    <url>http://www.visenze.com/docs</url>
 
     <scm>
         <url>https://github.com/visenze/visearch-sdk-java.git</url>
@@ -24,6 +24,8 @@
         <org.apache.httpcomponents.version>4.3.6</org.apache.httpcomponents.version>
         <com.fasterxml.jackson.core.version>2.4.4</com.fasterxml.jackson.core.version>
         <com.google.guava.version>18.0</com.google.guava.version>
+        <junit.version>4.12</junit.version>
+        <org.mockito.version>1.10.18</org.mockito.version>
     </properties>
 
     <dependencies>
@@ -56,6 +58,18 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${com.fasterxml.jackson.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${org.mockito.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

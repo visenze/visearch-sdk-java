@@ -1,4 +1,4 @@
-package com.visenze.visearch.internal.util;
+package com.visenze.visearch.internal.http;
 
 
 import com.visenze.visearch.ViSearchException;
@@ -6,7 +6,6 @@ import org.apache.commons.codec.binary.Hex;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -14,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utility class for generating authentication tokens for ViSearch APIs.
+ * Utility class for generating authentication parameters for ViSearch APIs.
  */
-public class AuthGenerator {
+class ViSearchAuthGenerator {
 
     /**
      * Generates a map of parameters for ViSearch APIs authentication.
@@ -25,7 +24,7 @@ public class AuthGenerator {
      * @param secretKey the secret key of the ViSearch App
      * @return the map of authentication parameters
      */
-    public static Map<String, String> getAuthParams(String accessKey, String secretKey) throws ViSearchException {
+    static Map<String, String> getAuthParams(String accessKey, String secretKey) throws ViSearchException {
         Map<String, String> authParams = new HashMap<String, String>();
         String nonce = generateNonce();
         long date = System.currentTimeMillis() / 1000L;
@@ -51,8 +50,7 @@ public class AuthGenerator {
         return new String(Hex.encodeHex(bytes));
     }
 
-    private static String hmacEncode(String baseString, String key) throws NoSuchAlgorithmException, InvalidKeyException, IllegalStateException,
-            UnsupportedEncodingException {
+    private static String hmacEncode(String baseString, String key) throws NoSuchAlgorithmException, InvalidKeyException, IllegalStateException {
         Mac mac = Mac.getInstance("HmacSHA1");
         SecretKeySpec secret = new SecretKeySpec(key.getBytes(), mac.getAlgorithm());
         mac.init(secret);
