@@ -1,7 +1,8 @@
 ViSearch Java SDK
 ===========
+[![Build Status](https://api.travis-ci.org/jasonpeng/visearch-sdk-java.svg?branch=master)](https://travis-ci.org/jasonpeng/visearch-sdk-java)
 
-This is the ViSearch Software Development Kit (SDK) for Java.
+ViSearch Java SDK
 Version: 1.0.0
 
 ## Overview
