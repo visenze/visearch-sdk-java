@@ -9,27 +9,29 @@
     <packaging>pom</packaging>
     <url>http://www.visenze.com/doc</url>
     <description>
-        This is the ViSearch Software Development Kit (SDK) for Java.
+        ViSearch Java SDK
     </description>
+
     <scm>
         <url>https://github.com/visenze/visearch-sdk-java.git</url>
+        <connection>scm:git@github.com/visenze/visearch-sdk-java.git</connection>
+        <developerConnection>scm:git@github.com/visenze/visearch-sdk-java.git</developerConnection>
     </scm>
 
     <licenses>
         <license>
-            <name>Copyright (C) 2014 by ViSenze Pte. Ltd</name>
+            <name>The MIT License</name>
+            <url>https://raw.githubusercontent.com/visenze/visearch-sdk-java/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
     <developers>
         <developer>
-            <id>visenze sdk</id>
+            <id>visenze</id>
+            <name>ViSenze</name>
             <organization>visenze</organization>
             <organizationUrl>https://www.visenze.com</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
         </developer>
     </developers>
 
