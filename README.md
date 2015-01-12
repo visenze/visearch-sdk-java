@@ -1,6 +1,5 @@
-ViSearch Java SDK
-===========
-[![Build Status](https://api.travis-ci.org/jasonpeng/visearch-sdk-java.svg?branch=master)](https://travis-ci.org/jasonpeng/visearch-sdk-java)
+## ViSearch Java SDK
+[![Build Status](https://api.travis-ci.org/visenze/visearch-sdk-java.svg?branch=master)](https://travis-ci.org/visenze/visearch-sdk-java)
 
 ViSearch Java SDK
 Version: 1.0.0
