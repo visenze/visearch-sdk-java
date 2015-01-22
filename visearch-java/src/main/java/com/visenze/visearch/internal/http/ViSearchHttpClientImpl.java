@@ -11,21 +11,23 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,9 +77,9 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     }
 
     @Override
-    public String postImage(String url, Multimap<String, String> params, byte[] byteArray) {
+    public String postImage(String url, Multimap<String, String> params, byte[] byteArray, String filename) {
         params = addAuthParams(params);
-        HttpUriRequest request = buildPostRequest(url, params, byteArray);
+        HttpUriRequest request = buildPostRequest(url, params, byteArray, filename);
         return executeRequest(request);
     }
 
@@ -117,32 +119,28 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     }
 
     private HttpUriRequest buildMultipartPostRequest(String url, HttpEntity entity) {
-        return RequestBuilder
-                .post()
-                .setUri(buildPostUri(url))
-                .setEntity(entity)
-                .setHeader(HttpHeaders.CONTENT_TYPE, ContentType.MULTIPART_FORM_DATA.withCharset(Consts.UTF_8).toString())
-                .build();
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(entity);
+        return httpPost;
     }
 
     private HttpUriRequest buildPostRequest(String url, Multimap<String, String> params, File file) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setCharset(Charset.forName("utf-8"));
         for (Map.Entry<String, String> entry : params.entries()) {
-            builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.APPLICATION_FORM_URLENCODED.withCharset(Consts.UTF_8));
+            builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
         }
-        FileBody fileBody = new FileBody(file);
-        builder.addPart("image", fileBody);
+        builder.addBinaryBody("image", file);
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }
 
-    private HttpUriRequest buildPostRequest(String url, Multimap<String, String> params, byte[] byteArray) {
+    private HttpUriRequest buildPostRequest(String url, Multimap<String, String> params, byte[] byteArray, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         for (Map.Entry<String, String> entry : params.entries()) {
-            builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.APPLICATION_FORM_URLENCODED.withCharset(Consts.UTF_8));
+            builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
         }
-        ByteArrayBody byteArrayBody = new ByteArrayBody(byteArray, ContentType.MULTIPART_FORM_DATA, "image");
-        builder.addPart("image", byteArrayBody);
+        builder.addPart("image", new InputStreamBody(new ByteArrayInputStream(byteArray), filename));
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }

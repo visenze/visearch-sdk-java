@@ -82,7 +82,7 @@ Build a UploadSearchParams object and call ``uploadSearch``.
 ```java
 File imageFile = new File("/path/to/your/image");
 UploadSearchParams uploadSearchParams = new UploadSearchParams(imageFile);
-PagedSearchResult<ImageResult> pagedSearchResult = viSearch.uploadSearch(uploadSearchParams);
+PagedSearchResult<ImageResult> pagedSearchResult = viSearch.uploadSearch(uploadSearchParams, ResizeSettings.STANDARD);
 List<ImageResult> imageResults = pagedSearchResult.getResult();
 ```
 

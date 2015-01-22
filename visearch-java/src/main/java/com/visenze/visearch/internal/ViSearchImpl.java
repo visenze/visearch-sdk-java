@@ -48,7 +48,7 @@ public class ViSearchImpl implements ViSearch {
     }
 
     @Override
-    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams) {
-        return searchOperations.uploadSearch(uploadSearchParams);
+    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
+        return searchOperations.uploadSearch(uploadSearchParams, resizeSettings);
     }
 }

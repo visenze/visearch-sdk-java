@@ -26,7 +26,7 @@ public class ViSearchSDKExample {
         File imageFile = new File("/path/to/your/image");
         UploadSearchParams uploadSearchParams =
                 new UploadSearchParams(imageFile);
-        PagedSearchResult<ImageResult> uploadResult = visearch.uploadSearch(uploadSearchParams);
+        PagedSearchResult<ImageResult> uploadResult = visearch.uploadSearch(uploadSearchParams, ResizeSettings.STANDARD);
         uploadResult.getResult();
     }
 
