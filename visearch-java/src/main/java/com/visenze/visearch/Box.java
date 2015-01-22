@@ -56,4 +56,15 @@ public class Box {
         return y2;
     }
 
+    public boolean allCoordsExist() {
+        return x1 != null && x2 != null && y1 != null && y2 != null;
+    }
+
+    public void scale(float ratio) {
+        x1 = (int) (x1 * ratio);
+        x2 = (int) (x2 * ratio);
+        y1 = (int) (y1 * ratio);
+        y2 = (int) (y2 * ratio);
+    }
+
 }

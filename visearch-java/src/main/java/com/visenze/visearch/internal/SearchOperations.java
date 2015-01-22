@@ -8,6 +8,6 @@ public interface SearchOperations {
 
     PagedSearchResult<ImageResult> colorSearch(ColorSearchParams colorSearchParams);
 
-    PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams);
+    PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings);
 
 }

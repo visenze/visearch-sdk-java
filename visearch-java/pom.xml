@@ -25,6 +25,7 @@
         <com.fasterxml.jackson.core.version>2.4.4</com.fasterxml.jackson.core.version>
         <com.google.guava.version>18.0</com.google.guava.version>
         <junit.version>4.12</junit.version>
+        <org.imgscalr.version>4.2</org.imgscalr.version>
         <org.mockito.version>1.10.18</org.mockito.version>
     </properties>
 
@@ -58,6 +59,17 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${com.fasterxml.jackson.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>${org.imgscalr.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-jpeg</artifactId>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

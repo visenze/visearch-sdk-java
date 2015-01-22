@@ -4,8 +4,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
+import org.imgscalr.Scalr;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,21 +50,71 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     }
 
     @Override
-    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams) {
+    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
         File imageFile = uploadSearchParams.getImageFile();
-        byte[] imageBytes = uploadSearchParams.getImageBytes();
         String imageUrl = uploadSearchParams.getImageUrl();
         String response;
-        if (imageFile == null && imageBytes == null && (imageUrl == null || imageUrl.isEmpty())) {
+        if (imageFile == null && (imageUrl == null || imageUrl.isEmpty())) {
             throw new ViSearchException("Missing image parameter for upload search");
         } else if (imageFile != null) {
-            response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageFile);
-        } else if (imageBytes != null) {
-            response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageBytes);
+            byte[] resizedImageBytes = resizeImage(uploadSearchParams, imageFile, resizeSettings);
+            response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), resizedImageBytes, imageFile.getName());
         } else {
             response = viSearchHttpClient.post(endpoint + "/uploadsearch", uploadSearchParams.toMap());
         }
         return getPagedResult(response);
+    }
+
+    private byte[] resizeImage(UploadSearchParams uploadSearchParams, File imageFile, ResizeSettings resizeSettings) {
+        try {
+            BufferedImage sourceImage =  ImageIO.read(imageFile);
+            int imageWidth = sourceImage.getWidth();
+            int imageHeight = sourceImage.getHeight();
+            BufferedImage resizedImage;
+            if (imageWidth > resizeSettings.getWidth() && imageHeight > resizeSettings.getHeight()) {
+                if (imageWidth >= imageHeight) {
+                    // landscape or square image
+                    resizedImage = Scalr.resize(sourceImage, Scalr.Mode.FIT_TO_HEIGHT, resizeSettings.getHeight());
+                } else {
+                    // portrait image
+                    resizedImage = Scalr.resize(sourceImage, Scalr.Mode.FIT_TO_WIDTH, resizeSettings.getWidth());
+                }
+            } else {
+                resizedImage = sourceImage;
+            }
+            scaleImageBox(uploadSearchParams, sourceImage, resizedImage);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            writeToOutputStream(outputStream, resizeSettings, resizedImage);
+            sourceImage.flush();
+            resizedImage.flush();
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new ViSearchException("Could not open image file: " + e.getMessage());
+        }
+    }
+
+    private void scaleImageBox(UploadSearchParams uploadSearchParams, BufferedImage sourceImage, BufferedImage resizedImage) {
+        if (uploadSearchParams.getBox() != null) {
+            Box box = uploadSearchParams.getBox();
+            if (box.allCoordsExist()) {
+                int imageWidth = sourceImage.getWidth();
+                int resizedWidth = resizedImage.getWidth();
+                float ratio = resizedWidth / (float) imageWidth;
+                box.scale(ratio);
+            }
+        }
+    }
+
+    private void writeToOutputStream(OutputStream outputStream, ResizeSettings resizeSettings, BufferedImage resizedImage) throws IOException {
+        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
+        Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("jpeg");
+        ImageWriter writer = it.next();
+        ImageWriteParam param = writer.getDefaultWriteParam();
+        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        param.setCompressionQuality(resizeSettings.getQuality() / 100.0f);
+        writer.setOutput(imageOutputStream);
+        writer.write(null, new IIOImage(resizedImage, null, null), param);
+        writer.dispose();
     }
 
     private PagedSearchResult<ImageResult> getPagedResult(String json) {

@@ -12,6 +12,6 @@ public interface ViSearchHttpClient {
 
     String postImage(String url, Multimap<String, String> params, File file);
 
-    String postImage(String url, Multimap<String, String> params, byte[] byteArray);
+    String postImage(String url, Multimap<String, String> params, byte[] byteArray, String filename);
 
 }
