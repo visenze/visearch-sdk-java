@@ -50,6 +50,11 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     }
 
     @Override
+    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams) {
+        return uploadSearch(uploadSearchParams, ResizeSettings.STANDARD);
+    }
+
+    @Override
     public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
         File imageFile = uploadSearchParams.getImageFile();
         String imageUrl = uploadSearchParams.getImageUrl();
