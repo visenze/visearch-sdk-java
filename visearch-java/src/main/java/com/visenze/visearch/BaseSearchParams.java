@@ -15,7 +15,7 @@ public class BaseSearchParams {
 
     protected Boolean facet;
 
-    protected Integer facetSize;
+    protected String facetField;
 
     protected Boolean score;
 
@@ -31,7 +31,7 @@ public class BaseSearchParams {
         this.limit = 10;
         this.page = 1;
         this.facet = null;
-        this.facetSize = 10;
+        this.facetField = null;
         this.score = null;
         this.fq = null;
         this.fl = null;
@@ -54,8 +54,8 @@ public class BaseSearchParams {
         return this;
     }
 
-    public BaseSearchParams setFacetSize(Integer facetSize) {
-        this.facetSize = facetSize;
+    public BaseSearchParams setFacetField(String facetField) {
+        this.facetField = facetField;
         return this;
     }
 
@@ -96,8 +96,8 @@ public class BaseSearchParams {
         return facet;
     }
 
-    public Integer getFacetSize() {
-        return facetSize;
+    public String getFacetField() {
+        return facetField;
     }
 
     public Boolean isScore() {
@@ -131,9 +131,9 @@ public class BaseSearchParams {
             map.put("page", page.toString());
         }
 
-        if (facet != null && facetSize != null && facetSize > 0) {
+        if (facet != null && facetField != null && facetField.length() > 0) {
             map.put("facet", String.valueOf(facet));
-            map.put("facetsize", facetSize.toString());
+            map.put("facet_field", facetField);
         }
 
         if (score != null) {
