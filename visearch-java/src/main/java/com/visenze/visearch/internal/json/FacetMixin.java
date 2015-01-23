@@ -9,10 +9,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class FacetMixin {
 
-    @JsonProperty("key")
     protected String key;
-
-    @JsonProperty("items")
     protected List<FacetItem> facetItems;
+
+    public FacetMixin(@JsonProperty("key") String key,
+                      @JsonProperty("items") List<FacetItem> facetItems) {
+        this.key = key;
+        this.facetItems = facetItems;
+    }
 
 }

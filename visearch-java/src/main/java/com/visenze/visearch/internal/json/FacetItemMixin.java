@@ -6,10 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class FacetItemMixin {
 
-    @JsonProperty("value")
     protected String key;
-
-    @JsonProperty("count")
     protected Integer count;
+
+    public FacetItemMixin(@JsonProperty("value") String value,
+                          @JsonProperty("count") Integer count) {
+        this.key = value;
+        this.count = count;
+    }
 
 }

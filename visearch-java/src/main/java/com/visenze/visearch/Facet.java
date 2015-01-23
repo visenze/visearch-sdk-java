@@ -8,6 +8,11 @@ public class Facet {
 
     private List<FacetItem> facetItems;
 
+    public Facet(String key, List<FacetItem> facetItems) {
+        this.key = key;
+        this.facetItems = facetItems;
+    }
+
     public String getKey() {
         return key;
     }

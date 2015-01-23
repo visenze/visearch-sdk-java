@@ -6,6 +6,11 @@ public class FacetItem {
 
     private Integer count;
 
+    public FacetItem(String value, Integer count) {
+        this.value = value;
+        this.count = count;
+    }
+
     public String getValue() {
         return value;
     }
