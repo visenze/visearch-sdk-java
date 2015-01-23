@@ -3,10 +3,13 @@ package com.visenze.visearch;
 import com.google.common.collect.Multimap;
 
 import java.io.File;
+import java.io.InputStream;
 
 public class UploadSearchParams extends BaseSearchParams {
 
     private File imageFile;
+
+    private InputStream imageStream;
 
     private Box box;
 
@@ -15,6 +18,11 @@ public class UploadSearchParams extends BaseSearchParams {
     public UploadSearchParams(File imageFile) {
         super();
         this.imageFile = imageFile;
+    }
+
+    public UploadSearchParams(InputStream imageStream) {
+        super();
+        this.imageStream = imageStream;
     }
 
     public UploadSearchParams(String imageUrl) {
@@ -27,17 +35,34 @@ public class UploadSearchParams extends BaseSearchParams {
         return this;
     }
 
+    public Box getBox() {
+        return this.box;
+    }
+
     public UploadSearchParams setImageFile(File imageFile) {
         this.imageFile = imageFile;
         return this;
     }
 
-    public Box getBox() {
-        return this.box;
-    }
-
     public File getImageFile() {
         return imageFile;
+    }
+
+    public UploadSearchParams setImageStream(InputStream imageStream) {
+        this.imageStream = imageStream;
+        return this;
+    }
+
+    public InputStream getImageStream() {
+        return imageStream;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
@@ -50,14 +75,6 @@ public class UploadSearchParams extends BaseSearchParams {
             map.put("im_url", imageUrl);
         }
         return map;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
 }

@@ -12,10 +12,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,22 +54,34 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     @Override
     public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
         File imageFile = uploadSearchParams.getImageFile();
+        InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
         String response;
-        if (imageFile == null && (imageUrl == null || imageUrl.isEmpty())) {
+        if (imageFile == null && imageStream == null && (imageUrl == null || imageUrl.isEmpty())) {
             throw new ViSearchException("Missing image parameter for upload search");
         } else if (imageFile != null) {
-            byte[] resizedImageBytes = resizeImage(uploadSearchParams, imageFile, resizeSettings);
-            response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), resizedImageBytes, imageFile.getName());
+            try {
+                byte[] imageBytes = resizeImage(uploadSearchParams, new FileInputStream(imageFile), resizeSettings);
+                response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageBytes, imageFile.getName());
+            } catch (Exception e) {
+                throw new ViSearchException("Error opening image file: " + imageFile.getName(), e);
+            }
+        } else if (imageStream != null) {
+            try {
+                byte[] imageBytes = resizeImage(uploadSearchParams, imageStream, resizeSettings);
+                response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageBytes, "image-stream");
+            } catch (Exception e) {
+                throw new ViSearchException("Error opening image stream", e);
+            }
         } else {
             response = viSearchHttpClient.post(endpoint + "/uploadsearch", uploadSearchParams.toMap());
         }
         return getPagedResult(response);
     }
 
-    private byte[] resizeImage(UploadSearchParams uploadSearchParams, File imageFile, ResizeSettings resizeSettings) {
+    private byte[] resizeImage(UploadSearchParams uploadSearchParams, InputStream inputStream, ResizeSettings resizeSettings) {
         try {
-            BufferedImage sourceImage =  ImageIO.read(imageFile);
+            BufferedImage sourceImage =  ImageIO.read(inputStream);
             int imageWidth = sourceImage.getWidth();
             int imageHeight = sourceImage.getHeight();
             BufferedImage resizedImage;
