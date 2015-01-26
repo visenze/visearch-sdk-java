@@ -5,20 +5,20 @@ import java.util.Map;
 
 public class Image {
 
-    protected String imName;
+    private final String imName;
+    private final String imUrl;
+    private final Map<String, String> metadata;
 
-    protected String imUrl;
-
-    protected Map<String, String> fields;
-
-    public Image() {
-        this.fields = new HashMap<String, String>();
-    }
-
-    public Image(String imName, String imUrl, Map<String, String> fields) {
+    public Image(String imName, String imUrl) {
         this.imName = imName;
         this.imUrl = imUrl;
-        this.fields = fields;
+        this.metadata = new HashMap<String, String>();
+    }
+
+    public Image(String imName, String imUrl, Map<String, String> metadata) {
+        this.imName = imName;
+        this.imUrl = imUrl;
+        this.metadata = metadata;
     }
 
     public String getImName() {
@@ -29,8 +29,8 @@ public class Image {
         return imUrl;
     }
 
-    public Map<String, String> getFields() {
-        return fields;
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 
 }

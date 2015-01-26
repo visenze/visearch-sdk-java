@@ -29,13 +29,13 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
     private Map<String, String> imageListToParams(List<Image> imageList) {
         Map<String, String> params = new HashMap<String, String>();
         for (int i = 0; i < imageList.size(); i++) {
-            Image image = imageList.get(0);
+            Image image = imageList.get(i);
             if (image != null) {
                 params.put("im_name" + "[" + i + "]", image.getImName());
                 params.put("im_url" + "[" + i + "]", image.getImUrl());
-                Map<String, String> fields = image.getFields();
-                if (fields != null) {
-                    for (Map.Entry<String, String> entry : fields.entrySet()) {
+                Map<String, String> metadata = image.getMetadata();
+                if (metadata != null) {
+                    for (Map.Entry<String, String> entry : metadata.entrySet()) {
                         params.put(entry.getKey() + "[" + i + "]", entry.getValue());
                     }
                 }
