@@ -114,7 +114,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
                 int imageWidth = sourceImage.getWidth();
                 int resizedWidth = resizedImage.getWidth();
                 float ratio = resizedWidth / (float) imageWidth;
-                box.scale(ratio);
+                uploadSearchParams.setBox(box.scale(ratio));
             }
         }
     }
