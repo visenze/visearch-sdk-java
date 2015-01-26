@@ -4,12 +4,12 @@ import com.visenze.visearch.*;
 
 public interface SearchOperations {
 
-    PagedSearchResult<ImageResult> search(SearchParams searchParams);
+    PagedSearchResult search(SearchParams searchParams);
 
-    PagedSearchResult<ImageResult> colorSearch(ColorSearchParams colorSearchParams);
+    PagedSearchResult colorSearch(ColorSearchParams colorSearchParams);
 
-    PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams);
+    PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams);
 
-    PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings);
+    PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings);
 
 }

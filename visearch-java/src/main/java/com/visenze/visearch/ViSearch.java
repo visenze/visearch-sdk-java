@@ -55,22 +55,22 @@ public class ViSearch implements DataOperations, SearchOperations {
     }
 
     @Override
-    public PagedSearchResult<ImageResult> search(SearchParams searchParams) {
+    public PagedSearchResult search(SearchParams searchParams) {
         return searchOperations.search(searchParams);
     }
 
     @Override
-    public PagedSearchResult<ImageResult> colorSearch(ColorSearchParams colorSearchParams) {
+    public PagedSearchResult colorSearch(ColorSearchParams colorSearchParams) {
         return searchOperations.colorSearch(colorSearchParams);
     }
 
     @Override
-    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams) {
+    public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams) {
         return searchOperations.uploadSearch(uploadSearchParams);
     }
 
     @Override
-    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
+    public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
         return searchOperations.uploadSearch(uploadSearchParams, resizeSettings);
     }
 

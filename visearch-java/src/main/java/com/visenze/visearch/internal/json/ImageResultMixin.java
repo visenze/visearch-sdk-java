@@ -8,10 +8,16 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class ImageResultMixin {
 
-    @JsonProperty("value_map")
-    protected Map<String, String> fields;
-
-    @JsonProperty("score")
+    protected String imName;
+    protected Map<String, Object> metadata;
     protected Float score;
+
+    public ImageResultMixin(@JsonProperty("im_name") String imName,
+                            @JsonProperty("value_map") Map<String, Object> metadata,
+                            @JsonProperty("score") Float score) {
+        this.imName = imName;
+        this.metadata = metadata;
+        this.score = score;
+    }
 
 }

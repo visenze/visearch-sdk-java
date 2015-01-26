@@ -24,7 +24,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     }
 
     @Override
-    public PagedSearchResult<ImageResult> search(SearchParams searchParams) {
+    public PagedSearchResult search(SearchParams searchParams) {
         String imageId = searchParams.getImName();
         if (imageId == null || imageId.isEmpty()) {
             throw new ViSearchException("Missing parameter");
@@ -34,7 +34,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     }
 
     @Override
-    public PagedSearchResult<ImageResult> colorSearch(ColorSearchParams colorSearchParams) {
+    public PagedSearchResult colorSearch(ColorSearchParams colorSearchParams) {
         String color = colorSearchParams.getColor();
         if (color == null || color.isEmpty()) {
             throw new ViSearchException("Missing parameter");
@@ -47,12 +47,12 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     }
 
     @Override
-    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams) {
+    public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams) {
         return uploadSearch(uploadSearchParams, ResizeSettings.STANDARD);
     }
 
     @Override
-    public PagedSearchResult<ImageResult> uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
+    public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
@@ -131,7 +131,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         writer.dispose();
     }
 
-    private PagedSearchResult<ImageResult> getPagedResult(String json) {
+    private PagedSearchResult getPagedResult(String json) {
         JsonNode node;
         try {
             node = objectMapper.readTree(json);
@@ -140,7 +140,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
         checkStatus(node);
         PagedResult<ImageResult> pagedResult = pagify(json, ImageResult.class);
-        PagedSearchResult<ImageResult> result = new PagedSearchResult<ImageResult>(pagedResult);
+        PagedSearchResult result = new PagedSearchResult(pagedResult);
         JsonNode facetsNode = node.get("facets");
         if (facetsNode != null) {
             List<Facet> facets = deserializeListResult(facetsNode, Facet.class);
