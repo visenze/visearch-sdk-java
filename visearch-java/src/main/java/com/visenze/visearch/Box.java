@@ -13,10 +13,10 @@ public class Box {
     public Box() {
     }
 
-    public Box(Integer x1, Integer x2, Integer y1, Integer y2) {
+    public Box(Integer x1, Integer y1, Integer x2, Integer y2) {
         this.x1 = x1;
-        this.x2 = x2;
         this.y1 = y1;
+        this.x2 = x2;
         this.y2 = y2;
     }
 
