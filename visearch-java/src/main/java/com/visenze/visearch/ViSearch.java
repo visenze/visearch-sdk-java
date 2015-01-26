@@ -1,7 +1,10 @@
 package com.visenze.visearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.visearch.internal.*;
+import com.visenze.visearch.internal.DataOperations;
+import com.visenze.visearch.internal.DataOperationsImpl;
+import com.visenze.visearch.internal.SearchOperations;
+import com.visenze.visearch.internal.SearchOperationsImpl;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import com.visenze.visearch.internal.json.ViSearchModule;

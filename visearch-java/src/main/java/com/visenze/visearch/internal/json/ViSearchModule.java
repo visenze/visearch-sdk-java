@@ -1,7 +1,10 @@
 package com.visenze.visearch.internal.json;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.visenze.visearch.*;
+import com.visenze.visearch.Facet;
+import com.visenze.visearch.FacetItem;
+import com.visenze.visearch.ImageResult;
+import com.visenze.visearch.InsertTransaction;
 
 public class ViSearchModule extends SimpleModule {
 
