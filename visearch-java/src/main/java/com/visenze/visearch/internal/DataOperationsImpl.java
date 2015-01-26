@@ -67,9 +67,20 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
     }
 
     @Override
-    public void remove(List<Image> imageList) {
-        Multimap<String, String> params = Multimaps.forMap(imageListToParams(imageList));
+    public void remove(List<String> imNameList) {
+        Multimap<String, String> params = Multimaps.forMap(imageNameListToParams(imNameList));
         viSearchHttpClient.post(endpoint + "/remove", params);
+    }
+
+    private Map<String, String> imageNameListToParams(List<String> imNameList) {
+        Map<String, String> params = new HashMap<String, String>();
+        for (int i = 0; i < imNameList.size(); i++) {
+            String imName = imNameList.get(i);
+            if (imName != null) {
+                params.put("im_name" + "[" + i + "]", imName);
+            }
+        }
+        return params;
     }
 
 }

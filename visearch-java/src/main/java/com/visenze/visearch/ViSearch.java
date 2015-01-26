@@ -50,8 +50,8 @@ public class ViSearch implements DataOperations, SearchOperations {
     }
 
     @Override
-    public void remove(List<Image> imageList) {
-        dataOperations.remove(imageList);
+    public void remove(List<String> imNameList) {
+        dataOperations.remove(imNameList);
     }
 
     @Override

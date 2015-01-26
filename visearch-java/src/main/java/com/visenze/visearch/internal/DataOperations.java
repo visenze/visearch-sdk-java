@@ -14,6 +14,6 @@ public interface DataOperations {
 
     InsertTransaction getStatus(String transactionId);
 
-    void remove(List<Image> imageList);
+    void remove(List<String> imNameList);
 
 }
