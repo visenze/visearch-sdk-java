@@ -15,7 +15,7 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
         super(page, limit, total, result);
     }
 
-    public PagedSearchResult(PagedResult pagedResult) {
+    public PagedSearchResult(PagedResult<ImageResult> pagedResult) {
         super(pagedResult.getPage(), pagedResult.getLimit(), pagedResult.getTotal(), pagedResult.getResult());
     }
 
