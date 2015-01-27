@@ -8,9 +8,9 @@ public class ImageResult {
     private final Map<String, String> metadata;
     private final Float score;
 
-    public ImageResult(String imName, Map<String, String> metatdata, Float score) {
+    public ImageResult(String imName, Map<String, String> metadata, Float score) {
         this.imName = imName;
-        this.metadata = metatdata;
+        this.metadata = metadata;
         this.score = score;
     }
 
