@@ -19,6 +19,10 @@ public class BaseSearchParams {
 
     protected Boolean score;
 
+    protected Float scoreMin;
+
+    protected Float scoreMax;
+
     protected Map<String, String> fq;
 
     protected List<String> fl;
@@ -33,6 +37,8 @@ public class BaseSearchParams {
         this.facet = null;
         this.facetField = null;
         this.score = null;
+        this.scoreMin = null;
+        this.scoreMax = null;
         this.fq = null;
         this.fl = null;
         this.queryInfo = null;
@@ -61,6 +67,16 @@ public class BaseSearchParams {
 
     public BaseSearchParams setScore(Boolean score) {
         this.score = score;
+        return this;
+    }
+
+    public BaseSearchParams setScoreMin(Float scoreMin) {
+        this.scoreMin = scoreMin;
+        return this;
+    }
+
+    public BaseSearchParams setScoreMax(Float scoreMax) {
+        this.scoreMax = scoreMax;
         return this;
     }
 
@@ -138,6 +154,14 @@ public class BaseSearchParams {
 
         if (score != null) {
             map.put("score", String.valueOf(score));
+        }
+
+        if (scoreMin != null) {
+            map.put("score_min", String.valueOf(scoreMin));
+        }
+
+        if (scoreMax != null) {
+            map.put("score_max", String.valueOf(scoreMax));
         }
 
         if (fq != null) {
