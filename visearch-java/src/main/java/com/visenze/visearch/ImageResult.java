@@ -5,10 +5,10 @@ import java.util.Map;
 public class ImageResult {
 
     private final String imName;
-    private final Map<String, Object> metadata;
+    private final Map<String, String> metadata;
     private final Float score;
 
-    public ImageResult(String imName, Map<String, Object> metatdata, Float score) {
+    public ImageResult(String imName, Map<String, String> metatdata, Float score) {
         this.imName = imName;
         this.metadata = metatdata;
         this.score = score;
@@ -18,7 +18,7 @@ public class ImageResult {
         return imName;
     }
 
-    public Map<String, Object> getMetadata() {
+    public Map<String, String> getMetadata() {
         return metadata;
     }
 
