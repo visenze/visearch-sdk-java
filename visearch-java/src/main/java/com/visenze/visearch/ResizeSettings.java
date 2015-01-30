@@ -3,9 +3,9 @@ package com.visenze.visearch;
 
 public class ResizeSettings {
 
-    public static ResizeSettings STANDARD = new ResizeSettings(512, 512, 85);
+    public static ResizeSettings STANDARD = new ResizeSettings(512, 512, 75);
 
-    public static ResizeSettings HIGH = new ResizeSettings(1024, 1024, 90);
+    public static ResizeSettings HIGH = new ResizeSettings(1024, 1024, 75);
 
     private int width;
     private int height;
