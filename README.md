@@ -223,13 +223,13 @@ When performing upload search, you might experience increasing search latency wi
 To reduce upload search latency, by default the ```uploadSearch``` method makes a copy of your image file and resizes the copy to 512x512 pixels if both of the original dimensions exceed 512 pixels. This is the optimized size to lower search latency while not sacrificing search accuracy for general use cases:
 
 ```java
-// client.uploadSearch(params) is equivalent to using STANDARD resize settings, 512x512 and jpeg 85 quality
+// client.uploadSearch(params) is equivalent to using STANDARD resize settings, 512x512 and jpeg 75 quality
 PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.STANDARD);
 ```
 
 If your image contains fine details such as textile patterns and textures, use the HIGH resize settings to get better search results:
 ```java
-// for images with fine details, use HIGH resize settings 1024x1024 and jpeg 90 quality
+// for images with fine details, use HIGH resize settings 1024x1024 and jpeg 75 quality
 PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.HIGH);
 ```
 
