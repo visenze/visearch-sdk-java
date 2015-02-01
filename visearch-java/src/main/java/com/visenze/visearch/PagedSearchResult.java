@@ -3,7 +3,7 @@ package com.visenze.visearch;
 import java.util.List;
 import java.util.Map;
 
-public class PagedSearchResult<T extends ImageResult> extends PagedResult<T> {
+public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<Facet> facets;
 
@@ -11,11 +11,11 @@ public class PagedSearchResult<T extends ImageResult> extends PagedResult<T> {
 
     private String rawJson;
 
-    public PagedSearchResult(Integer page, Integer limit, Integer total, List<T> result) {
+    public PagedSearchResult(Integer page, Integer limit, Integer total, List<ImageResult> result) {
         super(page, limit, total, result);
     }
 
-    public PagedSearchResult(PagedResult pagedResult) {
+    public PagedSearchResult(PagedResult<ImageResult> pagedResult) {
         super(pagedResult.getPage(), pagedResult.getLimit(), pagedResult.getTotal(), pagedResult.getResult());
     }
 

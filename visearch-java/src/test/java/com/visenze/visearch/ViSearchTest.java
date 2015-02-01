@@ -53,7 +53,7 @@ public class ViSearchTest {
                 .thenReturn(insertResponse);
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper, "http://visearch.visenze.com");
         List<Image> imageList = new ArrayList<Image>();
-        imageList.add(new Image("test_imname", "http://visenze.com/test_im_url.jpg", new HashMap<String, String>()));
+        imageList.add(new Image("test_imname", "http://visenze.com/test_im_url.jpg"));
         InsertTransaction insertTransaction = dataOperations.insert(imageList);
         assertEquals(new Integer(1), insertTransaction.getTotal());
         assertEquals("317517564605501440", insertTransaction.getTransactionId());
