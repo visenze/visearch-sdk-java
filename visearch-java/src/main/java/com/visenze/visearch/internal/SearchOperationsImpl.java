@@ -86,13 +86,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             int imageHeight = sourceImage.getHeight();
             BufferedImage resizedImage;
             if (imageWidth > resizeSettings.getWidth() && imageHeight > resizeSettings.getHeight()) {
-                if (imageWidth >= imageHeight) {
-                    // landscape or square image
-                    resizedImage = Scalr.resize(sourceImage, Scalr.Mode.FIT_TO_HEIGHT, resizeSettings.getHeight());
-                } else {
-                    // portrait image
-                    resizedImage = Scalr.resize(sourceImage, Scalr.Mode.FIT_TO_WIDTH, resizeSettings.getWidth());
-                }
+                resizedImage = Scalr.resize(sourceImage, resizeSettings.getWidth());
             } else {
                 resizedImage = sourceImage;
             }
