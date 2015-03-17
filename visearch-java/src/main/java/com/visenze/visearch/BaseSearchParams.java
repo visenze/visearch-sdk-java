@@ -15,7 +15,7 @@ public class BaseSearchParams {
 
     protected Boolean facet;
 
-    protected String facetField;
+    protected List<String> facetField;
 
     protected Boolean score;
 
@@ -60,7 +60,7 @@ public class BaseSearchParams {
         return this;
     }
 
-    public BaseSearchParams setFacetField(String facetField) {
+    public BaseSearchParams setFacetField(List<String> facetField) {
         this.facetField = facetField;
         return this;
     }
@@ -112,7 +112,7 @@ public class BaseSearchParams {
         return facet;
     }
 
-    public String getFacetField() {
+    public List<String> getFacetField() {
         return facetField;
     }
 
@@ -147,9 +147,11 @@ public class BaseSearchParams {
             map.put("page", page.toString());
         }
 
-        if (facet != null && facetField != null && facetField.length() > 0) {
+        if (facet != null && facetField != null && facetField.size() > 0) {
             map.put("facet", String.valueOf(facet));
-            map.put("facet_field", facetField);
+            for (String facetFieldItem : facetField) {
+                map.put("facet_field", facetFieldItem);
+            }
         }
 
         if (score != null) {
