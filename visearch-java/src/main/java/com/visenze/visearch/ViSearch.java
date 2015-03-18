@@ -38,6 +38,16 @@ public class ViSearch implements DataOperations, SearchOperations {
         this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper, API_ENDPOINT);
     }
 
+    public ViSearch(String endpoint, String accessKey, String secretKey) {
+        if (endpoint == null) {
+            throw new ViSearchException("Endpoint is not specified");
+        }
+        ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(accessKey, secretKey);
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
+        this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper, endpoint);
+        this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper, endpoint);
+    }
+
     public ViSearch(URL endpoint, String accessKey, String secretKey) {
         if (endpoint == null) {
             throw new ViSearchException("Endpoint is not specified");
