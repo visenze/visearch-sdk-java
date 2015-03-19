@@ -34,8 +34,8 @@ ViSearch is an API that provides accurate, reliable and scalable image search. V
 
 The ViSearch Java SDK is an open source software for easy integration with your Java back-end applications and services. For source code and references, visit the [Github Repository](https://github.com/visenze/visearch-sdk-java).
 
- > Current stable version: 1.0.0
- > Minimum Java version: 6
+ * Current stable version: 1.0.1
+ * Minimum Java version: 6
 
 ##2. Setup
 
