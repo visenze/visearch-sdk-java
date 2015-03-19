@@ -1,13 +1,14 @@
 package com.visenze.visearch.internal.http;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.visenze.visearch.ViSearchException;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -18,6 +19,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -35,17 +38,15 @@ import java.util.Map;
 public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private final CloseableHttpClient httpClient;
-    private final String accessKey;
-    private final String secretKey;
+    private final UsernamePasswordCredentials credentials;
 
     public ViSearchHttpClientImpl(String accessKey, String secretKey) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
         RequestConfig conf = RequestConfig
                 .custom()
                 .setConnectTimeout(5000)
                 .setSocketTimeout(10000)
                 .build();
+        credentials = new UsernamePasswordCredentials(accessKey, secretKey);
         this.httpClient = HttpClientBuilder
                 .create()
                 .setMaxConnTotal(50)
@@ -56,29 +57,24 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     @Override
     public String get(String url, Multimap<String, String> params) {
-        params = addAuthParams(params);
         HttpUriRequest request = buildGetRequest(url, params);
         return executeRequest(request);
     }
 
-
     @Override
     public String post(String url, Multimap<String, String> params) {
-        params = addAuthParams(params);
         HttpUriRequest request = buildPostRequest(url, params);
         return executeRequest(request);
     }
 
     @Override
     public String postImage(String url, Multimap<String, String> params, File file) {
-        params = addAuthParams(params);
         HttpUriRequest request = buildPostRequest(url, params, file);
         return executeRequest(request);
     }
 
     @Override
     public String postImage(String url, Multimap<String, String> params, byte[] byteArray, String filename) {
-        params = addAuthParams(params);
         HttpUriRequest request = buildPostRequest(url, params, byteArray, filename);
         return executeRequest(request);
     }
@@ -147,18 +143,13 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private String executeRequest(HttpUriRequest request) {
         try {
+            request.addHeader(new BasicScheme().authenticate(credentials, request, null));
             CloseableHttpResponse response = httpClient.execute(request);
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity);
         } catch (Exception e) {
             throw new ViSearchException("Error: Failed to execute request=" + request.toString() + ", error=" + e.getMessage());
         }
-    }
-
-    private Multimap<String, String> addAuthParams(Multimap<String, String> params) {
-        Preconditions.checkNotNull(params);
-        params.putAll(Multimaps.forMap(ViSearchAuthGenerator.getAuthParams(accessKey, secretKey)));
-        return params;
     }
 
     private List<NameValuePair> mapToNameValuePair(Multimap<String, ?> params) {
