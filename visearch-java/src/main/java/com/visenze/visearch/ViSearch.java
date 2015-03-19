@@ -14,10 +14,10 @@ import java.util.List;
 
 /**
  * ViSearch APIs.
- * <p/>
+ *
  * See online documentation for <a href="http://www.visenze.com/doc/api/data">Data API</a>
  * and <a href="http://www.visenze.com/doc/api/search">Search API</a>.
- * <p/>
+ *
  * viSearch.insert(...)
  * viSearch.remove(...)
  * viSearch.search(...)
