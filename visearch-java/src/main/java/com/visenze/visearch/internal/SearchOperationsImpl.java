@@ -19,8 +19,8 @@ import java.util.Map;
 
 public class SearchOperationsImpl extends BaseViSearchOperations implements SearchOperations {
 
-    public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper, String endpoint) {
-        super(viSearchHttpClient, objectMapper, endpoint);
+    public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
+        super(viSearchHttpClient, objectMapper);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         if (imageId == null || imageId.isEmpty()) {
             throw new ViSearchException("Missing parameter");
         }
-        String response = viSearchHttpClient.get(endpoint + "/search", searchParams.toMap());
+        String response = viSearchHttpClient.get("/search", searchParams.toMap());
         return getPagedResult(response);
     }
 
@@ -42,7 +42,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         if (!color.matches("^[0-9a-fA-F]{6}$")) {
             throw new ViSearchException("Invalid parameter");
         }
-        String response = viSearchHttpClient.get(endpoint + "/colorsearch", colorSearchParams.toMap());
+        String response = viSearchHttpClient.get("/colorsearch", colorSearchParams.toMap());
         return getPagedResult(response);
     }
 
@@ -62,19 +62,19 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         } else if (imageFile != null) {
             try {
                 byte[] imageBytes = resizeImage(uploadSearchParams, new FileInputStream(imageFile), resizeSettings);
-                response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageBytes, imageFile.getName());
+                response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, imageFile.getName());
             } catch (Exception e) {
                 throw new ViSearchException("Error opening image file: " + imageFile.getName(), e);
             }
         } else if (imageStream != null) {
             try {
                 byte[] imageBytes = resizeImage(uploadSearchParams, imageStream, resizeSettings);
-                response = viSearchHttpClient.postImage(endpoint + "/uploadsearch", uploadSearchParams.toMap(), imageBytes, "image-stream");
+                response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, "image-stream");
             } catch (Exception e) {
                 throw new ViSearchException("Error opening image stream", e);
             }
         } else {
-            response = viSearchHttpClient.post(endpoint + "/uploadsearch", uploadSearchParams.toMap());
+            response = viSearchHttpClient.post("/uploadsearch", uploadSearchParams.toMap());
         }
         return getPagedResult(response);
     }

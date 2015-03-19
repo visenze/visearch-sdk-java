@@ -37,10 +37,12 @@ import java.util.Map;
 
 public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
+    private final String endpoint;
     private final CloseableHttpClient httpClient;
     private final UsernamePasswordCredentials credentials;
 
-    public ViSearchHttpClientImpl(String accessKey, String secretKey) {
+    public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey) {
+        this.endpoint = endpoint;
         RequestConfig conf = RequestConfig
                 .custom()
                 .setConnectTimeout(5000)
@@ -56,26 +58,26 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     }
 
     @Override
-    public String get(String url, Multimap<String, String> params) {
-        HttpUriRequest request = buildGetRequest(url, params);
+    public String get(String path, Multimap<String, String> params) {
+        HttpUriRequest request = buildGetRequest(endpoint + path, params);
         return executeRequest(request);
     }
 
     @Override
-    public String post(String url, Multimap<String, String> params) {
-        HttpUriRequest request = buildPostRequest(url, params);
+    public String post(String path, Multimap<String, String> params) {
+        HttpUriRequest request = buildPostRequest(endpoint + path, params);
         return executeRequest(request);
     }
 
     @Override
-    public String postImage(String url, Multimap<String, String> params, File file) {
-        HttpUriRequest request = buildPostRequest(url, params, file);
+    public String postImage(String path, Multimap<String, String> params, File file) {
+        HttpUriRequest request = buildPostRequest(endpoint + path, params, file);
         return executeRequest(request);
     }
 
     @Override
-    public String postImage(String url, Multimap<String, String> params, byte[] byteArray, String filename) {
-        HttpUriRequest request = buildPostRequest(url, params, byteArray, filename);
+    public String postImage(String path, Multimap<String, String> params, byte[] byteArray, String filename) {
+        HttpUriRequest request = buildPostRequest(endpoint + path, params, byteArray, filename);
         return executeRequest(request);
     }
 

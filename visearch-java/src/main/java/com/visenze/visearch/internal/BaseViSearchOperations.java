@@ -17,12 +17,10 @@ class BaseViSearchOperations {
 
     final ViSearchHttpClient viSearchHttpClient;
     final ObjectMapper objectMapper;
-    final String endpoint;
 
-    BaseViSearchOperations(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper, String endpoint) {
+    BaseViSearchOperations(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
         this.viSearchHttpClient = viSearchHttpClient;
         this.objectMapper = objectMapper;
-        this.endpoint = endpoint;
     }
 
     <T> PagedResult<T> pagify(String json, Class<T> clazz) {

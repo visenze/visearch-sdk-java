@@ -15,14 +15,14 @@ import java.util.Map;
 
 public class DataOperationsImpl extends BaseViSearchOperations implements DataOperations {
 
-    public DataOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper, String endpoint) {
-        super(viSearchHttpClient, objectMapper, endpoint);
+    public DataOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
+        super(viSearchHttpClient, objectMapper);
     }
 
     @Override
     public InsertTransaction insert(List<Image> imageList) {
         Multimap<String, String> params = Multimaps.forMap(imageListToParams(imageList));
-        String response = viSearchHttpClient.post(endpoint + "/insert", params);
+        String response = viSearchHttpClient.post("/insert", params);
         return deserializeObjectResult(response, InsertTransaction.class);
     }
 
@@ -56,20 +56,20 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
         params.put("page", page.toString());
         params.put("limit", limit.toString());
 
-        String response = viSearchHttpClient.get(endpoint + "/insert/status", params);
+        String response = viSearchHttpClient.get("/insert/status", params);
         return pagify(response, InsertTransaction.class);
     }
 
     @Override
     public InsertTransaction getStatus(String transactionId) {
-        String response = viSearchHttpClient.get(endpoint + "/insert/status/" + transactionId, null);
+        String response = viSearchHttpClient.get("/insert/status/" + transactionId, null);
         return deserializeObjectResult(response, InsertTransaction.class);
     }
 
     @Override
     public void remove(List<String> imNameList) {
         Multimap<String, String> params = Multimaps.forMap(imageNameListToParams(imNameList));
-        viSearchHttpClient.post(endpoint + "/remove", params);
+        viSearchHttpClient.post("/remove", params);
     }
 
     private Map<String, String> imageNameListToParams(List<String> imNameList) {

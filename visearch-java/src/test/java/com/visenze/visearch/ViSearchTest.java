@@ -29,7 +29,7 @@ public class ViSearchTest {
                 Matchers.<Multimap<String, String>>any())
         )
         .thenReturn(insertResponse);
-        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper, "http://visearch.visenze.com");
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         List<Image> imageList = new ArrayList<Image>();
         InsertTransaction insertTransaction = dataOperations.insert(imageList);
         assertEquals(new Integer(0), insertTransaction.getTotal());
@@ -51,7 +51,7 @@ public class ViSearchTest {
                         Matchers.<Multimap<String, String>>any())
         )
                 .thenReturn(insertResponse);
-        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper, "http://visearch.visenze.com");
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         List<Image> imageList = new ArrayList<Image>();
         imageList.add(new Image("test_imname", "http://visenze.com/test_im_url.jpg"));
         InsertTransaction insertTransaction = dataOperations.insert(imageList);
@@ -74,7 +74,7 @@ public class ViSearchTest {
                         Matchers.<Multimap<String, String>>any())
         )
                 .thenReturn(insertResponse);
-        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper, "http://visearch.visenze.com");
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         InsertTransaction insertTransaction = dataOperations.getStatus("317506403860353024");
         assertEquals(new Integer(0), insertTransaction.getSuccessCount());
         assertEquals(new Integer(2), insertTransaction.getFailedCount());
@@ -95,7 +95,7 @@ public class ViSearchTest {
                         Matchers.<Multimap<String, String>>any())
         )
                 .thenReturn(insertResponse);
-        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper, "http://visearch.visenze.com");
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         InsertTransaction insertTransaction = dataOperations.getStatus("317071016692158464");
         assertEquals(new Integer(2), insertTransaction.getSuccessCount());
         assertEquals(new Integer(0), insertTransaction.getFailedCount());
