@@ -37,8 +37,8 @@ public class Box {
     public Box scale(float ratio) {
         return new Box(
             (int) (x1 * ratio),
-            (int) (x2 * ratio),
             (int) (y1 * ratio),
+            (int) (x2 * ratio),
             (int) (y2 * ratio)
         );
     }
