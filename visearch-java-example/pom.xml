@@ -16,14 +16,14 @@
     <parent>
         <groupId>com.visenze</groupId>
         <artifactId>visearch-java-sdk-pom</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.3</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.visenze</groupId>
             <artifactId>visearch-java-sdk</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.3</version>
         </dependency>
     </dependencies>
 

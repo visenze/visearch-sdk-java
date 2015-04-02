@@ -5,7 +5,7 @@
     <groupId>com.visenze</groupId>
     <artifactId>visearch-java-sdk-pom</artifactId>
     <name>ViSearch Java SDK POM</name>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3</version>
     <packaging>pom</packaging>
     <url>http://www.visenze.com/doc</url>
     <description>
