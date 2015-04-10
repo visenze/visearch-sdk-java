@@ -351,7 +351,3 @@ params.setScoreMax(0.8);
 // only retrieve search results with scores between 0.5 and 0.8
 PagedSearchResult searchResult = client.search(params);
 ```
-
-##8. Code Samples
-
-Example code of the ViSearch Java SDK can be found in [visearch-java-example](https://github.com/visenze/visearch-sdk-java/tree/master/visearch-java-example).
