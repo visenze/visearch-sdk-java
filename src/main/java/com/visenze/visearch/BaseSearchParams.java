@@ -1,194 +1,183 @@
 package com.visenze.visearch;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Common parameters for /search, /colorsearch, and /uploadsearch.
+ * Provide setters to override default values.
+ */
 public class BaseSearchParams {
 
-    protected Integer limit;
+    static final private Integer DEFAULT_PAGE = 1;
+    static final private Integer DEFAULT_LIMIT = 10;
+    static final private Boolean DEFAULT_FACET = false;
+    static final private List<String> DEFAULT_FACET_FIELD = ImmutableList.of();
+    static final private Boolean DEFAULT_SCORE = false;
+    static final private Float DEFAULT_SCORE_MIN = 0.0f;
+    static final private Float DEFAULT_SCORE_MAX = 1.0f;
+    static final private Map<String, String> DEFAULT_FQ = ImmutableMap.of();
+    static final private List<String> DEFAULT_FL = ImmutableList.of();
+    static final private Boolean DEFAULT_QINFO = false;
+    static final private Map<String, String> DEFAULT_CUSTOM = ImmutableMap.of();
 
-    protected Integer page;
+    protected Optional<Integer> page = Optional.absent();
+    protected Optional<Integer> limit = Optional.absent();
+    protected Optional<Boolean> facet = Optional.absent();
+    protected Optional<List<String>> facetField = Optional.absent();
+    protected Optional<Boolean> score = Optional.absent();
+    protected Optional<Float> scoreMin = Optional.absent();
+    protected Optional<Float> scoreMax = Optional.absent();
+    protected Optional<Map<String, String>> fq = Optional.absent();
+    protected Optional<List<String>> fl = Optional.absent();
+    protected Optional<Boolean> qInfo = Optional.absent();
+    protected Optional<Map<String, String>> custom = Optional.absent();
 
-    protected Boolean facet;
 
-    protected List<String> facetField;
-
-    protected Boolean score;
-
-    protected Float scoreMin;
-
-    protected Float scoreMax;
-
-    protected Map<String, String> fq;
-
-    protected List<String> fl;
-
-    protected Boolean queryInfo;
-
-    protected Map<String, String> custom;
-
-    public BaseSearchParams() {
-        this.limit = 10;
-        this.page = 1;
-        this.facet = null;
-        this.facetField = null;
-        this.score = null;
-        this.scoreMin = null;
-        this.scoreMax = null;
-        this.fq = null;
-        this.fl = null;
-        this.queryInfo = null;
-        this.custom = null;
-    }
-
-    public BaseSearchParams setLimit(Integer limit) {
-        this.limit = limit;
+    public BaseSearchParams setPage(Integer page) {
+        this.page = Optional.fromNullable(page);
         return this;
     }
 
-    public BaseSearchParams setPage(Integer page) {
-        this.page = page;
+    public BaseSearchParams setLimit(Integer limit) {
+        this.limit = Optional.fromNullable(limit);
         return this;
     }
 
     public BaseSearchParams setFacet(Boolean facet) {
-        this.facet = facet;
+        this.facet = Optional.fromNullable(facet);
         return this;
     }
 
     public BaseSearchParams setFacetField(List<String> facetField) {
-        this.facetField = facetField;
+        this.facetField = Optional.fromNullable(facetField);
         return this;
     }
 
     public BaseSearchParams setScore(Boolean score) {
-        this.score = score;
+        this.score = Optional.fromNullable(score);
         return this;
     }
 
     public BaseSearchParams setScoreMin(Float scoreMin) {
-        this.scoreMin = scoreMin;
+        this.scoreMin = Optional.fromNullable(scoreMin);
         return this;
     }
 
     public BaseSearchParams setScoreMax(Float scoreMax) {
-        this.scoreMax = scoreMax;
+        this.scoreMax = Optional.fromNullable(scoreMax);
         return this;
     }
 
     public BaseSearchParams setFq(Map<String, String> fq) {
-        this.fq = fq;
+        this.fq = Optional.fromNullable(fq);
         return this;
     }
 
     public BaseSearchParams setFl(List<String> fl) {
-        this.fl = fl;
+        this.fl = Optional.fromNullable(fl);
         return this;
     }
 
-    public BaseSearchParams setQueryInfo(Boolean queryInfo) {
-        this.queryInfo = queryInfo;
+    public BaseSearchParams setQInfo(Boolean qInfo) {
+        this.qInfo = Optional.fromNullable(qInfo);
         return this;
     }
 
     public BaseSearchParams setCustom(Map<String, String> custom) {
-        this.custom = custom;
+        this.custom = Optional.fromNullable(custom);
         return this;
     }
 
-    public Integer getLimit() {
-        return limit;
-    }
-
     public Integer getPage() {
-        return page;
+        return page.or(DEFAULT_PAGE);
     }
 
-    public Boolean isFacet() {
-        return facet;
+    public Integer getLimit() {
+        return limit.or(DEFAULT_LIMIT);
+    }
+
+    public boolean isFacet() {
+        return facet.or(DEFAULT_FACET);
     }
 
     public List<String> getFacetField() {
-        return facetField;
+        return facetField.or(DEFAULT_FACET_FIELD);
     }
 
-    public Boolean isScore() {
-        return score;
+    public boolean isScore() {
+        return score.or(DEFAULT_SCORE);
+    }
+
+    public Float getScoreMin() {
+        return scoreMin.or(DEFAULT_SCORE_MIN);
+    }
+
+    public Float getScoreMax() {
+        return scoreMax.or(DEFAULT_SCORE_MAX);
     }
 
     public Map<String, String> getFq() {
-        return fq;
+        return fq.or(DEFAULT_FQ);
     }
 
     public List<String> getFl() {
-        return fl;
+        return fl.or(DEFAULT_FL);
     }
 
-    public Boolean isQueryInfo() {
-        return queryInfo;
+    public Boolean isQInfo() {
+        return qInfo.or(DEFAULT_QINFO);
     }
 
     public Map<String, String> getCustom() {
-        return custom;
+        return custom.or(DEFAULT_CUSTOM);
     }
 
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = HashMultimap.create();
 
-        if (limit != null && limit > 0) {
-            map.put("limit", limit.toString());
-        }
+        map.put("page", getPage().toString());
+        map.put("limit", getLimit().toString());
 
-        if (page != null && page > 0) {
-            map.put("page", page.toString());
-        }
-
-        if (facet != null && facetField != null && facetField.size() > 0) {
-            map.put("facet", String.valueOf(facet));
-            for (String facetFieldItem : facetField) {
+        if (isFacet() && getFacetField().size() > 0) {
+            map.put("facet", "true");
+            for (String facetFieldItem : getFacetField()) {
                 map.put("facet_field", facetFieldItem);
             }
         }
 
-        if (score != null) {
-            map.put("score", String.valueOf(score));
+        if (isScore()) {
+            map.put("score", "true");
         }
 
-        if (scoreMin != null) {
-            map.put("score_min", String.valueOf(scoreMin));
+        map.put("score_min", getScoreMin().toString());
+        map.put("score_max", getScoreMax().toString());
+
+        for (Map.Entry<String, String> entry : getFq().entrySet()) {
+            map.put("fq", entry.getKey() + ":" + entry.getValue());
         }
 
-        if (scoreMax != null) {
-            map.put("score_max", String.valueOf(scoreMax));
+        for (String fl : getFl()) {
+            map.put("fl", fl);
         }
 
-        if (fq != null) {
-            for (Map.Entry<String, String> entry : fq.entrySet()) {
-                map.put("fq", entry.getKey() + ":" + entry.getValue());
-            }
+        if (isQInfo()) {
+            map.put("qinfo", "true");
         }
 
-        if (fl != null) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < fl.size(); i++) {
-                builder.append(fl.get(i));
-                if (i < fl.size() - 1) {
-                    builder.append(',');
-                }
-            }
-            map.put("fl", builder.toString());
-        }
-
-        if (queryInfo != null) {
-            map.put("qinfo", String.valueOf(queryInfo));
-        }
-
-        if (custom != null) {
-            map.putAll(Multimaps.forMap(custom));
+        for (Map.Entry<String, String> entry : getCustom().entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            Preconditions.checkNotNull(key, "Custom search param key must not be null.");
+            Preconditions.checkNotNull(value, "Custom search param value must not be null.");
+            map.put(entry.getKey(), entry.getValue());
         }
 
         return map;
