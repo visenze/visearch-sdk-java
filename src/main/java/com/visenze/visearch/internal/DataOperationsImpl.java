@@ -1,14 +1,20 @@
 package com.visenze.visearch.internal;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.visenze.visearch.Image;
-import com.visenze.visearch.InsertTransaction;
-import com.visenze.visearch.PagedResult;
+import com.visenze.visearch.InsertStatus;
+import com.visenze.visearch.InsertTrans;
+import com.visenze.visearch.ViSearchException;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +26,68 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
     }
 
     @Override
-    public InsertTransaction insert(List<Image> imageList) {
+    public InsertTrans insert(List<Image> imageList) {
+        Preconditions.checkNotNull(imageList, "image list for insert must not be null.");
         Multimap<String, String> params = Multimaps.forMap(imageListToParams(imageList));
         String response = viSearchHttpClient.post("/insert", params);
-        return deserializeObjectResult(response, InsertTransaction.class);
+        try {
+            JsonNode responseNode = objectMapper.readTree(response);
+            JsonNode statusNode = responseNode.get("status");
+            if (statusNode == null) {
+                throw new ViSearchException("Unable to process response from insert api: missing 'status' property");
+            } else {
+                String status = statusNode.asText();
+                return deserializeObjectResult(response, InsertTrans.class);
+            }
+        } catch (JsonProcessingException e) {
+            throw new ViSearchException("Unable to process response from insert api", e);
+        } catch (IOException e) {
+            throw new ViSearchException("Unable to process response from insert api", e);
+        }
+    }
+
+    @Override
+    public InsertStatus insertStatus(String transId) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(transId), "trans_id must not be null or empty");
+        String response = viSearchHttpClient.get("/insert/status/" + transId, HashMultimap.<String, String>create());
+        return parseInsertStatus(response);
+    }
+
+    @Override
+    public InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(transId), "trans_id must not be null or empty");
+        Preconditions.checkNotNull(errorPage, "error page must not be null");
+        Preconditions.checkNotNull(errorLimit, "error limit must not be null");
+        Multimap<String, String> params = HashMultimap.create();
+        params.put("error_page", errorPage.toString());
+        params.put("error_limit", errorLimit.toString());
+        String response = viSearchHttpClient.get("/insert/status/" + transId, params);
+        return parseInsertStatus(response);
+    }
+
+    private InsertStatus parseInsertStatus(String response) {
+        try {
+            JsonNode responseNode = objectMapper.readTree(response);
+            JsonNode statusNode = responseNode.get("status");
+            if (statusNode == null) {
+                throw new ViSearchException("Unable to process response from insert status api: missing 'status' property");
+            } else {
+                String status = statusNode.asText();
+                JsonNode resultNode = responseNode.get("result").get(0);
+                return deserializeObjectResult(resultNode.toString(), InsertStatus.class);
+            }
+        } catch (JsonProcessingException e) {
+            throw new ViSearchException("Unable to process response from insert status api", e);
+        } catch (IOException e) {
+            throw new ViSearchException("Unable to process response from insert status api", e);
+        }
+    }
+
+    @Override
+    public void remove(List<String> imNameList) {
+        Preconditions.checkNotNull(imNameList, "im_name list for remove must not be null.");
+        Multimap<String, String> params = Multimaps.forMap(imageNameListToParams(imNameList));
+        viSearchHttpClient.post("/remove", params);
     }
 
     private Map<String, String> imageListToParams(List<Image> imageList) {
@@ -42,34 +106,6 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
             }
         }
         return params;
-    }
-
-    @Override
-    public PagedResult<InsertTransaction> getStatus(Integer page, Integer limit) {
-        if (page == null || page <= 0) {
-            page = 1;
-        }
-        if (limit == null || limit <= 0) {
-            limit = 10;
-        }
-        Multimap<String, String> params = HashMultimap.create();
-        params.put("page", page.toString());
-        params.put("limit", limit.toString());
-
-        String response = viSearchHttpClient.get("/insert/status", params);
-        return pagify(response, InsertTransaction.class);
-    }
-
-    @Override
-    public InsertTransaction getStatus(String transactionId) {
-        String response = viSearchHttpClient.get("/insert/status/" + transactionId, null);
-        return deserializeObjectResult(response, InsertTransaction.class);
-    }
-
-    @Override
-    public void remove(List<String> imNameList) {
-        Multimap<String, String> params = Multimaps.forMap(imageNameListToParams(imNameList));
-        viSearchHttpClient.post("/remove", params);
     }
 
     private Map<String, String> imageNameListToParams(List<String> imNameList) {

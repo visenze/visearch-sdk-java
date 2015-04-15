@@ -1,18 +1,18 @@
 package com.visenze.visearch.internal;
 
 import com.visenze.visearch.Image;
-import com.visenze.visearch.InsertTransaction;
-import com.visenze.visearch.PagedResult;
+import com.visenze.visearch.InsertStatus;
+import com.visenze.visearch.InsertTrans;
 
 import java.util.List;
 
 public interface DataOperations {
 
-    InsertTransaction insert(List<Image> imageList);
+    InsertTrans insert(List<Image> imageList);
 
-    PagedResult<InsertTransaction> getStatus(Integer page, Integer limit);
+    InsertStatus insertStatus(String transId);
 
-    InsertTransaction getStatus(String transactionId);
+    InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit);
 
     void remove(List<String> imNameList);
 

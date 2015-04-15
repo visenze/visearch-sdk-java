@@ -80,29 +80,30 @@ public class ViSearch implements DataOperations, SearchOperations {
      * @return an insert transaction
      */
     @Override
-    public InsertTransaction insert(List<Image> imageList) {
+    public InsertTrans insert(List<Image> imageList) {
         return dataOperations.insert(imageList);
     }
 
     /**
-     * Get recent insert transactions in pages.
-     * @param page the page number
-     * @param limit the number of item returning per page.
-     * @return the page of insert transactions
+     * Get insert status by insert trans id.
+     * @param transId the id of the insert trans.
+     * @return the insert trans
      */
     @Override
-    public PagedResult<InsertTransaction> getStatus(Integer page, Integer limit) {
-        return dataOperations.getStatus(page, limit);
+    public InsertStatus insertStatus(String transId) {
+        return dataOperations.insertStatus(transId);
     }
 
     /**
-     * Get a single insert transaction by transaction id.
-     * @param transactionId the id of the insert transaction.
+     * Get insert status by insert trans id, and get errors page.
+     * @param transId the id of the insert transaction.
+     * @param errorPage page number of the error list
+     * @param errorLimit per page limit number of the error list
      * @return the insert transaction
      */
     @Override
-    public InsertTransaction getStatus(String transactionId) {
-        return dataOperations.getStatus(transactionId);
+    public InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit) {
+        return dataOperations.insertStatus(transId, errorPage, errorLimit);
     }
 
     /**
