@@ -1,5 +1,7 @@
 package com.visenze.visearch;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 public class ColorSearchParams extends BaseSearchParams {
@@ -12,6 +14,7 @@ public class ColorSearchParams extends BaseSearchParams {
     }
 
     public ColorSearchParams setColor(String color) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(color), "The color param must not be null or empty.");
         this.color = color;
         return this;
     }
