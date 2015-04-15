@@ -27,7 +27,7 @@ public class InsertStatus {
         this.successCount = successCount;
         this.failCount = failCount;
         this.startTime = startTime;
-        this.updateTime =updateTime;
+        this.updateTime = updateTime;
         this.errorList = errorList;
         this.errorPage = errorPage;
         this.errorLimit = errorLimit;

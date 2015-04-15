@@ -81,7 +81,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
     private byte[] resizeImage(UploadSearchParams uploadSearchParams, InputStream inputStream, ResizeSettings resizeSettings) {
         try {
-            BufferedImage sourceImage =  ImageIO.read(inputStream);
+            BufferedImage sourceImage = ImageIO.read(inputStream);
             int imageWidth = sourceImage.getWidth();
             int imageHeight = sourceImage.getHeight();
             BufferedImage resizedImage;

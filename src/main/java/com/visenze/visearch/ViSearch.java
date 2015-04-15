@@ -32,6 +32,7 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Construct a ViSearch client to call the default endpoint with access key and secret key.
+     *
      * @param accessKey ViSearch App access key
      * @param secretKey ViSearch App secret key
      */
@@ -44,7 +45,8 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * (For testing) Construct a ViSearch client to call a custom endpoint with access key and secret key.
-     * @param endpoint custom ViSearch endpoint
+     *
+     * @param endpoint  custom ViSearch endpoint
      * @param accessKey ViSearch App access key
      * @param secretKey ViSearch App secret key
      */
@@ -60,7 +62,8 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * (For testing) Construct a ViSearch client to call a custom endpoint with access key and secret key.
-     * @param endpoint custom ViSearch endpoint
+     *
+     * @param endpoint  custom ViSearch endpoint
      * @param accessKey ViSearch App access key
      * @param secretKey ViSearch App secret key
      */
@@ -76,6 +79,7 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Insert images to the ViSearch App.
+     *
      * @param imageList the list of Images to insert.
      * @return an insert transaction
      */
@@ -86,6 +90,7 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Get insert status by insert trans id.
+     *
      * @param transId the id of the insert trans.
      * @return the insert trans
      */
@@ -96,8 +101,9 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Get insert status by insert trans id, and get errors page.
-     * @param transId the id of the insert transaction.
-     * @param errorPage page number of the error list
+     *
+     * @param transId    the id of the insert transaction.
+     * @param errorPage  page number of the error list
      * @param errorLimit per page limit number of the error list
      * @return the insert transaction
      */
@@ -108,6 +114,7 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Remove a list of images from the ViSearch App, identified by their im_names.
+     *
      * @param imNameList the list of im_names of the images to be removed
      */
     @Override
@@ -117,6 +124,7 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Search for similar images from the ViSearch App given an existing image in the App.
+     *
      * @param searchParams the search parameters, must contain the im_name of the existing image
      * @return the page of search result
      */
@@ -127,6 +135,7 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Search for similar images from the ViSearch App given a hex color.
+     *
      * @param colorSearchParams the color search parameters, must contain the hex color
      * @return the page of color search result
      */
@@ -137,6 +146,7 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Search for similar images from the ViSearch App given an image file or url.
+     *
      * @param uploadSearchParams the upload search parameters, must contain a image file or a url
      * @return the page of upload search result
      */
@@ -147,8 +157,9 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Search for similar images from the ViSearch App given an image file or url, with customized image resize option.
+     *
      * @param uploadSearchParams the upload search parameters, must contain a image file or a url
-     * @param resizeSettings custom image resize option
+     * @param resizeSettings     custom image resize option
      * @return the page of upload search result
      */
     @Override
