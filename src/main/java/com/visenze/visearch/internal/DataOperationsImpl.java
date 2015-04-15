@@ -27,22 +27,21 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
 
     @Override
     public InsertTrans insert(List<Image> imageList) {
-        Preconditions.checkNotNull(imageList, "image list for insert must not be null.");
+        Preconditions.checkNotNull(imageList, "image list must not be null");
         Multimap<String, String> params = Multimaps.forMap(imageListToParams(imageList));
         String response = viSearchHttpClient.post("/insert", params);
         try {
             JsonNode responseNode = objectMapper.readTree(response);
             JsonNode statusNode = responseNode.get("status");
             if (statusNode == null) {
-                throw new ViSearchException("Unable to process response from insert api: missing 'status' property");
+                throw new ViSearchException("There was a malformed ViSearch response: " + response, response);
             } else {
-                String status = statusNode.asText();
                 return deserializeObjectResult(response, InsertTrans.class);
             }
         } catch (JsonProcessingException e) {
-            throw new ViSearchException("Unable to process response from insert api", e);
+            throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
         } catch (IOException e) {
-            throw new ViSearchException("Unable to process response from insert api", e);
+            throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
         }
     }
 
@@ -70,16 +69,27 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
             JsonNode responseNode = objectMapper.readTree(response);
             JsonNode statusNode = responseNode.get("status");
             if (statusNode == null) {
-                throw new ViSearchException("Unable to process response from insert status api: missing 'status' property");
+                throw new ViSearchException("There was a malformed ViSearch response: " + response, response);
             } else {
                 String status = statusNode.asText();
-                JsonNode resultNode = responseNode.get("result").get(0);
-                return deserializeObjectResult(resultNode.toString(), InsertStatus.class);
+                JsonNode resultArrayNode = responseNode.get("result");
+                if (status.equals("fail") ||
+                        resultArrayNode == null || !resultArrayNode.isArray() || resultArrayNode.get(0) == null) {
+                    JsonNode errorNode = responseNode.get("error");
+                    if (errorNode == null || !errorNode.isArray() || errorNode.get(0) == null) {
+                        throw new ViSearchException("An unknown error occurred in ViSearch.", response);
+                    }
+                    String message = errorNode.path(0).asText();
+                    throw new ViSearchException("An error occurred calling ViSearch: " + message, response);
+                } else {
+                    JsonNode resultNode = resultArrayNode.get(0);
+                    return deserializeObjectResult(resultNode.toString(), InsertStatus.class);
+                }
             }
         } catch (JsonProcessingException e) {
-            throw new ViSearchException("Unable to process response from insert status api", e);
+            throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
         } catch (IOException e) {
-            throw new ViSearchException("Unable to process response from insert status api", e);
+            throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
         }
     }
 

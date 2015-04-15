@@ -1,11 +1,13 @@
 package com.visenze.visearch.internal.http;
 
 import com.google.common.collect.Multimap;
+import com.visenze.visearch.NetworkException;
 import com.visenze.visearch.ViSearchException;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -25,6 +27,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -57,25 +60,25 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     @Override
     public String get(String path, Multimap<String, String> params) {
         HttpUriRequest request = buildGetRequest(endpoint + path, params);
-        return executeRequest(request);
+        return getStringResponse(request);
     }
 
     @Override
     public String post(String path, Multimap<String, String> params) {
         HttpUriRequest request = buildPostRequest(endpoint + path, params);
-        return executeRequest(request);
+        return getStringResponse(request);
     }
 
     @Override
     public String postImage(String path, Multimap<String, String> params, File file) {
-        HttpUriRequest request = buildPostRequest(endpoint + path, params, file);
-        return executeRequest(request);
+        HttpUriRequest request = buildPostRequestForImage(endpoint + path, params, file);
+        return getStringResponse(request);
     }
 
     @Override
     public String postImage(String path, Multimap<String, String> params, byte[] byteArray, String filename) {
-        HttpUriRequest request = buildPostRequest(endpoint + path, params, byteArray, filename);
-        return executeRequest(request);
+        HttpUriRequest request = buildPostRequestForImage(endpoint + path, params, byteArray, filename);
+        return getStringResponse(request);
     }
 
     private HttpUriRequest buildGetRequest(String url, Multimap<String, String> params) {
@@ -87,20 +90,19 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private URI buildGetUri(String url, List<NameValuePair> nameValuePairList) {
         try {
-            return new URIBuilder(url)
-                    .addParameters(nameValuePairList)
-                    .build();
+            return new URIBuilder(url).addParameters(nameValuePairList).build();
         } catch (URISyntaxException e) {
-            throw new ViSearchException("Error: URISyntaxException url=" + url + ", params=" + nameValuePairList.toString() + ", error=" + e.getMessage());
+            throw new ViSearchException("There was an error parsing the ViSearch endpoint. Please ensure " +
+                    "that your provided ViSearch endpoint is a well-formed URL and try again.", e);
         }
     }
 
     private URI buildPostUri(String url) {
         try {
-            return new URIBuilder(url)
-                    .build();
+            return new URIBuilder(url).build();
         } catch (URISyntaxException e) {
-            throw new ViSearchException("Error: URISyntaxException url=" + url + ", error=" + e.getMessage());
+            throw new ViSearchException("There was an error parsing the ViSearch endpoint. Please ensure " +
+                    "that your provided ViSearch endpoint is a well-formed URL and try again.", e);
         }
     }
 
@@ -119,7 +121,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return httpPost;
     }
 
-    private HttpUriRequest buildPostRequest(String url, Multimap<String, String> params, File file) {
+    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setCharset(Charset.forName("utf-8"));
         for (Map.Entry<String, String> entry : params.entries()) {
@@ -130,7 +132,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private HttpUriRequest buildPostRequest(String url, Multimap<String, String> params, byte[] byteArray, String filename) {
+    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, byte[] byteArray, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
@@ -140,14 +142,40 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private String executeRequest(HttpUriRequest request) {
+    private String getStringResponse(HttpUriRequest request) {
+        addAuthHeader(request);
+        CloseableHttpResponse response = executeRequest(request);
+        return getStringFromEntity(response);
+    }
+
+    private void addAuthHeader(HttpUriRequest request) {
         try {
             request.addHeader(new BasicScheme().authenticate(credentials, request, null));
-            CloseableHttpResponse response = httpClient.execute(request);
+        } catch (AuthenticationException e) {
+            throw new com.visenze.visearch.AuthenticationException("There was an error generating the " +
+                    "HTTP basic authentication header. Please check your access key and secret key and try again", e);
+        }
+    }
+
+    private CloseableHttpResponse executeRequest(HttpUriRequest request) {
+        try {
+            return httpClient.execute(request);
+        } catch (IOException e) {
+            throw new NetworkException("A network error occurred when requesting to the ViSearch endpoint. " +
+                    "Please check your network connectivity and try again.", e);
+        }
+    }
+
+    private String getStringFromEntity(CloseableHttpResponse response) {
+        try {
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity);
-        } catch (Exception e) {
-            throw new ViSearchException("Error: Failed to execute request=" + request.toString() + ", error=" + e.getMessage());
+        } catch (IOException e) {
+            throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
+                    "Please check your network connectivity and try again.", e);
+        } catch (IllegalArgumentException e) {
+            throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
+                    "Please check your network connectivity and try again.", e);
         }
     }
 

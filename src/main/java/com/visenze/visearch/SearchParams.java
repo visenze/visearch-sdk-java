@@ -1,5 +1,7 @@
 package com.visenze.visearch;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 public class SearchParams extends BaseSearchParams {
@@ -8,10 +10,11 @@ public class SearchParams extends BaseSearchParams {
 
     public SearchParams(String imName) {
         super();
-        this.imName = imName;
+        setImName(imName);
     }
 
     public SearchParams setImName(String imName) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(imName), "im_name must not be null or empty for pre-indexed search.");
         this.imName = imName;
         return this;
     }

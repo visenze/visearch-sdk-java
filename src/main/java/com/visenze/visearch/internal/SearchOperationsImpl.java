@@ -1,7 +1,9 @@
 package com.visenze.visearch.internal;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import org.imgscalr.Scalr;
@@ -25,23 +27,12 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
     @Override
     public PagedSearchResult search(SearchParams searchParams) {
-        String imageId = searchParams.getImName();
-        if (imageId == null || imageId.isEmpty()) {
-            throw new ViSearchException("Missing parameter");
-        }
         String response = viSearchHttpClient.get("/search", searchParams.toMap());
         return getPagedResult(response);
     }
 
     @Override
     public PagedSearchResult colorSearch(ColorSearchParams colorSearchParams) {
-        String color = colorSearchParams.getColor();
-        if (color == null || color.isEmpty()) {
-            throw new ViSearchException("Missing parameter");
-        }
-        if (!color.matches("^[0-9a-fA-F]{6}$")) {
-            throw new ViSearchException("Invalid parameter");
-        }
         String response = viSearchHttpClient.get("/colorsearch", colorSearchParams.toMap());
         return getPagedResult(response);
     }
@@ -57,26 +48,26 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
         String response;
-        if (imageFile == null && imageStream == null && (imageUrl == null || imageUrl.isEmpty())) {
-            throw new ViSearchException("Missing image parameter for upload search");
+        if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
+            throw new IllegalArgumentException("Must provide either an image file or an image url to perform upload search");
         } else if (imageFile != null) {
-            try {
-                byte[] imageBytes = resizeImage(uploadSearchParams, new FileInputStream(imageFile), resizeSettings);
-                response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, imageFile.getName());
-            } catch (Exception e) {
-                throw new ViSearchException("Error opening image file: " + imageFile.getName(), e);
-            }
+            byte[] imageBytes = resizeImage(uploadSearchParams, imageFile, resizeSettings);
+            response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, imageFile.getName());
         } else if (imageStream != null) {
-            try {
-                byte[] imageBytes = resizeImage(uploadSearchParams, imageStream, resizeSettings);
-                response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, "image-stream");
-            } catch (Exception e) {
-                throw new ViSearchException("Error opening image stream", e);
-            }
+            byte[] imageBytes = resizeImage(uploadSearchParams, imageStream, resizeSettings);
+            response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, "image-stream");
         } else {
             response = viSearchHttpClient.post("/uploadsearch", uploadSearchParams.toMap());
         }
         return getPagedResult(response);
+    }
+
+    private byte[] resizeImage(UploadSearchParams uploadSearchParams, File imageFile, ResizeSettings resizeSettings) {
+        try {
+            return resizeImage(uploadSearchParams, new FileInputStream(imageFile), resizeSettings);
+        } catch (FileNotFoundException e) {
+            throw new ViSearchException("Could not found the image file " + imageFile.getAbsolutePath(), e);
+        }
     }
 
     private byte[] resizeImage(UploadSearchParams uploadSearchParams, InputStream inputStream, ResizeSettings resizeSettings) {
@@ -97,7 +88,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             resizedImage.flush();
             return outputStream.toByteArray();
         } catch (IOException e) {
-            throw new ViSearchException("Could not open image file: " + e.getMessage());
+            throw new ViSearchException("Could not read the image from input stream.", e);
         }
     }
 
@@ -113,27 +104,35 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
     }
 
-    private void writeToOutputStream(OutputStream outputStream, ResizeSettings resizeSettings, BufferedImage resizedImage) throws IOException {
-        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
-        Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("jpeg");
-        ImageWriter writer = it.next();
-        ImageWriteParam param = writer.getDefaultWriteParam();
-        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        param.setCompressionQuality(resizeSettings.getQuality() / 100.0f);
-        writer.setOutput(imageOutputStream);
-        writer.write(null, new IIOImage(resizedImage, null, null), param);
-        writer.dispose();
+    private void writeToOutputStream(OutputStream outputStream, ResizeSettings resizeSettings, BufferedImage resizedImage) {
+        try {
+            ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
+            Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("jpeg");
+            ImageWriter writer = it.next();
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(resizeSettings.getQuality() / 100.0f);
+            writer.setOutput(imageOutputStream);
+            writer.write(null, new IIOImage(resizedImage, null, null), param);
+            writer.dispose();
+        } catch (IOException e) {
+            throw new ViSearchException("Could not write to buffer when scaling image before upload search. " +
+                    "Please ensure sufficient memory for your runtime and try again.", e);
+        }
     }
 
-    private PagedSearchResult getPagedResult(String json) {
+    private PagedSearchResult getPagedResult(String response) {
         JsonNode node;
         try {
-            node = objectMapper.readTree(json);
-        } catch (Exception e) {
-            throw new ViSearchException("Error deserializing json=" + json);
+            node = objectMapper.readTree(response);
+        } catch (JsonProcessingException e) {
+            throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
+        } catch (IOException e) {
+            throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
         }
-        checkStatus(node);
-        PagedResult<ImageResult> pagedResult = pagify(json, ImageResult.class);
+        checkResponseStatus(node);
+
+        PagedResult<ImageResult> pagedResult = pagify(response, ImageResult.class);
         PagedSearchResult result = new PagedSearchResult(pagedResult);
         JsonNode facetsNode = node.get("facets");
         if (facetsNode != null) {
@@ -142,30 +141,27 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
         JsonNode qinfoNode = node.get("qinfo");
         if (qinfoNode != null) {
-            try {
-                Map<String, String> qinfo = deserializeMapResult(qinfoNode, String.class, String.class);
-                result.setQueryInfo(qinfo);
-            } catch (Exception e) {
-                throw new ViSearchException("Error deserializing qinfo");
-            }
+            Map<String, String> qinfo = deserializeMapResult(qinfoNode, String.class, String.class);
+            result.setQueryInfo(qinfo);
         }
         result.setRawJson(node.toString());
         return result;
     }
 
-    private void checkStatus(JsonNode node) {
+    private void checkResponseStatus(JsonNode node) {
+        String json = node.toString();
         JsonNode statusNode = node.get("status");
         if (statusNode == null) {
-            throw new ViSearchException("Error receiving api response");
+            throw new ViSearchException("There was a malformed ViSearch response: " + json, json);
         } else {
             String status = statusNode.asText();
             if (!status.equals("OK")) {
                 JsonNode errorNode = node.get("error");
                 if (errorNode == null) {
-                    throw new ViSearchException("Error receiving api response");
+                    throw new ViSearchException("An unknown error occurred in ViSearch.", json);
                 }
-                String errorMessage = errorNode.path(0).asText();
-                throw new ViSearchException("Error : " + errorMessage, node.toString());
+                String message = errorNode.path(0).asText();
+                throw new ViSearchException("An error occurred calling ViSearch: " + message, json);
             }
         }
     }

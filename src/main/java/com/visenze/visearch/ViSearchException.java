@@ -2,7 +2,7 @@ package com.visenze.visearch;
 
 public class ViSearchException extends RuntimeException {
 
-    private String json;
+    protected String json;
 
     public ViSearchException(String message) {
         super(message);
@@ -14,6 +14,11 @@ public class ViSearchException extends RuntimeException {
 
     public ViSearchException(String message, String json) {
         super(message);
+        this.json = json;
+    }
+
+    public ViSearchException(String message, Throwable cause, String json) {
+        super(message, cause);
         this.json = json;
     }
 

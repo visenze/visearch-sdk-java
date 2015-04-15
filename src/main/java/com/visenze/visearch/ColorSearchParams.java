@@ -10,11 +10,13 @@ public class ColorSearchParams extends BaseSearchParams {
 
     public ColorSearchParams(String color) {
         super();
-        this.color = color;
+        setColor(color);
     }
 
     public ColorSearchParams setColor(String color) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(color), "The color param must not be null or empty.");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(color), "color must not be null or empty.");
+        Preconditions.checkArgument(color.matches("^[0-9a-fA-F]{6}$"), "Invalid color. " +
+                "It should be a six hexadecimal number color code e.g. 123ACF.");
         this.color = color;
         return this;
     }
