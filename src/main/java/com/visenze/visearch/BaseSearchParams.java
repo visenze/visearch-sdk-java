@@ -2,11 +2,9 @@ package com.visenze.visearch;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,14 +17,14 @@ public class BaseSearchParams {
     static final private Integer DEFAULT_PAGE = 1;
     static final private Integer DEFAULT_LIMIT = 10;
     static final private Boolean DEFAULT_FACET = false;
-    static final private List<String> DEFAULT_FACET_FIELD = ImmutableList.of();
+    static final private List<String> DEFAULT_FACET_FIELD = Lists.newArrayList();
     static final private Boolean DEFAULT_SCORE = false;
     static final private Float DEFAULT_SCORE_MIN = 0.0f;
     static final private Float DEFAULT_SCORE_MAX = 1.0f;
-    static final private Map<String, String> DEFAULT_FQ = ImmutableMap.of();
-    static final private List<String> DEFAULT_FL = ImmutableList.of();
+    static final private Map<String, String> DEFAULT_FQ = new HashMap<String, String>();
+    static final private List<String> DEFAULT_FL = Lists.newArrayList();
     static final private Boolean DEFAULT_QINFO = false;
-    static final private Map<String, String> DEFAULT_CUSTOM = ImmutableMap.of();
+    static final private Map<String, String> DEFAULT_CUSTOM = new HashMap<String, String>();
 
     protected Optional<Integer> page = Optional.absent();
     protected Optional<Integer> limit = Optional.absent();
