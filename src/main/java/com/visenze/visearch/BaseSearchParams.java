@@ -14,13 +14,9 @@ import java.util.Map;
  */
 public class BaseSearchParams {
 
-    static final private Integer DEFAULT_PAGE = 1;
-    static final private Integer DEFAULT_LIMIT = 10;
     static final private Boolean DEFAULT_FACET = false;
     static final private List<String> DEFAULT_FACET_FIELD = Lists.newArrayList();
     static final private Boolean DEFAULT_SCORE = false;
-    static final private Float DEFAULT_SCORE_MIN = 0.0f;
-    static final private Float DEFAULT_SCORE_MAX = 1.0f;
     static final private Map<String, String> DEFAULT_FQ = new HashMap<String, String>();
     static final private List<String> DEFAULT_FL = Lists.newArrayList();
     static final private Boolean DEFAULT_QINFO = false;
@@ -95,11 +91,11 @@ public class BaseSearchParams {
     }
 
     public Integer getPage() {
-        return page.or(DEFAULT_PAGE);
+        return page.orNull();
     }
 
     public Integer getLimit() {
-        return limit.or(DEFAULT_LIMIT);
+        return limit.orNull();
     }
 
     public boolean isFacet() {
@@ -115,11 +111,11 @@ public class BaseSearchParams {
     }
 
     public Float getScoreMin() {
-        return scoreMin.or(DEFAULT_SCORE_MIN);
+        return scoreMin.orNull();
     }
 
     public Float getScoreMax() {
-        return scoreMax.or(DEFAULT_SCORE_MAX);
+        return scoreMax.orNull();
     }
 
     public Map<String, String> getFq() {
@@ -141,8 +137,12 @@ public class BaseSearchParams {
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = HashMultimap.create();
 
-        map.put("page", getPage().toString());
-        map.put("limit", getLimit().toString());
+        if (getPage() != null) {
+            map.put("page", getPage().toString());
+        }
+        if (getLimit() != null) {
+            map.put("limit", getLimit().toString());
+        }
 
         if (isFacet() && getFacetField().size() > 0) {
             map.put("facet", "true");
@@ -155,8 +155,12 @@ public class BaseSearchParams {
             map.put("score", "true");
         }
 
-        map.put("score_min", getScoreMin().toString());
-        map.put("score_max", getScoreMax().toString());
+        if (getScoreMin() != null) {
+            map.put("score_min", getScoreMin().toString());
+        }
+        if (getScoreMax() != null) {
+            map.put("score_max", getScoreMax().toString());
+        }
 
         for (Map.Entry<String, String> entry : getFq().entrySet()) {
             map.put("fq", entry.getKey() + ":" + entry.getValue());
