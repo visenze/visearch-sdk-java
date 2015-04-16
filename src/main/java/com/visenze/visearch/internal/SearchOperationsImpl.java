@@ -87,7 +87,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             sourceImage.flush();
             resizedImage.flush();
             return outputStream.toByteArray();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ViSearchException("Could not read the image from input stream.", e);
         }
     }
