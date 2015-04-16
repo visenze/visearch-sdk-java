@@ -5,10 +5,13 @@ import com.visenze.visearch.InsertStatus;
 import com.visenze.visearch.InsertTrans;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DataOperations {
 
     InsertTrans insert(List<Image> imageList);
+
+    InsertTrans insert(List<Image> imageList, Map<String, String> customParams);
 
     InsertStatus insertStatus(String transId);
 

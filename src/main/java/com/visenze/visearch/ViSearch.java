@@ -11,6 +11,7 @@ import com.visenze.visearch.internal.json.ViSearchModule;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 
 public class ViSearch implements DataOperations, SearchOperations {
@@ -86,6 +87,18 @@ public class ViSearch implements DataOperations, SearchOperations {
     @Override
     public InsertTrans insert(List<Image> imageList) {
         return dataOperations.insert(imageList);
+    }
+
+    /**
+     * (For testing) Insert images to the ViSearch App with custom parameters.
+     *
+     * @param imageList the list of Images to insert.
+     * @param customParams custom parameters
+     * @return an insert transaction
+     */
+    @Override
+    public InsertTrans insert(List<Image> imageList, Map<String, String> customParams) {
+        return dataOperations.insert(imageList, customParams);
     }
 
     /**

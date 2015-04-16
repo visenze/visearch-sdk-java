@@ -27,8 +27,17 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
 
     @Override
     public InsertTrans insert(List<Image> imageList) {
+        return insert(imageList, new HashMap<String, String>());
+    }
+
+    @Override
+    public InsertTrans insert(List<Image> imageList, Map<String, String> customParams) {
         Preconditions.checkNotNull(imageList, "image list must not be null");
-        Multimap<String, String> params = Multimaps.forMap(imageListToParams(imageList));
+        Preconditions.checkNotNull(customParams, "custom params must not be null");
+        Multimap<String, String> params = imageListToParams(imageList);
+        for (Map.Entry<String, String> entry : customParams.entrySet()) {
+            params.put(entry.getKey(), entry.getValue());
+        }
         String response = viSearchHttpClient.post("/insert", params);
         try {
             JsonNode responseNode = objectMapper.readTree(response);
@@ -100,8 +109,8 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
         viSearchHttpClient.post("/remove", params);
     }
 
-    private Map<String, String> imageListToParams(List<Image> imageList) {
-        Map<String, String> params = new HashMap<String, String>();
+    private Multimap<String, String> imageListToParams(List<Image> imageList) {
+        Multimap<String, String> params = HashMultimap.create();
         for (int i = 0; i < imageList.size(); i++) {
             Image image = imageList.get(i);
             if (image != null) {
