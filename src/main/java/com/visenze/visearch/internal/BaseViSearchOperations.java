@@ -29,10 +29,13 @@ class BaseViSearchOperations {
         try {
             JsonNode node = objectMapper.readTree(json);
             List<T> result = deserializeListResult(node.get("result"), clazz);
-            Integer page = node.get("page").asInt();
-            Integer limit = node.get("limit").asInt();
-            Integer total = node.get("total").asInt();
-            return new PagedResult<T>(page, limit, total, result);
+            JsonNode pageNode = node.get("page");
+            JsonNode limitNode = node.get("limit");
+            JsonNode totalNode = node.get("total");
+            if (pageNode == null || limitNode == null || totalNode == null) {
+                throw new ViSearchException("Could not parse the paged ViSearch response: " + json, json);
+            }
+            return new PagedResult<T>(pageNode.asInt(), limitNode.asInt(), totalNode.asInt(), result);
         } catch (JsonProcessingException e) {
             throw new ViSearchException("Could not parse the paged ViSearch response: " + json, e, json);
         } catch (IOException e) {
