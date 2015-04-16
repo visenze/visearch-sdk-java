@@ -3,6 +3,7 @@ package com.visenze.visearch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.visenze.visearch.internal.DataOperations;
 import com.visenze.visearch.internal.DataOperationsImpl;
@@ -15,6 +16,7 @@ import org.mockito.Matchers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -37,7 +39,12 @@ public class ViSearchDataOperationsTest {
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         List<Image> imageList = new ArrayList<Image>();
         Image image0 = new Image("test_im_0", "http://www.example.com/test_im_0.jpeg");
-        Image image1 = new Image("test_im_1", "http://www.example.com/test_im_1.jpeg");
+        Map<String, String> image1Metadata = Maps.newHashMap();
+        image1Metadata.put("field_int", "99");
+        image1Metadata.put("field_float", "1.0");
+        image1Metadata.put("field_string", "visearch");
+        image1Metadata.put("field_text", "java sdk");
+        Image image1 = new Image("test_im_1", "http://www.example.com/test_im_1.jpeg", image1Metadata);
         imageList.add(image0);
         imageList.add(image1);
         InsertTrans insertTrans = dataOperations.insert(imageList);
@@ -46,6 +53,28 @@ public class ViSearchDataOperationsTest {
         expectedParams.put("im_url[0]", "http://www.example.com/test_im_0.jpeg");
         expectedParams.put("im_name[1]", "test_im_1");
         expectedParams.put("im_url[1]", "http://www.example.com/test_im_1.jpeg");
+        expectedParams.put("field_int[1]", "99");
+        expectedParams.put("field_float[1]", "1.0");
+        expectedParams.put("field_string[1]", "visearch");
+        expectedParams.put("field_text[1]", "java sdk");
+        verify(mockClient).post("/insert", expectedParams);
+    }
+
+    @Test
+    public void testInsertCustomParams() throws Exception {
+        String insertResponse = "{\"status\":\"OK\",\"trans_id\":317503499455827968,\"method\":\"insert\",\"total\":1}";
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(insertResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<Image> imageList = new ArrayList<Image>();
+        Image image0 = new Image("test_im_0", "http://www.example.com/test_im_0.jpeg");
+        imageList.add(image0);
+        Map<String, String> customParam = Maps.newHashMap();
+        customParam.put("custom_param", "custom_value");
+        InsertTrans insertTrans = dataOperations.insert(imageList, customParam);
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name[0]", "test_im_0");
+        expectedParams.put("im_url[0]", "http://www.example.com/test_im_0.jpeg");
+        expectedParams.put("custom_param", "custom_value");
         verify(mockClient).post("/insert", expectedParams);
     }
 
