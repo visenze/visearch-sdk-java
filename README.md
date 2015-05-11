@@ -229,7 +229,7 @@ PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.STAN
 ```
 
 For instance, the blue rectangle image on the left will be resized to the one on the right:
-[resize example](img/resize_example.png)
+![resize example](img/resize_example.png)
 
 If your image contains fine details such as textile patterns and textures, use the HIGH resize settings to get better search results:
 ```java
