@@ -10,16 +10,16 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class InsertStatusMixin {
 
-    final private String transId;
-    final private Integer processedPercent;
-    final private Integer total;
-    final private Integer successCount;
-    final private Integer failCount;
-    final private Date startTime;
-    final private Date updateTime;
-    final private List<InsertError> errorList;
-    final private Integer errorPage;
-    final private Integer errorLimit;
+    protected String transId;
+    protected Integer processedPercent;
+    protected Integer total;
+    protected Integer successCount;
+    protected Integer failCount;
+    protected Date startTime;
+    protected Date updateTime;
+    protected List<InsertError> errorList;
+    protected Integer errorPage;
+    protected Integer errorLimit;
 
     public InsertStatusMixin(@JsonProperty("trans_id") String transId,
                              @JsonProperty("processed_percent") Integer processedPercent,

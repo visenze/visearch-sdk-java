@@ -9,9 +9,9 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class InsertTransMixin {
 
-    private String transId;
-    private Integer total;
-    private List<InsertError> errorList;
+    protected String transId;
+    protected Integer total;
+    protected List<InsertError> errorList;
 
     public InsertTransMixin(@JsonProperty("trans_id") String transId,
                             @JsonProperty("total") Integer total,

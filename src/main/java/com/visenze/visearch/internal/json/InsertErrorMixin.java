@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 abstract class InsertErrorMixin {
 
-    final private String imName;
-    final private Integer index;
-    final private Integer errorCode;
-    final private String errorMessage;
+    protected String imName;
+    protected Integer index;
+    protected Integer errorCode;
+    protected String errorMessage;
 
     public InsertErrorMixin(@JsonProperty("im_name") String imName,
                             @JsonProperty("index") Integer index,
