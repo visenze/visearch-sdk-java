@@ -135,7 +135,6 @@
                     <maxmem>256m</maxmem>
                     <instrumentation>
                         <excludes>
-                            <exclude>com/visenze/visearch/example/*</exclude>
                             <exclude>com/visenze/visearch/internal/json/*</exclude>
                         </excludes>
                     </instrumentation>
