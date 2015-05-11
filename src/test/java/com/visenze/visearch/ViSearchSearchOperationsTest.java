@@ -107,6 +107,7 @@ public class ViSearchSearchOperationsTest {
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
+        assertEquals(response, pagedResult.getRawJson());
         assertEquals(new Integer(10), pagedResult.getPage());
         assertEquals(new Integer(1), pagedResult.getLimit());
         assertEquals(new Integer(20), pagedResult.getTotal());
