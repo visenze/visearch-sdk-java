@@ -117,10 +117,10 @@ String imName = "vintage_wingtips";
 String imUrl = "http://mydomain.com/images/vintage_wingtips.jpg";
 
 // add metadata to your image
-Map<String, Object> metadata = new HashMap<String, Object>();
+Map<String, String> metadata = new HashMap<String, String>();
 metadata.put("title", "Vintage Wingtips");
 metadata.put("description", "A pair of high quality leather wingtips");
-metadata.put("price", 100.0f);
+metadata.put("price", "100.0");
 images.add(new Image(imName, imUrl, metadata));
 client.insert(images);
 ```
@@ -141,7 +141,7 @@ String imUrl = "http://mydomain.com/images/vintage_wingtips_sale.jpg";
 // update metadata of the image
 Map<String, Object> metadata = new HashMap<String, Object>();
 metadata.put("title", "Vintage Wingtips Sale");
-metadata.put("price", 69.99f);
+metadata.put("price", "69.99");
 
 images.add(new Image(imName, imUrl, metadata));
 client.insert(images);
@@ -151,7 +151,7 @@ client.insert(images);
 
 ### 4.4 Removing Images
 
-In case you decide to remove some of the indexed images, you can call the ```remove``` endpoint with the list of unique identifier of the indexed images. ViSearch will then remove the specified images from the index. You will not be able to perform [pre-indexed search](#51-pre-indexed-search) on this image, and the image will not be found in any search result.
+In case you decide to remove some of the indexed images, you can call the ```remove``` endpoint with the list of unique identifier of the indexed images. ViSearch will then remove the specified images from the index.
 
 ```java
 // the list of unique identifiers 'im_name' of the images to be removed
@@ -204,6 +204,7 @@ PagedSearchResult searchResult = client.uploadSearch(params);
 ####5.3.1 Selection Box
 
 If the object you wish to search for takes up only a small portion of your image, or if other irrelevant objects exists in the same image, chances are the search result could become inaccurate. Use the Box parameter to refine the search area of the image to improve accuracy. The box coordinates are set with respect to the original size of the uploading image:
+(note: if the box coordinates are invalid(negative or exceed the image boundary), this search will be equivalent to the normal Upload Search)
 
 ```java
 File imageFile = new File("/path/to/your/image");
@@ -235,8 +236,8 @@ PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.HIGH
 
 Or provide customized resize settings:
 ```java
-// using customized resize settings 800x800 and jpeg 80 quality
-ResizeSettings settings = new ResizeSettings(800, 800, 80);
+// using customized resize settings with width = 800, height = 600 and jpeg 80 quality
+ResizeSettings settings = new ResizeSettings(800, 600, 80);
 PagedSearchResult searchResult = client.uploadSearch(params, settings);
 ```
 
@@ -255,7 +256,7 @@ Pagination parameters:
 // building pre-indexed search params
 SearchParams params = new SearchParams("vintage_wingtips");
 params.setPage(1);
-params.setLimit(10);
+params.setLimit(20);
 PagedSearchResult searchResult = client.search(params);
 
 // total number of results
@@ -347,8 +348,8 @@ score_max | Float | Maximum score for the image results. Default is 1.0.
 
 ```java
 SearchParams params = new SearchParams("vintage_wingtips");
-params.setScoreMin(0.5);
-params.setScoreMax(0.8);
+params.setScoreMin(0.5f);
+params.setScoreMax(0.8f);
 // only retrieve search results with scores between 0.5 and 0.8
 PagedSearchResult searchResult = client.search(params);
 ```
