@@ -7,7 +7,7 @@ import com.visenze.visearch.InsertError;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InsertTransMixin {
+abstract class InsertTransMixin {
 
     private String transId;
     private Integer total;

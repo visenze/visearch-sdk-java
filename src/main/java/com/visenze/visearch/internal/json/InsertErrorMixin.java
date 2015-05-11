@@ -3,7 +3,7 @@ package com.visenze.visearch.internal.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class InsertErrorMixin {
+abstract class InsertErrorMixin {
 
     final private String imName;
     final private Integer index;
