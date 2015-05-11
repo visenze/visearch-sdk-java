@@ -2,7 +2,9 @@ package com.visenze.visearch;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.Map;
  * Common parameters for /search, /colorsearch, and /uploadsearch.
  * Provide setters to override default values.
  */
-public class BaseSearchParams {
+public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
     static final private Boolean DEFAULT_FACET = false;
     static final private List<String> DEFAULT_FACET_FIELD = Lists.newArrayList();
@@ -34,60 +36,70 @@ public class BaseSearchParams {
     protected Optional<Boolean> qInfo = Optional.absent();
     protected Optional<Map<String, String>> custom = Optional.absent();
 
-
-    public BaseSearchParams setPage(Integer page) {
+    @SuppressWarnings("unchecked")
+    public P setPage(Integer page) {
         this.page = Optional.fromNullable(page);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setLimit(Integer limit) {
+    @SuppressWarnings("unchecked")
+    public P setLimit(Integer limit) {
         this.limit = Optional.fromNullable(limit);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setFacet(Boolean facet) {
+    @SuppressWarnings("unchecked")
+    public P setFacet(Boolean facet) {
         this.facet = Optional.fromNullable(facet);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setFacetField(List<String> facetField) {
+    @SuppressWarnings("unchecked")
+    public P setFacetField(List<String> facetField) {
         this.facetField = Optional.fromNullable(facetField);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setScore(Boolean score) {
+    @SuppressWarnings("unchecked")
+    public P setScore(Boolean score) {
         this.score = Optional.fromNullable(score);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setScoreMin(Float scoreMin) {
+    @SuppressWarnings("unchecked")
+    public P setScoreMin(Float scoreMin) {
         this.scoreMin = Optional.fromNullable(scoreMin);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setScoreMax(Float scoreMax) {
+    @SuppressWarnings("unchecked")
+    public P setScoreMax(Float scoreMax) {
         this.scoreMax = Optional.fromNullable(scoreMax);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setFq(Map<String, String> fq) {
+    @SuppressWarnings("unchecked")
+    public P setFq(Map<String, String> fq) {
         this.fq = Optional.fromNullable(fq);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setFl(List<String> fl) {
+    @SuppressWarnings("unchecked")
+    public P setFl(List<String> fl) {
         this.fl = Optional.fromNullable(fl);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setQInfo(Boolean qInfo) {
+    @SuppressWarnings("unchecked")
+    public P setQInfo(Boolean qInfo) {
         this.qInfo = Optional.fromNullable(qInfo);
-        return this;
+        return (P) this;
     }
 
-    public BaseSearchParams setCustom(Map<String, String> custom) {
+    @SuppressWarnings("unchecked")
+    public P setCustom(Map<String, String> custom) {
         this.custom = Optional.fromNullable(custom);
-        return this;
+        return (P) this;
     }
 
     public Integer getPage() {

@@ -50,21 +50,21 @@ public class ViSearchSearchOperationsTest {
         String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":10,\"limit\":1,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        SearchParams searchParams = new SearchParams("test_im");
-        searchParams.setPage(10);
-        searchParams.setLimit(1);
-        searchParams.setScore(true);
-        searchParams.setScoreMin(0.1f);
-        searchParams.setScoreMax(0.75f);
         Map<String, String> fq = Maps.newHashMap();
         fq.put("field_a", "value_a");
         fq.put("field_b", "value_b");
-        searchParams.setFq(fq);
-        searchParams.setFl(Lists.newArrayList("field_x", "field_y"));
-        searchParams.setQInfo(true);
         Map<String, String> custom = Maps.newHashMap();
         custom.put("custom_key", "custom_value");
-        searchParams.setCustom(custom);
+        SearchParams searchParams = new SearchParams("test_im")
+                .setPage(10)
+                .setLimit(1)
+                .setScore(true)
+                .setScoreMin(0.1f)
+                .setScoreMax(0.75f)
+                .setFq(fq)
+                .setFl(Lists.newArrayList("field_x", "field_y"))
+                .setQInfo(true)
+                .setCustom(custom);
         searchOperations.search(searchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "test_im");

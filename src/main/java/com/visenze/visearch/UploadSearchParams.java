@@ -7,7 +7,7 @@ import com.google.common.collect.Multimap;
 import java.io.File;
 import java.io.InputStream;
 
-public class UploadSearchParams extends BaseSearchParams {
+public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     private File imageFile;
 
