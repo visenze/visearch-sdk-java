@@ -228,6 +228,9 @@ To reduce upload search latency, by default the ```uploadSearch``` method makes 
 PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.STANDARD);
 ```
 
+For instance, the blue rectangle image on the left will be resized to the one on the right:
+![resize example](https://docs.google.com/drawings/d/1Ox7btHWJpIfslhhFgshLXGiC3uTv9HDneB9VeA9KQ_c/edit?usp=sharing)
+
 If your image contains fine details such as textile patterns and textures, use the HIGH resize settings to get better search results:
 ```java
 // for images with fine details, use HIGH resize settings 1024x1024 and jpeg 75 quality
