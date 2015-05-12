@@ -11,7 +11,9 @@ import com.visenze.visearch.internal.SearchOperationsImpl;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.json.ViSearchModule;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Matchers;
 
 import java.io.File;
@@ -27,6 +29,9 @@ public class ViSearchSearchOperationsTest {
 
     private ViSearchHttpClient mockClient;
     private ObjectMapper objectMapper;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void beforeTest() {
@@ -175,45 +180,55 @@ public class ViSearchSearchOperationsTest {
         assertEquals(metadata, image.getMetadata());
     }
 
-    @Test(expected = ViSearchException.class)
+    @Test
     public void testSearchResponseError() {
-        String response = "{\"status\":\"fail\",\"method\":\"search\",\"error\":[\"error\"],\"page\":1,\"limit\":10,\"total\":0}";
+        String response = "{\"status\":\"fail\",\"method\":\"search\",\"error\":[\"Error message.\"],\"page\":1,\"limit\":10,\"total\":0}";
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("An error occurred calling ViSearch: " + "Error message.");
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
     }
 
-    @Test(expected = ViSearchException.class)
+    @Test
     public void testSearchResponseMalformed0() {
         String response = "{\"status\":\"OK\" \"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_0\"},{\"im_name\":\"test_im_1\"},{\"im_name\":\"test_im_2\"},{\"im_name\":\"test_im_3\"},{\"im_name\":\"test_im_4\"},{\"im_name\":\"test_im_5\"},{\"im_name\":\"test_im_6\"},{\"im_name\":\"test_im_7\"},{\"im_name\":\"test_im_8\"},{\"im_name\":\"test_im_9\"}]}";
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("Could not parse the ViSearch response: " + response);
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
     }
 
-    @Test(expected = ViSearchException.class)
+    @Test
     public void testSearchResponseMalformed1() {
         String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":{}}";
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("Could not parse the ViSearch response for list of ImageResult: {}");
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
     }
 
-    @Test(expected = ViSearchException.class)
+    @Test
     public void testSearchResponseMalformed2() {
         String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"total\":20,\"result\":[]}";
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("Could not parse the paged ViSearch response: " + response);
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
     }
 
-    @Test(expected = ViSearchException.class)
+    @Test
     public void testSearchResponseMalformed3() throws Exception {
         String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":10,\"limit\":1,\"total\":20,\"qinfo\":[\"im_url\",\"price\",\"title\"],\"result\":[]}";
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("Could not parse the ViSearch response for map<String, String>: [\"im_url\",\"price\",\"title\"]");
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
@@ -233,8 +248,11 @@ public class ViSearchSearchOperationsTest {
         verify(mockClient).get("/colorsearch", expectedParams);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testColorSearchParamsInvalid() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Invalid color. " +
+                "It should be a six hexadecimal number color code e.g. 123ACF.");
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         ColorSearchParams colorSearchParams = new ColorSearchParams("#123ABC");
     }
@@ -252,16 +270,20 @@ public class ViSearchSearchOperationsTest {
         verify(mockClient).post("/uploadsearch", expectedParams);
     }
 
-    @Test(expected = ViSearchException.class)
+    @Test
     public void testUploadSearchParamsNullFile() {
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("Could not found the image file");
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        File nullFile = new File("null");
+        File nullFile = new File("/null");
         UploadSearchParams uploadSearchParams = new UploadSearchParams(nullFile);
         searchOperations.uploadSearch(uploadSearchParams);
     }
 
-    @Test(expected = ViSearchException.class)
+    @Test
     public void testUploadSearchParamsNullStream() {
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("Could not read the image from input stream.");
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         UploadSearchParams uploadSearchParams = new UploadSearchParams(new NullInputStream());
         searchOperations.uploadSearch(uploadSearchParams);
