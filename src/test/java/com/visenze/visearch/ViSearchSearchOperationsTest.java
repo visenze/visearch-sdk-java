@@ -282,4 +282,12 @@ public class ViSearchSearchOperationsTest {
         params.put("box", "128,128,256,256");
         verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<byte[]>any(), eq(imageFile.getName()));
     }
+
+    @Test
+    public void testResizeParamQuality() throws Exception {
+        ResizeSettings resizeSettings = new ResizeSettings(100, 100, -1);
+        assertEquals(0, resizeSettings.getQuality());
+        ResizeSettings resizeSettings1 = new ResizeSettings(100, 100, 101);
+        assertEquals(100, resizeSettings1.getQuality());
+    }
 }
