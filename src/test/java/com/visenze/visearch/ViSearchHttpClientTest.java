@@ -18,12 +18,11 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ViSearchHttpClientTest {
     enum CommandType {GET, POST, POST_IMAGE_01, POST_IMAGE_02, INVALID}
+
     private String validEndpoint = "http://localhost/";
     private String validAccessKey = "$%&valid_access key-123";
     private String validSecretKey = "validRANDOMsecrete#!34key";
@@ -63,24 +62,24 @@ public class ViSearchHttpClientTest {
             when(mockedHttpClient.execute(argument.capture())).thenReturn(response);
 
             CommandType cmd = determineCommandType(cmdString);
-            switch(cmd) {
+            switch (cmd) {
                 case GET:
-                    client.get((String)parameters[0], (Multimap<String, String>)parameters[1]);
+                    client.get((String) parameters[0], (Multimap<String, String>) parameters[1]);
                     break;
                 case POST:
-                    client.post((String)parameters[0], (Multimap<String, String>)parameters[1]);
+                    client.post((String) parameters[0], (Multimap<String, String>) parameters[1]);
                     break;
                 case POST_IMAGE_01:
-                    client.postImage((String)parameters[0], (Multimap<String, String>)parameters[1], (File)parameters[2]);
+                    client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (File) parameters[2]);
                     break;
                 case POST_IMAGE_02:
-                    client.postImage((String)parameters[0], (Multimap<String, String>)parameters[1], (byte[])parameters[2], (String)parameters[3]);
+                    client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (byte[]) parameters[2], (String) parameters[3]);
                     break;
                 default:
-                    assert(false); // should not be executed
+                    assert (false); // should not be executed
             }
         } catch (IOException e) {
-            assert(false);  // should not be executed
+            assert (false);  // should not be executed
         }
 
         HttpUriRequest request = argument.getValue();
@@ -88,7 +87,7 @@ public class ViSearchHttpClientTest {
         String expected = "Basic " + EncodingUtils.getAsciiString(Base64.encodeBase64(EncodingUtils.getAsciiBytes(validAccessKey + ":" + validSecretKey)));
 
         boolean isFound = false;
-        for (int i=0; i<headerArray.length; i++) {
+        for (int i = 0; i < headerArray.length; i++) {
             if (headerArray[i].getValue().equals(expected)) {
                 isFound = true; // found credentials
                 break;
@@ -121,7 +120,7 @@ public class ViSearchHttpClientTest {
         try {
             client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
             client.get(path, params);
-            assert(false); // should not be executed
+            assert (false); // should not be executed
         } catch (Exception e) {
             assertTrue(e instanceof ViSearchException);
         }
@@ -133,7 +132,7 @@ public class ViSearchHttpClientTest {
         try {
             client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
             client.post(path, params);
-            assert(false); // should not be executed
+            assert (false); // should not be executed
         } catch (Exception e) {
             assertTrue(e instanceof ViSearchException);
         }
@@ -145,7 +144,7 @@ public class ViSearchHttpClientTest {
         try {
             client = new ViSearchHttpClientImpl(validEndpoint, invalidAccessKey, validSecretKey, mockedHttpClient);
             client.get(path, params);
-            assert(false); // should not be executed
+            assert (false); // should not be executed
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
         }
@@ -157,7 +156,7 @@ public class ViSearchHttpClientTest {
         try {
             client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
             client.post(path, null);
-            assert(false); // should not be executed
+            assert (false); // should not be executed
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
         }
@@ -170,7 +169,7 @@ public class ViSearchHttpClientTest {
             client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
             when(mockedHttpClient.execute(Matchers.<HttpUriRequest>any())).thenThrow(new IOException("test IOException"));
             client.post(path, params);
-            assert(false); // should not be executed
+            assert (false); // should not be executed
         } catch (Exception e) {
             assertTrue(e instanceof NetworkException);
         }
@@ -185,7 +184,7 @@ public class ViSearchHttpClientTest {
             when(mockedHttpClient.execute(Matchers.<HttpUriRequest>any())).thenReturn(response);
             doThrow(new IllegalArgumentException("test IllegalArgumentException")).when(response).getEntity();
             client.post(path, params);
-            assert(false); // should not be executed
+            assert (false); // should not be executed
         } catch (Exception e) {
             assertTrue(e instanceof NetworkException);
         }
@@ -209,7 +208,7 @@ public class ViSearchHttpClientTest {
         try {
             client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
             client.postImage(path, params, null, "test file name String");
-            assert(false); // should not be executed
+            assert (false); // should not be executed
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
         }

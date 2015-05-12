@@ -94,7 +94,7 @@ public class ViSearch implements DataOperations, SearchOperations {
     /**
      * (For testing) Insert images to the ViSearch App with custom parameters.
      *
-     * @param imageList the list of Images to insert.
+     * @param imageList    the list of Images to insert.
      * @param customParams custom parameters
      * @return an insert transaction
      */
