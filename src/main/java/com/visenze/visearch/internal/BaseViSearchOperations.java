@@ -62,10 +62,10 @@ class BaseViSearchOperations {
             CollectionType listType = TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
             return (List<T>) objectMapper.reader(listType).readValue(json);
         } catch (JsonProcessingException e) {
-            throw new ViSearchException("Could not parse the list ViSearch response for " +
+            throw new ViSearchException("Could not parse the ViSearch response for list of " +
                     clazz.getSimpleName() + ": " + json, e, json);
         } catch (IOException e) {
-            throw new ViSearchException("Could not parse the list ViSearch response for " +
+            throw new ViSearchException("Could not parse the ViSearch response for list of " +
                     clazz.getSimpleName() + ": " + json, e, json);
         }
     }
@@ -77,13 +77,13 @@ class BaseViSearchOperations {
             MapType mapType = TypeFactory.defaultInstance().constructMapType(HashMap.class, keyClass, valueClass);
             return (Map<T, U>) objectMapper.reader(mapType).readValue(node);
         } catch (JsonProcessingException e) {
-            throw new ViSearchException("Could not parse the map ViSearch response for " +
+            throw new ViSearchException("Could not parse the ViSearch response for map<" +
                     keyClass.getSimpleName() + ", " +
-                    valueClass.getSimpleName() + ": " + json, e, json);
+                    valueClass.getSimpleName() + ">: " + json, e, json);
         } catch (IOException e) {
-            throw new ViSearchException("Could not parse the map ViSearch response for " +
+            throw new ViSearchException("Could not parse the ViSearch response for map<" +
                     keyClass.getSimpleName() + ", " +
-                    valueClass.getSimpleName() + ": " + json, e, json);
+                    valueClass.getSimpleName() + ">: " + json, e, json);
         }
     }
 }
