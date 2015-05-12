@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class ViSearchSearchOperationsTest {
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
         searchOperations.search(searchParams);
+        assertEquals("test_im", searchParams.getImName());
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "test_im");
         verify(mockClient).get("/search", expectedParams);
@@ -175,7 +177,7 @@ public class ViSearchSearchOperationsTest {
 
     @Test(expected = ViSearchException.class)
     public void testSearchResponseError() {
-        String response = "{\"status\":\"fail\" \"method\":\"search\",\"error\":[\"error\"],\"page\":1,\"limit\":10,\"total\":0}";
+        String response = "{\"status\":\"fail\",\"method\":\"search\",\"error\":[\"error\"],\"page\":1,\"limit\":10,\"total\":0}";
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
@@ -209,12 +211,22 @@ public class ViSearchSearchOperationsTest {
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
     }
 
+    @Test(expected = ViSearchException.class)
+    public void testSearchResponseMalformed3() throws Exception {
+        String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":10,\"limit\":1,\"total\":20,\"qinfo\":[\"im_url\",\"price\",\"title\"],\"result\":[]}";
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im");
+        PagedSearchResult pagedResult = searchOperations.search(searchParams);
+    }
+
     @Test
     public void testColorSearchParams() {
         String response = "{\"status\":\"OK\",\"method\":\"colorsearch\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         ColorSearchParams colorSearchParams = new ColorSearchParams("123ABC");
+        assertEquals("123ABC", colorSearchParams.getColor());
         searchOperations.colorSearch(colorSearchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("color", "123ABC");
@@ -233,6 +245,7 @@ public class ViSearchSearchOperationsTest {
         when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/test_im.jpeg");
+        assertEquals("http://www.example.com/test_im.jpeg", uploadSearchParams.getImageUrl());
         searchOperations.uploadSearch(uploadSearchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
@@ -262,9 +275,25 @@ public class ViSearchSearchOperationsTest {
         URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
         File imageFile = new File(resourceUrl.getFile());
         UploadSearchParams uploadSearchParams = new UploadSearchParams(imageFile);
+        assertEquals(imageFile, uploadSearchParams.getImageFile());
         searchOperations.uploadSearch(uploadSearchParams);
         Multimap<String, String> params = HashMultimap.create();
         verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<byte[]>any(), eq(imageFile.getName()));
+    }
+
+    @Test
+    public void testUploadSearchParamsImageStream() throws Exception {
+        String response = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
+        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<byte[]>any(), anyString())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
+        File imageFile = new File(resourceUrl.getFile());
+        FileInputStream fileInputStream = new FileInputStream(imageFile);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(fileInputStream);
+        assertEquals(fileInputStream, uploadSearchParams.getImageStream());
+        searchOperations.uploadSearch(uploadSearchParams);
+        Multimap<String, String> params = HashMultimap.create();
+        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<byte[]>any(), eq("image-stream"));
     }
 
     @Test
