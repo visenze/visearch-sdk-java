@@ -45,6 +45,16 @@ public class ViSearch implements DataOperations, SearchOperations {
     }
 
     /**
+     * (For testing) stub constructor
+     * @param dataOperations
+     * @param searchOperations
+     */
+    public ViSearch(DataOperations dataOperations, SearchOperations searchOperations) {
+        this.dataOperations = dataOperations;
+        this.searchOperations = searchOperations;
+    }
+
+    /**
      * (For testing) Construct a ViSearch client to call a custom endpoint with access key and secret key.
      *
      * @param endpoint  custom ViSearch endpoint
