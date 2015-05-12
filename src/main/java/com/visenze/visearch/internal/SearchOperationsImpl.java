@@ -158,7 +158,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             if (!status.equals("OK")) {
                 JsonNode errorNode = node.get("error");
                 if (errorNode == null) {
-                    throw new ViSearchException("An unknown error occurred in ViSearch.", json);
+                    throw new ViSearchException("An unknown error occurred in ViSearch: " + json, json);
                 }
                 String message = errorNode.path(0).asText();
                 throw new ViSearchException("An error occurred calling ViSearch: " + message, json);
