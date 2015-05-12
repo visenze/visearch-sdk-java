@@ -41,6 +41,12 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     private final CloseableHttpClient httpClient;
     private final UsernamePasswordCredentials credentials;
 
+    public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey, CloseableHttpClient httpClient) {
+        this.endpoint = endpoint;
+        credentials = new UsernamePasswordCredentials(accessKey, secretKey);
+        this.httpClient = httpClient;
+    }
+
     public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey) {
         this.endpoint = endpoint;
         RequestConfig conf = RequestConfig
