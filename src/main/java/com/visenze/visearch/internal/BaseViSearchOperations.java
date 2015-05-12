@@ -1,6 +1,5 @@
 package com.visenze.visearch.internal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -36,8 +35,6 @@ class BaseViSearchOperations {
                 throw new ViSearchException("Could not parse the paged ViSearch response: " + json, json);
             }
             return new PagedResult<T>(pageNode.asInt(), limitNode.asInt(), totalNode.asInt(), result);
-        } catch (JsonProcessingException e) {
-            throw new ViSearchException("Could not parse the paged ViSearch response: " + json, e, json);
         } catch (IOException e) {
             throw new ViSearchException("Could not parse the paged ViSearch response: " + json, e, json);
         }
@@ -46,9 +43,6 @@ class BaseViSearchOperations {
     <T> T deserializeObjectResult(String json, Class<T> clazz) {
         try {
             return objectMapper.reader(clazz).readValue(json);
-        } catch (JsonProcessingException e) {
-            throw new ViSearchException("Could not parse the ViSearch response for " +
-                    clazz.getSimpleName() + ": " + json, e, json);
         } catch (IOException e) {
             throw new ViSearchException("Could not parse the ViSearch response for " +
                     clazz.getSimpleName() + ": " + json, e, json);
@@ -61,9 +55,6 @@ class BaseViSearchOperations {
         try {
             CollectionType listType = TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
             return (List<T>) objectMapper.reader(listType).readValue(json);
-        } catch (JsonProcessingException e) {
-            throw new ViSearchException("Could not parse the ViSearch response for list of " +
-                    clazz.getSimpleName() + ": " + json, e, json);
         } catch (IOException e) {
             throw new ViSearchException("Could not parse the ViSearch response for list of " +
                     clazz.getSimpleName() + ": " + json, e, json);
@@ -76,10 +67,6 @@ class BaseViSearchOperations {
         try {
             MapType mapType = TypeFactory.defaultInstance().constructMapType(HashMap.class, keyClass, valueClass);
             return (Map<T, U>) objectMapper.reader(mapType).readValue(node);
-        } catch (JsonProcessingException e) {
-            throw new ViSearchException("Could not parse the ViSearch response for map<" +
-                    keyClass.getSimpleName() + ", " +
-                    valueClass.getSimpleName() + ">: " + json, e, json);
         } catch (IOException e) {
             throw new ViSearchException("Could not parse the ViSearch response for map<" +
                     keyClass.getSimpleName() + ", " +
