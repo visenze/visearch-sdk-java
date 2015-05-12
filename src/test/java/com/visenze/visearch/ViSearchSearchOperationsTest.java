@@ -46,6 +46,22 @@ public class ViSearchSearchOperationsTest {
     }
 
     @Test
+    public void testSearchParamsFacet() {
+        String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}],\"facets\":[{\"key\":\"brand\",\"items\":[{\"value\":\"brandA\",\"count\":5},{\"value\":\"brandB\",\"count\":6},{\"value\":\"brandC\",\"count\":9}]}]}";
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im")
+                .setFacet(true)
+                .setFacetField(Lists.newArrayList("brand"));
+        searchOperations.search(searchParams);
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "test_im");
+        expectedParams.put("facet", "true");
+        expectedParams.put("facet_field", "brand");
+        verify(mockClient).get("/search", expectedParams);
+    }
+
+    @Test
     public void testSearchParamsFull() {
         String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":10,\"limit\":1,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
@@ -98,6 +114,37 @@ public class ViSearchSearchOperationsTest {
             ImageResult image = results.get(i);
             assertEquals("test_im_" + i, image.getImName());
         }
+    }
+
+    @Test
+    public void testSearchResponseFacet() {
+        String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":1,\"total\":20,\"result\":[{\"im_name\":\"test_im_0\"}],\"facets\":[{\"key\":\"brand\",\"items\":[{\"value\":\"brandA\",\"count\":5},{\"value\":\"brandB\",\"count\":6},{\"value\":\"brandC\",\"count\":9}]}]}";
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im")
+                .setFacet(true)
+                .setFacetField(Lists.newArrayList("brand"));
+        PagedSearchResult pagedResult = searchOperations.search(searchParams);
+        assertEquals(new Integer(1), pagedResult.getPage());
+        assertEquals(new Integer(1), pagedResult.getLimit());
+        assertEquals(new Integer(20), pagedResult.getTotal());
+        List<ImageResult> results = pagedResult.getResult();
+        assertEquals(1, results.size());
+        List<Facet> facetList = pagedResult.getFacets();
+        assertEquals(1, facetList.size());
+        Facet facet = facetList.get(0);
+        assertEquals("brand", facet.getKey());
+        List<FacetItem> facetItemList = facet.getFacetItems();
+        assertEquals(3, facetItemList.size());
+        FacetItem facetItem0 = facetItemList.get(0);
+        assertEquals("brandA", facetItem0.getValue());
+        assertEquals(new Integer(5), facetItem0.getCount());
+        FacetItem facetItem1 = facetItemList.get(1);
+        assertEquals("brandB", facetItem1.getValue());
+        assertEquals(new Integer(6), facetItem1.getCount());
+        FacetItem facetItem2 = facetItemList.get(2);
+        assertEquals("brandC", facetItem2.getValue());
+        assertEquals(new Integer(9), facetItem2.getCount());
     }
 
     @Test
