@@ -10,7 +10,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EncodingUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 
@@ -31,6 +33,9 @@ public class ViSearchHttpClientTest {
     private String path = "";
     private Multimap<String, String> params = ArrayListMultimap.create();
     private CloseableHttpClient mockedHttpClient = mock(CloseableHttpClient.class);
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testValidGetMethod() {
@@ -116,14 +121,10 @@ public class ViSearchHttpClientTest {
 
     @Test
     public void testInvalidEndPointUsingGetMethod() {
+        expectedException.expect(ViSearchException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
-            client.get(path, params);
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof ViSearchException);
-        }
+        client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
+        client.get(path, params);
     }
 
     @Test
