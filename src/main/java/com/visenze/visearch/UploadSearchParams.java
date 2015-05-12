@@ -44,18 +44,8 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         return this.box;
     }
 
-    public UploadSearchParams setImageFile(File imageFile) {
-        this.imageFile = imageFile;
-        return this;
-    }
-
     public File getImageFile() {
         return imageFile;
-    }
-
-    public UploadSearchParams setImageStream(InputStream imageStream) {
-        this.imageStream = imageStream;
-        return this;
     }
 
     public InputStream getImageStream() {
@@ -64,10 +54,6 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     public String getImageUrl() {
         return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     @Override
