@@ -38,53 +38,49 @@ public class ViSearchHttpClientTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void testValidGetMethod() {
+    public void testValidGetMethod() throws Exception {
         testValidMethodCalls("get", path, params);
     }
 
     @Test
-    public void testValidPostMethod() {
+    public void testValidPostMethod() throws Exception {
         testValidMethodCalls("post", path, params);
     }
 
     @Test
-    public void testFirstValidPostImageMethod() {
+    public void testFirstValidPostImageMethod() throws Exception {
         testValidMethodCalls("postImage01", path, params, mock(File.class));
     }
 
     @Test
-    public void testSecondValidPostImageMethod() {
+    public void testSecondValidPostImageMethod() throws Exception {
         testValidMethodCalls("postImage02", path, params, new byte[10], "test file name String");
     }
 
-    private void testValidMethodCalls(String cmdString, Object... parameters) {
+    private void testValidMethodCalls(String cmdString, Object... parameters) throws Exception {
         ViSearchHttpClientImpl client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
         ArgumentCaptor<HttpUriRequest> argument = ArgumentCaptor.forClass(HttpUriRequest.class);
 
-        try {
-            CloseableHttpResponse response = mock(CloseableHttpResponse.class);
-            when(response.getEntity()).thenReturn(new StringEntity("test"));
-            when(mockedHttpClient.execute(argument.capture())).thenReturn(response);
+        CloseableHttpResponse response = mock(CloseableHttpResponse.class);
+        when(response.getEntity()).thenReturn(new StringEntity("test"));
+        when(mockedHttpClient.execute(argument.capture())).thenReturn(response);
 
-            CommandType cmd = determineCommandType(cmdString);
-            switch (cmd) {
-                case GET:
-                    client.get((String) parameters[0], (Multimap<String, String>) parameters[1]);
-                    break;
-                case POST:
-                    client.post((String) parameters[0], (Multimap<String, String>) parameters[1]);
-                    break;
-                case POST_IMAGE_01:
-                    client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (File) parameters[2]);
-                    break;
-                case POST_IMAGE_02:
-                    client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (byte[]) parameters[2], (String) parameters[3]);
-                    break;
-                default:
-                    assert (false); // should not be executed
-            }
-        } catch (IOException e) {
-            assert (false);  // should not be executed
+        CommandType cmd = determineCommandType(cmdString);
+        switch (cmd) {
+            case GET:
+                client.get((String) parameters[0], (Multimap<String, String>) parameters[1]);
+                break;
+            case POST:
+                client.post((String) parameters[0], (Multimap<String, String>) parameters[1]);
+                break;
+            case POST_IMAGE_01:
+                client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (File) parameters[2]);
+                break;
+            case POST_IMAGE_02:
+                client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (byte[]) parameters[2], (String) parameters[3]);
+                break;
+            default:
+                break;
         }
 
         HttpUriRequest request = argument.getValue();
