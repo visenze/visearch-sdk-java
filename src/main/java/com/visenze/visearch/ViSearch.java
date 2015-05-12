@@ -19,7 +19,7 @@ public class ViSearch implements DataOperations, SearchOperations {
     /**
      * Default ViSearch API base endpoint.
      */
-    private static final String API_ENDPOINT = "http://visearch.visenze.com";
+    private static final String DEFAULT_VISEARCH_ENDPOINT = "http://visearch.visenze.com";
 
     /**
      * ViSearch Data API i.e. /insert, /insert/status, /remove.
@@ -32,22 +32,17 @@ public class ViSearch implements DataOperations, SearchOperations {
     private final SearchOperations searchOperations;
 
     /**
-     * Construct a ViSearch client to call the default endpoint with access key and secret key.
+     * Construct a ViSearch client to call the default ViSearch API endpoint with access key and secret key.
      *
      * @param accessKey ViSearch App access key
      * @param secretKey ViSearch App secret key
      */
     public ViSearch(String accessKey, String secretKey) {
-        ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(API_ENDPOINT, accessKey, secretKey);
-        ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
-        this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
-        this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
+        this(DEFAULT_VISEARCH_ENDPOINT, accessKey, secretKey);
     }
 
     /**
      * (For testing) stub constructor
-     * @param dataOperations
-     * @param searchOperations
      */
     public ViSearch(DataOperations dataOperations, SearchOperations searchOperations) {
         this.dataOperations = dataOperations;
@@ -55,34 +50,31 @@ public class ViSearch implements DataOperations, SearchOperations {
     }
 
     /**
-     * (For testing) Construct a ViSearch client to call a custom endpoint with access key and secret key.
-     *
-     * @param endpoint  custom ViSearch endpoint
-     * @param accessKey ViSearch App access key
-     * @param secretKey ViSearch App secret key
-     */
-    public ViSearch(String endpoint, String accessKey, String secretKey) {
-        if (endpoint == null) {
-            throw new ViSearchException("Endpoint is not specified");
-        }
-        ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(endpoint, accessKey, secretKey);
-        ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
-        this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
-        this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
-    }
-
-    /**
-     * (For testing) Construct a ViSearch client to call a custom endpoint with access key and secret key.
+     * Construct a ViSearch client to call a ViSearch API endpoint of URL object, with access key and secret key.
      *
      * @param endpoint  custom ViSearch endpoint
      * @param accessKey ViSearch App access key
      * @param secretKey ViSearch App secret key
      */
     public ViSearch(URL endpoint, String accessKey, String secretKey) {
+        this(endpoint.toString(), accessKey, secretKey);
+    }
+
+    /**
+     * Construct a ViSearch client to call a ViSearch API endpoint, with access key and secret key.
+     *
+     * @param endpoint  the ViSearch API endpoint
+     * @param accessKey ViSearch App access key
+     * @param secretKey ViSearch App secret key
+     */
+    public ViSearch(String endpoint, String accessKey, String secretKey) {
         if (endpoint == null) {
-            throw new ViSearchException("Endpoint is not specified");
+            throw new IllegalArgumentException("ViSearch endpoint must not be null.");
         }
-        ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(endpoint.toString(), accessKey, secretKey);
+        if (endpoint.isEmpty()) {
+            throw new IllegalArgumentException("ViSearch endpoint must not be empty.");
+        }
+        ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(endpoint, accessKey, secretKey);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
         this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
         this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
