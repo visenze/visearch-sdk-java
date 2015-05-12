@@ -192,6 +192,30 @@ public class ViSearchSearchOperationsTest {
     }
 
     @Test
+    public void testSearchResponseUnknownError() {
+        String response = "{\"status\":\"fail\",\"method\":\"search\",\"page\":1,\"limit\":10,\"total\":0}";
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("An unknown error occurred in ViSearch: " + response);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im");
+        PagedSearchResult pagedResult = searchOperations.search(searchParams);
+    }
+
+    @Test
+    public void testSearchResponseErrorGetJson() {
+        String response = "{\"status\":\"fail\",\"method\":\"search\",\"error\":[\"Error message.\"],\"page\":1,\"limit\":10,\"total\":0}";
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        try {
+            SearchParams searchParams = new SearchParams("test_im");
+            PagedSearchResult pagedResult = searchOperations.search(searchParams);
+        } catch (ViSearchException e) {
+            assertEquals(response, e.getJson());
+        }
+    }
+
+    @Test
     public void testSearchResponseMalformed0() {
         String response = "{\"status\":\"OK\" \"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_0\"},{\"im_name\":\"test_im_1\"},{\"im_name\":\"test_im_2\"},{\"im_name\":\"test_im_3\"},{\"im_name\":\"test_im_4\"},{\"im_name\":\"test_im_5\"},{\"im_name\":\"test_im_6\"},{\"im_name\":\"test_im_7\"},{\"im_name\":\"test_im_8\"},{\"im_name\":\"test_im_9\"}]}";
         expectedException.expect(ViSearchException.class);
@@ -229,6 +253,17 @@ public class ViSearchSearchOperationsTest {
         String response = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":10,\"limit\":1,\"total\":20,\"qinfo\":[\"im_url\",\"price\",\"title\"],\"result\":[]}";
         expectedException.expect(ViSearchException.class);
         expectedException.expectMessage("Could not parse the ViSearch response for map<String, String>: [\"im_url\",\"price\",\"title\"]");
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im");
+        PagedSearchResult pagedResult = searchOperations.search(searchParams);
+    }
+
+    @Test
+    public void testSearchResponseMalformed4() {
+        String response = "{\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":0,\"result\":[]}";
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("There was a malformed ViSearch response: " + response);
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im");
