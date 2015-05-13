@@ -14,6 +14,7 @@
 	  - 4.2 [Image with Metadata](#42-image-with-metadata)
 	  - 4.3 [Updating Images](#43-updating-images)
 	  - 4.4 [Removing Images](#44-removing-images)
+	  - 4.5 [Check Insert Status](#45-check-insert-status)
  5. [Searching Images](#5-searching-images)
 	  - 5.1 [Pre-indexed Search](#51-pre-indexed-search)
 	  - 5.2 [Color Search](#52-color-search)
