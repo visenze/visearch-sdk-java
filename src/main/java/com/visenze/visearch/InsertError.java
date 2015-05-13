@@ -31,4 +31,9 @@ public class InsertError {
         return errorMessage;
     }
 
+    @Override
+    public String toString() {
+        return "Image Name: " + getImName() + " Error Code: " + getErrorCode()
+                + " Error Message: " + getErrorMessage();
+    }
 }

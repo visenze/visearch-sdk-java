@@ -175,10 +175,16 @@ images.add(new Image(imName, imUrl));
 
 // index the image and get the InsertTrans
 InsertTrans trans = client.insert(images);
-InsertStatus status;
+// check if the insert endpoint reports any errors
+System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().size() + " fail");
+System.out.println("Error list: ");
+for (int i = 0; i < trans.getErrorList().size(); i++) {
+    System.out.println(trans.getErrorList().get(i));
+}
 
-int percent = 0;
+InsertStatus status;
 // check the status of indexing process while it is not complete
+int percent = 0;
 while (percent < 100) {
     try {
         Thread.sleep(1000);
@@ -190,16 +196,26 @@ while (percent < 100) {
     System.out.println(percent + "% complete");
 }
 
-status = client.insertStatus(trans.getTransId());
+int pageIndex = 1; // error page index always starts with 1
+int errorPerPage = 10;  // set error page limit
+status = client.insertStatus(trans.getTransId(), pageIndex, errorPerPage);
 System.out.println("Start time:" + status.getStartTime());
 System.out.println("Update time:" + status.getUpdateTime());
 System.out.println(status.getTotal() + " insertions with "
         + status.getSuccessCount() + " succeed and "
         + status.getFailCount() + " fail");
+
+// print all the error messages if there are any
 if (status.getFailCount() > 0) {
-    System.out.println("First failure at page " + status.getErrorPage());
-    System.out.println("Maximum error recorded:" + status.getErrorLimit());
-    System.out.println("Error list: " + status.getErrorList());
+    int totPageNumber = (int)Math.ceil(1.0 * status.getFailCount() / status.getErrorLimit());
+    for (pageIndex = 1; pageIndex <= totPageNumber; pageIndex++) {
+        status = client.insertStatus(trans.getTransId(), pageIndex, errorPerPage);
+        List<InsertError> errorList = status.getErrorList();
+        for (int errorIndex = 0; errorIndex < errorList.size(); errorIndex++) {
+            System.out.println("failure at page " + pageIndex
+                    + " with error message: " + errorList.get(errorIndex));
+        }
+    }
 }
 ```
 
