@@ -1,6 +1,7 @@
 #ViSearch Java SDK
 
 [![Build Status](https://api.travis-ci.org/visenze/visearch-sdk-java.svg?branch=master)](https://travis-ci.org/visenze/visearch-sdk-java)
+[![Coverage Status](https://coveralls.io/repos/visenze/visearch-sdk-java/badge.svg)](https://coveralls.io/r/visenze/visearch-sdk-java)
 
 ---
 
@@ -13,6 +14,7 @@
 	  - 4.2 [Image with Metadata](#42-image-with-metadata)
 	  - 4.3 [Updating Images](#43-updating-images)
 	  - 4.4 [Removing Images](#44-removing-images)
+	  - 4.5 [Check Indexing Status](#45-check-indexing-status)
  5. [Searching Images](#5-searching-images)
 	  - 5.1 [Pre-indexed Search](#51-pre-indexed-search)
 	  - 5.2 [Color Search](#52-color-search)
@@ -34,8 +36,8 @@ ViSearch is an API that provides accurate, reliable and scalable image search. V
 
 The ViSearch Java SDK is an open source software for easy integration with your Java back-end applications and services. For source code and references, visit the [Github Repository](https://github.com/visenze/visearch-sdk-java).
 
- * Current stable version: 1.0.3
- * Minimum Java version: 6
+ * Current stable version: 1.2.0
+ * Minimum JVM version: 6
 
 ##2. Setup
 
@@ -44,18 +46,18 @@ For Maven projects, include the dependency in ```pom.xml```:
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.0.3</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
 For Gradle projects, include this line in your ```build.gradle``` dependencies block:
 ```
-compile 'com.visenze:visearch-java-sdk:1.0.3'
+compile 'com.visenze:visearch-java-sdk:1.2.0'
 ```
 
 For SBT projects, add the following line to ```build.sbt```:
 ```
-libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.0.3"
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.2.0"
 ```
 
 ##3. Initialization
@@ -69,7 +71,7 @@ ViSearch client = new ViSearch("access_key", "secret_key");
 
 ###4.1 Indexing Your First Images
 
-Built for scalability, ViSearch API enables fast and accurate searches on high volume of images. Before making your first image search, you need to prepare a list of images and index them into ViSearch by calling the ```insert``` endpoint. Each image must have a unique identifier and a publicly downloadable URL. ViSearch will parallelly fetch your images from the given URLs, and index the downloaded for searching. After the image indexes are built, you can start searching for [similar images using the unique identifier](#51-pre-indexed-search), [using a color](#52-color-search), or [using another image](#53-upload-search).
+Built for scalability, ViSearch API enables fast and accurate searches on high volume of images. Before making your first image search, you need to prepare a list of images and index them into ViSearch by calling the ```insert``` endpoint. Each image must have a distinct name (```im_name```) which serves as this image's unique identifier and a publicly downloadable URL (```im_url```). ViSearch will fetch and index your images from the given URLs. You can check the status of this process using instructions described in [Section 4.5](#45-check-indexing-status). After the image indexes are built, you can start searching for [similar images using the unique identifier](#51-pre-indexed-search), [using a color](#52-color-search), or [using another image](#53-upload-search).
 
 To index your images, prepare a list of Images and call the ```insert``` endpoint. 
 ```java
@@ -80,10 +82,28 @@ String imName = "red_dress";
 // the publicly downloadable url of the image 'im_url'
 String imUrl = "http://mydomain.com/images/red_dress.jpg";
 images.add(new Image(imName, imUrl));
-// calls the /insert endpoint to index the image
+// calls the insert endpoint to index the image
 client.insert(images);
 ```
  > Each ```insert``` call to ViSearch accepts a maximum of 100 images. We recommend indexing your images in batches of 100 for optimized image indexing speed.
+
+Note that error messages may be generated from ```insert``` endpoint call, you can check if this happens using the corresponding insert transection.
+
+```java
+List<Image> images = new ArrayList<Image>();
+String imName = "red_dress";
+String imUrl = "http://mydomain.com/images/red_dress.jpg";
+images.add(new Image(imName, imUrl));
+
+// index the image and get the InsertTrans
+InsertTrans trans = client.insert(images);
+// check if the insert endpoint reports any errors
+System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().size() + " fail");
+System.out.println("Error list: ");
+for (int i = 0; i < trans.getErrorList().size(); i++) {
+    System.out.println(trans.getErrorList().get(i));
+} 
+```
 
 ###4.2 Image with Metadata
 
@@ -116,10 +136,10 @@ String imName = "vintage_wingtips";
 String imUrl = "http://mydomain.com/images/vintage_wingtips.jpg";
 
 // add metadata to your image
-Map<String, Object> metadata = new HashMap<String, Object>();
+Map<String, String> metadata = new HashMap<String, String>();
 metadata.put("title", "Vintage Wingtips");
 metadata.put("description", "A pair of high quality leather wingtips");
-metadata.put("price", 100.0f);
+metadata.put("price", "100.0");
 images.add(new Image(imName, imUrl, metadata));
 client.insert(images);
 ```
@@ -140,7 +160,7 @@ String imUrl = "http://mydomain.com/images/vintage_wingtips_sale.jpg";
 // update metadata of the image
 Map<String, Object> metadata = new HashMap<String, Object>();
 metadata.put("title", "Vintage Wingtips Sale");
-metadata.put("price", 69.99f);
+metadata.put("price", "69.99");
 
 images.add(new Image(imName, imUrl, metadata));
 client.insert(images);
@@ -150,7 +170,7 @@ client.insert(images);
 
 ### 4.4 Removing Images
 
-In case you decide to remove some of the indexed images, you can call the ```remove``` endpoint with the list of unique identifier of the indexed images. ViSearch will then remove the specified images from the index. You will not be able to perform [pre-indexed search](#51-pre-indexed-search) on this image, and the image will not be found in any search result.
+In case you decide to remove some of the indexed images, you can call the ```remove``` endpoint with the list of unique identifier of the indexed images. ViSearch will then remove the specified images from the index.
 
 ```java
 // the list of unique identifiers 'im_name' of the images to be removed
@@ -161,6 +181,55 @@ client.remove(removeList);
 ```
  > We recommend calling ```remove``` in batches of 100 images for optimized image indexing speed.
 
+###4.5 Check Indexing Status
+
+The fetching and indexing process take time, and you may only search for images after their indexs are built. If you want to keep track of this process, you can call the ```insertStatus``` endpoint with the image's trasaction identifier.
+
+```java
+List<Image> images = new ArrayList<Image>();
+String imName = "vintage_wingtips";
+String imUrl = "http://mydomain.com/images/vintage_wingtips.jpg";
+images.add(new Image(imName, imUrl));
+
+// index the image and get the InsertTrans
+InsertTrans trans = client.insert(images);
+
+InsertStatus status;
+// check the status of indexing process while it is not complete
+int percent = 0;
+while (percent < 100) {
+    try {
+        Thread.sleep(1000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    status = client.insertStatus(trans.getTransId());
+    percent = status.getProcessedPercent();
+    System.out.println(percent + "% complete");
+}
+
+int pageIndex = 1; // error page index always starts with 1
+int errorPerPage = 10;  // set error page limit
+status = client.insertStatus(trans.getTransId(), pageIndex, errorPerPage);
+System.out.println("Start time:" + status.getStartTime());
+System.out.println("Update time:" + status.getUpdateTime());
+System.out.println(status.getTotal() + " insertions with "
+        + status.getSuccessCount() + " succeed and "
+        + status.getFailCount() + " fail");
+
+// print all the error messages if there are any
+if (status.getFailCount() > 0) {
+    int totPageNumber = (int) Math.ceil(1.0 * status.getFailCount() / status.getErrorLimit());
+    for (pageIndex = 1; pageIndex <= totPageNumber; pageIndex++) {
+        status = client.insertStatus(trans.getTransId(), pageIndex, errorPerPage);
+        List<InsertError> errorList = status.getErrorList();
+        for (int errorIndex = 0; errorIndex < errorList.size(); errorIndex++) {
+            System.out.println("failure at page " + pageIndex
+                    + " with error message: " + errorList.get(errorIndex));
+        }
+    }
+}
+```
 
 ##5. Searching Images
 
@@ -203,12 +272,13 @@ PagedSearchResult searchResult = client.uploadSearch(params);
 ####5.3.1 Selection Box
 
 If the object you wish to search for takes up only a small portion of your image, or if other irrelevant objects exists in the same image, chances are the search result could become inaccurate. Use the Box parameter to refine the search area of the image to improve accuracy. The box coordinates are set with respect to the original size of the uploading image:
+(note: if the box coordinates are invalid(negative or exceed the image boundary), this search will be equivalent to the normal Upload Search)
 
 ```java
 File imageFile = new File("/path/to/your/image");
 UploadSearchParams params = new UploadSearchParams(imageFile);
 // create the box to refine the area on the searching image
-// Box(x1, y1, x2, y2) where (0,0) is the top-left corner
+// Box(x1, y1, x2, y2) where (0, 0) is the top-left corner
 // of the image, (x1, y1) is the top-left corner of the box,
 // and (x2, y2) is the bottom-right corner of the box.
 Box box = new Box(50, 50, 200, 200);
@@ -226,6 +296,9 @@ To reduce upload search latency, by default the ```uploadSearch``` method makes 
 PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.STANDARD);
 ```
 
+For instance, the blue rectangle image on the left will be resized to the one on the right:
+![resize example](img/resize_example.png)
+
 If your image contains fine details such as textile patterns and textures, use the HIGH resize settings to get better search results:
 ```java
 // for images with fine details, use HIGH resize settings 1024x1024 and jpeg 75 quality
@@ -234,8 +307,8 @@ PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.HIGH
 
 Or provide customized resize settings:
 ```java
-// using customized resize settings 800x800 and jpeg 80 quality
-ResizeSettings settings = new ResizeSettings(800, 800, 80);
+// using customized resize settings with width = 800, height = 600 and jpeg 80 quality
+ResizeSettings settings = new ResizeSettings(800, 600, 80);
 PagedSearchResult searchResult = client.uploadSearch(params, settings);
 ```
 
@@ -254,7 +327,7 @@ Pagination parameters:
 // building pre-indexed search params
 SearchParams params = new SearchParams("vintage_wingtips");
 params.setPage(1);
-params.setLimit(10);
+params.setLimit(20);
 PagedSearchResult searchResult = client.search(params);
 
 // total number of results
@@ -318,8 +391,8 @@ Type | FQ
 --- | ---
 string | Metadata value must be exactly matched with the query value, e.g. "Vintage Wingtips" would not match "vintage wingtips" or "vintage"
 text | Metadata value will be indexed using full-text-search engine and supports fuzzy text matching, e.g. "A pair of high quality leather wingtips" would match any word in the phrase
-int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value ```1, 99```, and ```199``` would match ranged query ```0,199``` but would not match ranged query ```200,300```</li></ul>
-float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value ```1.0, 99.99```, and ```199.99``` would match ranged query ```0.0,199.99``` but would not match ranged query 200.0,300.0</li></ul>
+int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value 99 would match ranged query ```0,199```</li></ul>
+float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value 99.99 would match ranged query ```0.0,199.99```</li></ul>
 
 ###7.3 Result Score
 
@@ -346,12 +419,8 @@ score_max | Float | Maximum score for the image results. Default is 1.0.
 
 ```java
 SearchParams params = new SearchParams("vintage_wingtips");
-params.setScoreMin(0.5);
-params.setScoreMax(0.8);
+params.setScoreMin(0.5f);
+params.setScoreMax(0.8f);
 // only retrieve search results with scores between 0.5 and 0.8
 PagedSearchResult searchResult = client.search(params);
 ```
-
-##8. Code Samples
-
-Example code of the ViSearch Java SDK can be found in [visearch-java-example](https://github.com/visenze/visearch-sdk-java/tree/master/visearch-java-example).
