@@ -33,7 +33,11 @@ public class InsertError {
 
     @Override
     public String toString() {
-        return "Image Name: " + getImName() + " Error Code: " + getErrorCode()
-                + " Error Message: " + getErrorMessage();
+        return "InsertError{" +
+                "imName='" + imName + '\'' +
+                ", index=" + index +
+                ", errorCode=" + errorCode +
+                ", errorMessage='" + errorMessage + '\'' +
+                '}';
     }
 }

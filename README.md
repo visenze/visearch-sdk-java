@@ -87,6 +87,24 @@ client.insert(images);
 ```
  > Each ```insert``` call to ViSearch accepts a maximum of 100 images. We recommend indexing your images in batches of 100 for optimized image indexing speed.
 
+Note that error messages may be generated from ```insert``` endpoint call, you can check if this happens using the corresponding insert transection.
+
+```java
+List<Image> images = new ArrayList<Image>();
+String imName = "red_dress";
+String imUrl = "http://mydomain.com/images/red_dress.jpg";
+images.add(new Image(imName, imUrl));
+
+// index the image and get the InsertTrans
+InsertTrans trans = client.insert(images);
+// check if the insert endpoint reports any errors
+System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().size() + " fail");
+System.out.println("Error list: ");
+for (int i = 0; i < trans.getErrorList().size(); i++) {
+    System.out.println(trans.getErrorList().get(i));
+} 
+```
+
 ###4.2 Image with Metadata
 
 Images usually come with descriptive text or numeric values as metadata, for example:
@@ -165,7 +183,7 @@ client.remove(removeList);
 
 ###4.5 Check Indexing Status
 
-The fetching and indexing process take time, and you may only search for images after their indexs are built. If you want to keep track of this process, you can call the ```insertStatus``` endpoint with the image's unique identifier.
+The fetching and indexing process take time, and you may only search for images after their indexs are built. If you want to keep track of this process, you can call the ```insertStatus``` endpoint with the image's trasaction identifier.
 
 ```java
 List<Image> images = new ArrayList<Image>();
@@ -175,12 +193,6 @@ images.add(new Image(imName, imUrl));
 
 // index the image and get the InsertTrans
 InsertTrans trans = client.insert(images);
-// check if the insert endpoint reports any errors
-System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().size() + " fail");
-System.out.println("Error list: ");
-for (int i = 0; i < trans.getErrorList().size(); i++) {
-    System.out.println(trans.getErrorList().get(i));
-}
 
 InsertStatus status;
 // check the status of indexing process while it is not complete
@@ -207,7 +219,7 @@ System.out.println(status.getTotal() + " insertions with "
 
 // print all the error messages if there are any
 if (status.getFailCount() > 0) {
-    int totPageNumber = (int)Math.ceil(1.0 * status.getFailCount() / status.getErrorLimit());
+    int totPageNumber = (int) Math.ceil(1.0 * status.getFailCount() / status.getErrorLimit());
     for (pageIndex = 1; pageIndex <= totPageNumber; pageIndex++) {
         status = client.insertStatus(trans.getTransId(), pageIndex, errorPerPage);
         List<InsertError> errorList = status.getErrorList();
@@ -266,7 +278,7 @@ If the object you wish to search for takes up only a small portion of your image
 File imageFile = new File("/path/to/your/image");
 UploadSearchParams params = new UploadSearchParams(imageFile);
 // create the box to refine the area on the searching image
-// Box(x1, y1, x2, y2) where (0,0) is the top-left corner
+// Box(x1, y1, x2, y2) where (0, 0) is the top-left corner
 // of the image, (x1, y1) is the top-left corner of the box,
 // and (x2, y2) is the bottom-right corner of the box.
 Box box = new Box(50, 50, 200, 200);
@@ -368,7 +380,7 @@ Map<String, String> fq = new HashMap<String, String>();
 // description is metadata type text
 fq.put("description", "wingtips");
 // price is metadata type float
-fq.put("price", "0,199");
+fq.put("price", "0, 199");
 params.setFq(fq);
 PagedSearchResult searchResult = client.search(params);
 ```
@@ -379,8 +391,8 @@ Type | FQ
 --- | ---
 string | Metadata value must be exactly matched with the query value, e.g. "Vintage Wingtips" would not match "vintage wingtips" or "vintage"
 text | Metadata value will be indexed using full-text-search engine and supports fuzzy text matching, e.g. "A pair of high quality leather wingtips" would match any word in the phrase
-int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value ```1, 99```, and ```199``` would match ranged query ```0,199``` but would not match ranged query ```200,300```</li></ul>
-float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value ```1.0, 99.99```, and ```199.99``` would match ranged query ```0.0,199.99``` but would not match ranged query 200.0,300.0</li></ul>
+int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value ```1, 99```, and ```199``` would match ranged query ```0, 199``` but would not match ranged query ```200, 300```</li></ul>
+float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value ```1.0, 99.99```, and ```199.99``` would match ranged query ```0.0, 199.99``` but would not match ranged query 200.0, 300.0</li></ul>
 
 ###7.3 Result Score
 
