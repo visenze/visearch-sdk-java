@@ -14,7 +14,7 @@
 	  - 4.2 [Image with Metadata](#42-image-with-metadata)
 	  - 4.3 [Updating Images](#43-updating-images)
 	  - 4.4 [Removing Images](#44-removing-images)
-	  - 4.5 [Check Insert Status](#45-check-insert-status)
+	  - 4.5 [Check Indexing Status](#45-check-indexing-status)
  5. [Searching Images](#5-searching-images)
 	  - 5.1 [Pre-indexed Search](#51-pre-indexed-search)
 	  - 5.2 [Color Search](#52-color-search)
@@ -71,7 +71,7 @@ ViSearch client = new ViSearch("access_key", "secret_key");
 
 ###4.1 Indexing Your First Images
 
-Built for scalability, ViSearch API enables fast and accurate searches on high volume of images. Before making your first image search, you need to prepare a list of images and index them into ViSearch by calling the ```insert``` endpoint. Each image must have a distinct name(```imName```) which serves as this image's unique identifier and a publicly downloadable URL(```imUrl```). ViSearch will parallelly fetch and index your images from the given URLs. You can check the status of this process using instructions described in Section 4.5. After the image indexes are built, you can start searching for [similar images using the unique identifier](#51-pre-indexed-search), [using a color](#52-color-search), or [using another image](#53-upload-search).
+Built for scalability, ViSearch API enables fast and accurate searches on high volume of images. Before making your first image search, you need to prepare a list of images and index them into ViSearch by calling the ```insert``` endpoint. Each image must have a distinct name (```imName```) which serves as this image's unique identifier and a publicly downloadable URL (```imUrl```). ViSearch will parallelly fetch and index your images from the given URLs. You can check the status of this process using instructions described in [Section 4.5](#45-check-indexing-status). After the image indexes are built, you can start searching for [similar images using the unique identifier](#51-pre-indexed-search), [using a color](#52-color-search), or [using another image](#53-upload-search).
 
 To index your images, prepare a list of Images and call the ```insert``` endpoint. 
 ```java
@@ -82,7 +82,7 @@ String imName = "red_dress";
 // the publicly downloadable url of the image 'im_url'
 String imUrl = "http://mydomain.com/images/red_dress.jpg";
 images.add(new Image(imName, imUrl));
-// calls the /insert endpoint to index the image
+// calls the insert endpoint to index the image
 client.insert(images);
 ```
  > Each ```insert``` call to ViSearch accepts a maximum of 100 images. We recommend indexing your images in batches of 100 for optimized image indexing speed.
@@ -163,7 +163,7 @@ client.remove(removeList);
 ```
  > We recommend calling ```remove``` in batches of 100 images for optimized image indexing speed.
 
-###4.5 Check Insert Status
+###4.5 Check Indexing Status
 
 The fetching and indexing process take time, and you may only search for images after their indexs are built. If you want to keep track of this process, you can call the ```insertStatus``` endpoint with the image's unique identifier.
 
@@ -175,9 +175,32 @@ images.add(new Image(imName, imUrl));
 
 // index the image and get the InsertTrans
 InsertTrans trans = client.insert(images);
-// get the InsertStatus from the InsertTrans
-InsertStatus status = client.insertStatus(trans.getTransId());
-// your code follows
+InsertStatus status;
+
+int percent = 0;
+// check the status of indexing process while it is not complete
+while (percent < 100) {
+    try {
+        Thread.sleep(1000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    status = client.insertStatus(trans.getTransId());
+    percent = status.getProcessedPercent();
+    System.out.println(percent + "% complete");
+}
+
+status = client.insertStatus(trans.getTransId());
+System.out.println("Start time:" + status.getStartTime());
+System.out.println("Update time:" + status.getUpdateTime());
+System.out.println(status.getTotal() + " insertions with "
+        + status.getSuccessCount() + " succeed and "
+        + status.getFailCount() + " fail");
+if (status.getFailCount() > 0) {
+    System.out.println("First failure at page " + status.getErrorPage());
+    System.out.println("Maximum error recorded:" + status.getErrorLimit());
+    System.out.println("Error list: " + status.getErrorList());
+}
 ```
 
 ##5. Searching Images
