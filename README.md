@@ -14,6 +14,7 @@
 	  - 4.2 [Image with Metadata](#42-image-with-metadata)
 	  - 4.3 [Updating Images](#43-updating-images)
 	  - 4.4 [Removing Images](#44-removing-images)
+	  - 4.5 [Check Indexing Status](#45-check-indexing-status)
  5. [Searching Images](#5-searching-images)
 	  - 5.1 [Pre-indexed Search](#51-pre-indexed-search)
 	  - 5.2 [Color Search](#52-color-search)
@@ -70,7 +71,7 @@ ViSearch client = new ViSearch("access_key", "secret_key");
 
 ###4.1 Indexing Your First Images
 
-Built for scalability, ViSearch API enables fast and accurate searches on high volume of images. Before making your first image search, you need to prepare a list of images and index them into ViSearch by calling the ```insert``` endpoint. Each image must have a unique identifier and a publicly downloadable URL. ViSearch will parallelly fetch your images from the given URLs, and index the downloaded for searching. After the image indexes are built, you can start searching for [similar images using the unique identifier](#51-pre-indexed-search), [using a color](#52-color-search), or [using another image](#53-upload-search).
+Built for scalability, ViSearch API enables fast and accurate searches on high volume of images. Before making your first image search, you need to prepare a list of images and index them into ViSearch by calling the ```insert``` endpoint. Each image must have a distinct name (```imName```) which serves as this image's unique identifier and a publicly downloadable URL (```imUrl```). ViSearch will parallelly fetch and index your images from the given URLs. You can check the status of this process using instructions described in [Section 4.5](#45-check-indexing-status). After the image indexes are built, you can start searching for [similar images using the unique identifier](#51-pre-indexed-search), [using a color](#52-color-search), or [using another image](#53-upload-search).
 
 To index your images, prepare a list of Images and call the ```insert``` endpoint. 
 ```java
@@ -81,10 +82,28 @@ String imName = "red_dress";
 // the publicly downloadable url of the image 'im_url'
 String imUrl = "http://mydomain.com/images/red_dress.jpg";
 images.add(new Image(imName, imUrl));
-// calls the /insert endpoint to index the image
+// calls the insert endpoint to index the image
 client.insert(images);
 ```
  > Each ```insert``` call to ViSearch accepts a maximum of 100 images. We recommend indexing your images in batches of 100 for optimized image indexing speed.
+
+Note that error messages may be generated from ```insert``` endpoint call, you can check if this happens using the corresponding insert transection.
+
+```java
+List<Image> images = new ArrayList<Image>();
+String imName = "red_dress";
+String imUrl = "http://mydomain.com/images/red_dress.jpg";
+images.add(new Image(imName, imUrl));
+
+// index the image and get the InsertTrans
+InsertTrans trans = client.insert(images);
+// check if the insert endpoint reports any errors
+System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().size() + " fail");
+System.out.println("Error list: ");
+for (int i = 0; i < trans.getErrorList().size(); i++) {
+    System.out.println(trans.getErrorList().get(i));
+} 
+```
 
 ###4.2 Image with Metadata
 
@@ -162,6 +181,55 @@ client.remove(removeList);
 ```
  > We recommend calling ```remove``` in batches of 100 images for optimized image indexing speed.
 
+###4.5 Check Indexing Status
+
+The fetching and indexing process take time, and you may only search for images after their indexs are built. If you want to keep track of this process, you can call the ```insertStatus``` endpoint with the image's trasaction identifier.
+
+```java
+List<Image> images = new ArrayList<Image>();
+String imName = "vintage_wingtips";
+String imUrl = "http://mydomain.com/images/vintage_wingtips.jpg";
+images.add(new Image(imName, imUrl));
+
+// index the image and get the InsertTrans
+InsertTrans trans = client.insert(images);
+
+InsertStatus status;
+// check the status of indexing process while it is not complete
+int percent = 0;
+while (percent < 100) {
+    try {
+        Thread.sleep(1000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    status = client.insertStatus(trans.getTransId());
+    percent = status.getProcessedPercent();
+    System.out.println(percent + "% complete");
+}
+
+int pageIndex = 1; // error page index always starts with 1
+int errorPerPage = 10;  // set error page limit
+status = client.insertStatus(trans.getTransId(), pageIndex, errorPerPage);
+System.out.println("Start time:" + status.getStartTime());
+System.out.println("Update time:" + status.getUpdateTime());
+System.out.println(status.getTotal() + " insertions with "
+        + status.getSuccessCount() + " succeed and "
+        + status.getFailCount() + " fail");
+
+// print all the error messages if there are any
+if (status.getFailCount() > 0) {
+    int totPageNumber = (int) Math.ceil(1.0 * status.getFailCount() / status.getErrorLimit());
+    for (pageIndex = 1; pageIndex <= totPageNumber; pageIndex++) {
+        status = client.insertStatus(trans.getTransId(), pageIndex, errorPerPage);
+        List<InsertError> errorList = status.getErrorList();
+        for (int errorIndex = 0; errorIndex < errorList.size(); errorIndex++) {
+            System.out.println("failure at page " + pageIndex
+                    + " with error message: " + errorList.get(errorIndex));
+        }
+    }
+}
+```
 
 ##5. Searching Images
 
@@ -210,7 +278,7 @@ If the object you wish to search for takes up only a small portion of your image
 File imageFile = new File("/path/to/your/image");
 UploadSearchParams params = new UploadSearchParams(imageFile);
 // create the box to refine the area on the searching image
-// Box(x1, y1, x2, y2) where (0,0) is the top-left corner
+// Box(x1, y1, x2, y2) where (0, 0) is the top-left corner
 // of the image, (x1, y1) is the top-left corner of the box,
 // and (x2, y2) is the bottom-right corner of the box.
 Box box = new Box(50, 50, 200, 200);
@@ -312,7 +380,7 @@ Map<String, String> fq = new HashMap<String, String>();
 // description is metadata type text
 fq.put("description", "wingtips");
 // price is metadata type float
-fq.put("price", "0,199");
+fq.put("price", "0, 199");
 params.setFq(fq);
 PagedSearchResult searchResult = client.search(params);
 ```
@@ -323,8 +391,8 @@ Type | FQ
 --- | ---
 string | Metadata value must be exactly matched with the query value, e.g. "Vintage Wingtips" would not match "vintage wingtips" or "vintage"
 text | Metadata value will be indexed using full-text-search engine and supports fuzzy text matching, e.g. "A pair of high quality leather wingtips" would match any word in the phrase
-int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value ```1, 99```, and ```199``` would match ranged query ```0,199``` but would not match ranged query ```200,300```</li></ul>
-float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value ```1.0, 99.99```, and ```199.99``` would match ranged query ```0.0,199.99``` but would not match ranged query 200.0,300.0</li></ul>
+int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value ```1, 99```, and ```199``` would match ranged query ```0, 199``` but would not match ranged query ```200, 300```</li></ul>
+float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value ```1.0, 99.99```, and ```199.99``` would match ranged query ```0.0, 199.99``` but would not match ranged query 200.0, 300.0</li></ul>
 
 ###7.3 Result Score
 
