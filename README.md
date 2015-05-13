@@ -380,7 +380,7 @@ Map<String, String> fq = new HashMap<String, String>();
 // description is metadata type text
 fq.put("description", "wingtips");
 // price is metadata type float
-fq.put("price", "0, 199");
+fq.put("price", "0,199");
 params.setFq(fq);
 PagedSearchResult searchResult = client.search(params);
 ```
@@ -391,8 +391,8 @@ Type | FQ
 --- | ---
 string | Metadata value must be exactly matched with the query value, e.g. "Vintage Wingtips" would not match "vintage wingtips" or "vintage"
 text | Metadata value will be indexed using full-text-search engine and supports fuzzy text matching, e.g. "A pair of high quality leather wingtips" would match any word in the phrase
-int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value ```1, 99```, and ```199``` would match ranged query ```0, 199``` but would not match ranged query ```200, 300```</li></ul>
-float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value ```1.0, 99.99```, and ```199.99``` would match ranged query ```0.0, 199.99``` but would not match ranged query 200.0, 300.0</li></ul>
+int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value 99 would match ranged query ```0,199```</li></ul>
+float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value 99.99 would match ranged query ```0.0,199.99```</li></ul>
 
 ###7.3 Result Score
 
