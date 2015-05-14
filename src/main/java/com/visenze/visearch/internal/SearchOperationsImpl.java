@@ -138,7 +138,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         return outputImage;
     }
 
-    private static BufferedImage resampleImage(BufferedImage origImage, int width, int height) {
+    private BufferedImage resampleImage(BufferedImage origImage, int width, int height) {
         BufferedImageOp resampler = new ResampleOp(width, height, ResampleOp.FILTER_LANCZOS);
         return resampler.filter(origImage, null);
     }
