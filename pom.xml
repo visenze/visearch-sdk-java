@@ -40,8 +40,7 @@
         <guava.version>18.0</guava.version>
         <jackson.version>2.5.2</jackson.version>
         <junit.version>4.12</junit.version>
-        <imgscalr.version>4.2</imgscalr.version>
-        <imageio-jpeg.version>3.0.2</imageio-jpeg.version>
+        <imageio.version>3.1.0</imageio.version>
         <mockito.version>1.10.19</mockito.version>
     </properties>
 
@@ -77,14 +76,9 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.imgscalr</groupId>
-            <artifactId>imgscalr-lib</artifactId>
-            <version>${imgscalr.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-jpeg</artifactId>
-            <version>${imageio-jpeg.version}</version>
+            <artifactId>imageio</artifactId>
+            <version>${imageio.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -25,9 +25,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -82,8 +82,8 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     }
 
     @Override
-    public String postImage(String path, Multimap<String, String> params, byte[] byteArray, String filename) {
-        HttpUriRequest request = buildPostRequestForImage(endpoint + path, params, byteArray, filename);
+    public String postImage(String path, Multimap<String, String> params, InputStream inputStream, String filename) {
+        HttpUriRequest request = buildPostRequestForImage(endpoint + path, params, inputStream, filename);
         return getStringResponse(request);
     }
 
@@ -138,12 +138,12 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, byte[] byteArray, String filename) {
+    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
         }
-        builder.addPart("image", new InputStreamBody(new ByteArrayInputStream(byteArray), filename));
+        builder.addPart("image", new InputStreamBody(inputStream, filename));
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }

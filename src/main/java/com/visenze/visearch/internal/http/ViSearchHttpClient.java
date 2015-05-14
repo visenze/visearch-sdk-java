@@ -3,6 +3,7 @@ package com.visenze.visearch.internal.http;
 import com.google.common.collect.Multimap;
 
 import java.io.File;
+import java.io.InputStream;
 
 public interface ViSearchHttpClient {
 
@@ -12,6 +13,6 @@ public interface ViSearchHttpClient {
 
     String postImage(String url, Multimap<String, String> params, File file);
 
-    String postImage(String url, Multimap<String, String> params, byte[] byteArray, String filename);
+    String postImage(String url, Multimap<String, String> params, InputStream inputStream, String filename);
 
 }
