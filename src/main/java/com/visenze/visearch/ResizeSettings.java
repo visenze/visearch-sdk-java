@@ -7,7 +7,7 @@ public class ResizeSettings {
 
     public static ResizeSettings HIGH = new ResizeSettings(1024, 1024, 0.985f);
 
-    public static float DELTA = 0.000001f;
+    private static float DELTA = 0.000001f;
 
     private int width;
     private int height;
