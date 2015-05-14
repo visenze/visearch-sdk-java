@@ -16,7 +16,7 @@ public class ResizeSettings {
     public ResizeSettings(int width, int height, float quality) {
         this.width = width;
         this.height = height;
-        if (Math.abs(quality) < DELTA) {
+        if (quality - DELTA < 0) {
             this.quality = 0;
         } else if (quality + DELTA > 1.0f) {
             this.quality = 1.0f;
