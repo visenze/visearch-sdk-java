@@ -16,9 +16,10 @@ public class ResizeSettings {
         this.height = height;
         if (quality < 0) {
             this.quality = 0;
-        }
-        if (quality > 1.0f) {
+        } else if (quality > 1.0f) {
             this.quality = 1.0f;
+        } else {
+            this.quality = quality;
         }
     }
 

@@ -404,10 +404,20 @@ public class ViSearchSearchOperationsTest {
     }
 
     @Test
-    public void testResizeParamQuality() throws Exception {
-        ResizeSettings resizeSettings = new ResizeSettings(100, 100, -1);
-        assert (resizeSettings.getQuality() == 0);
-        ResizeSettings resizeSettings1 = new ResizeSettings(100, 100, 2);
-        assert (resizeSettings.getQuality() <= 1.0f);
+    public void testResizeParamNormalQuality() {
+        ResizeSettings resizeSettings = new ResizeSettings(100, 100, 0.5f);
+        assertEquals(0.5f, resizeSettings.getQuality(), 0.000001f);
+    }
+
+    @Test
+    public void testResizeParamNegQuality() {
+        ResizeSettings resizeSettings = new ResizeSettings(100, 100, -1.0f);
+        assertEquals(0.0f, resizeSettings.getQuality(), 0.000001f);
+    }
+
+    @Test
+    public void testResizeParamOverOneQuality() {
+        ResizeSettings resizeSettings = new ResizeSettings(100, 100, 2.0f);
+        assertEquals(1.0f, resizeSettings.getQuality(), 0.000001f);
     }
 }
