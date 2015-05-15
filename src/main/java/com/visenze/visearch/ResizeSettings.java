@@ -3,24 +3,26 @@ package com.visenze.visearch;
 
 public class ResizeSettings {
 
-    public static ResizeSettings STANDARD = new ResizeSettings(512, 512, 75);
+    public static ResizeSettings STANDARD = new ResizeSettings(512, 512, 0.97f);
 
-    public static ResizeSettings HIGH = new ResizeSettings(1024, 1024, 75);
+    public static ResizeSettings HIGH = new ResizeSettings(1024, 1024, 0.985f);
+
+    private static float DELTA = 0.000001f;
 
     private int width;
     private int height;
-    private int quality;
+    private float quality;
 
-    public ResizeSettings(int width, int height, int quality) {
+    public ResizeSettings(int width, int height, float quality) {
         this.width = width;
         this.height = height;
-        if (quality > 100) {
-            quality = 100;
+        if (quality - DELTA < 0) {
+            this.quality = 0;
+        } else if (quality + DELTA > 1.0f) {
+            this.quality = 1.0f;
+        } else {
+            this.quality = quality;
         }
-        if (quality < 0) {
-            quality = 0;
-        }
-        this.quality = quality;
     }
 
     public int getWidth() {
@@ -31,7 +33,7 @@ public class ResizeSettings {
         return height;
     }
 
-    public int getQuality() {
+    public float getQuality() {
         return quality;
     }
 

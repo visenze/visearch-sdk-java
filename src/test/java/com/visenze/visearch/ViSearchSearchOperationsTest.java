@@ -5,7 +5,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.twelvemonkeys.io.NullInputStream;
 import com.visenze.visearch.internal.SearchOperations;
 import com.visenze.visearch.internal.SearchOperationsImpl;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
@@ -18,6 +17,7 @@ import org.mockito.Matchers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -307,27 +307,61 @@ public class ViSearchSearchOperationsTest {
 
     @Test
     public void testUploadSearchParamsNullFile() {
-        expectedException.expect(ViSearchException.class);
-        expectedException.expectMessage("Could not found the image file");
+        expectedException.expect(NullPointerException.class);
+        expectedException.expectMessage("The image file must not be null");
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        File nullFile = new File("/null");
+        File nullFile = null;
         UploadSearchParams uploadSearchParams = new UploadSearchParams(nullFile);
         searchOperations.uploadSearch(uploadSearchParams);
     }
 
     @Test
-    public void testUploadSearchParamsNullStream() {
+    public void testUploadSearchParamsNonFile() {
         expectedException.expect(ViSearchException.class);
-        expectedException.expectMessage("Could not read the image from input stream.");
+        expectedException.expectMessage("Could not process the image file");
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(new NullInputStream());
+        File nonFile = new File("nonFile");
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(nonFile);
+        searchOperations.uploadSearch(uploadSearchParams);
+    }
+
+    @Test
+    public void testUploadSearchParamsInvalidFile() throws Exception {
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("The image file seems to be invalid");
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        URL url = getClass().getResource("/stub.txt");
+        File invalidFile = new File(url.getFile());
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(invalidFile);
+        searchOperations.uploadSearch(uploadSearchParams);
+    }
+
+    @Test
+    public void testUploadSearchParamsNullStream() {
+        expectedException.expect(NullPointerException.class);
+        expectedException.expectMessage("The image input stream must not be null");
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        InputStream inputStream = null;
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
+        searchOperations.uploadSearch(uploadSearchParams);
+    }
+
+    @Test
+    public void testUploadSearchParamsInvalidStream() throws Exception {
+        expectedException.expect(ViSearchException.class);
+        expectedException.expectMessage("The image stream seems to be invalid");
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        URL url = getClass().getResource("/stub.txt");
+        File invalidFile = new File(url.getFile());
+        FileInputStream inputStream = new FileInputStream(invalidFile);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
         searchOperations.uploadSearch(uploadSearchParams);
     }
 
     @Test
     public void testUploadSearchParamsImage() {
         String response = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
-        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<byte[]>any(), anyString())).thenReturn(response);
+        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<InputStream>any(), anyString())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
         File imageFile = new File(resourceUrl.getFile());
@@ -335,13 +369,13 @@ public class ViSearchSearchOperationsTest {
         assertEquals(imageFile, uploadSearchParams.getImageFile());
         searchOperations.uploadSearch(uploadSearchParams);
         Multimap<String, String> params = HashMultimap.create();
-        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<byte[]>any(), eq(imageFile.getName()));
+        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<InputStream>any(), eq(imageFile.getName()));
     }
 
     @Test
     public void testUploadSearchParamsImageStream() throws Exception {
         String response = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
-        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<byte[]>any(), anyString())).thenReturn(response);
+        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<InputStream>any(), anyString())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
         File imageFile = new File(resourceUrl.getFile());
@@ -350,13 +384,13 @@ public class ViSearchSearchOperationsTest {
         assertEquals(fileInputStream, uploadSearchParams.getImageStream());
         searchOperations.uploadSearch(uploadSearchParams);
         Multimap<String, String> params = HashMultimap.create();
-        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<byte[]>any(), eq("image-stream"));
+        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<InputStream>any(), eq("image-stream"));
     }
 
     @Test
     public void testUploadSearchParamsBox() {
         String response = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
-        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<byte[]>any(), anyString())).thenReturn(response);
+        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<InputStream>any(), anyString())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
         File imageFile = new File(resourceUrl.getFile());
@@ -366,14 +400,24 @@ public class ViSearchSearchOperationsTest {
         searchOperations.uploadSearch(uploadSearchParams);
         Multimap<String, String> params = HashMultimap.create();
         params.put("box", "128,128,256,256");
-        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<byte[]>any(), eq(imageFile.getName()));
+        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<InputStream>any(), eq(imageFile.getName()));
     }
 
     @Test
-    public void testResizeParamQuality() throws Exception {
-        ResizeSettings resizeSettings = new ResizeSettings(100, 100, -1);
-        assertEquals(0, resizeSettings.getQuality());
-        ResizeSettings resizeSettings1 = new ResizeSettings(100, 100, 101);
-        assertEquals(100, resizeSettings1.getQuality());
+    public void testResizeParamNormalQuality() {
+        ResizeSettings resizeSettings = new ResizeSettings(100, 100, 0.5f);
+        assertEquals(0.5f, resizeSettings.getQuality(), 0.000001f);
+    }
+
+    @Test
+    public void testResizeParamNegQuality() {
+        ResizeSettings resizeSettings = new ResizeSettings(100, 100, -1.0f);
+        assertEquals(0.0f, resizeSettings.getQuality(), 0.000001f);
+    }
+
+    @Test
+    public void testResizeParamOverOneQuality() {
+        ResizeSettings resizeSettings = new ResizeSettings(100, 100, 2.0f);
+        assertEquals(1.0f, resizeSettings.getQuality(), 0.000001f);
     }
 }

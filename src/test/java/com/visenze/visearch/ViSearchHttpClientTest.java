@@ -18,6 +18,7 @@ import org.mockito.Matchers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -54,7 +55,7 @@ public class ViSearchHttpClientTest {
 
     @Test
     public void testSecondValidPostImageMethod() throws Exception {
-        testValidMethodCalls("postImage02", path, params, new byte[10], "test file name String");
+        testValidMethodCalls("postImage02", path, params, mock(InputStream.class), "test file name String");
     }
 
     private void testValidMethodCalls(String cmdString, Object... parameters) throws Exception {
@@ -77,7 +78,7 @@ public class ViSearchHttpClientTest {
                 client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (File) parameters[2]);
                 break;
             case POST_IMAGE_02:
-                client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (byte[]) parameters[2], (String) parameters[3]);
+                client.postImage((String) parameters[0], (Multimap<String, String>) parameters[1], (InputStream) parameters[2], (String) parameters[3]);
                 break;
             default:
                 break;
@@ -125,89 +126,61 @@ public class ViSearchHttpClientTest {
 
     @Test
     public void testInvalidEndPointUsingPostMethod() {
+        expectedException.expect(ViSearchException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
-            client.post(path, params);
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof ViSearchException);
-        }
+        client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
+        client.post(path, params);
     }
 
     @Test
     public void testInvalidAccessKeyUsingGetMethod() {
+        expectedException.expect(IllegalArgumentException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(validEndpoint, invalidAccessKey, validSecretKey, mockedHttpClient);
-            client.get(path, params);
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof IllegalArgumentException);
-        }
+        client = new ViSearchHttpClientImpl(validEndpoint, invalidAccessKey, validSecretKey, mockedHttpClient);
+        client.get(path, params);
     }
 
     @Test
     public void testInvalidParamsUsingPostMethod() {
+        expectedException.expect(NullPointerException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
-            client.post(path, null);
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof NullPointerException);
-        }
+        client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
+        client.post(path, null);
     }
 
     @Test
-    public void testHttpClientThrowsIOExceptionUsingPostMethod() {
+    public void testHttpClientThrowsIOExceptionUsingPostMethod() throws Exception {
+        expectedException.expect(NetworkException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
-            when(mockedHttpClient.execute(Matchers.<HttpUriRequest>any())).thenThrow(new IOException("test IOException"));
-            client.post(path, params);
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof NetworkException);
-        }
+        client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
+        when(mockedHttpClient.execute(Matchers.<HttpUriRequest>any())).thenThrow(new IOException("test IOException"));
+        client.post(path, params);
     }
 
     @Test
-    public void testCloseableHttpResponseThrowsIllegalArgumentExceptionUsingPostMethod() {
+    public void testCloseableHttpResponseThrowsIllegalArgumentExceptionUsingPostMethod() throws Exception {
+        expectedException.expect(NetworkException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
-            CloseableHttpResponse response = mock(CloseableHttpResponse.class);
-            when(mockedHttpClient.execute(Matchers.<HttpUriRequest>any())).thenReturn(response);
-            doThrow(new IllegalArgumentException("test IllegalArgumentException")).when(response).getEntity();
-            client.post(path, params);
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof NetworkException);
-        }
+        client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
+        CloseableHttpResponse response = mock(CloseableHttpResponse.class);
+        when(mockedHttpClient.execute(Matchers.<HttpUriRequest>any())).thenReturn(response);
+        doThrow(new IllegalArgumentException("test IllegalArgumentException")).when(response).getEntity();
+        client.post(path, params);
     }
 
     @Test
     public void testInvalidFileUsingFirstPostImageMethod() {
+        expectedException.expect(IllegalArgumentException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
-            client.postImage(path, params, null);
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof IllegalArgumentException);
-        }
+        client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
+        client.postImage(path, params, null);
     }
 
     @Test
-    public void testInvalidByteArrayUsingSecondPostImageMethod() {
+    public void testInvalidInputStreamUsingSecondPostImageMethod() {
+        expectedException.expect(IllegalArgumentException.class);
         ViSearchHttpClientImpl client;
-        try {
-            client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
-            client.postImage(path, params, null, "test file name String");
-            assert (false); // should not be executed
-        } catch (Exception e) {
-            assertTrue(e instanceof NullPointerException);
-        }
+        client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
+        client.postImage(path, params, null, "test file name String");
     }
 }

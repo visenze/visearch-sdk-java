@@ -4,16 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.twelvemonkeys.image.ResampleOp;
 import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
-import org.imgscalr.Scalr;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
+import javax.imageio.*;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
@@ -49,75 +48,155 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         String imageUrl = uploadSearchParams.getImageUrl();
         String response;
         if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
-            throw new IllegalArgumentException("Must provide either an image file or an image url to perform upload search");
+            throw new IllegalArgumentException("Must provide either an image file, input stream, or an image url to perform upload search");
         } else if (imageFile != null) {
-            byte[] imageBytes = resizeImage(uploadSearchParams, imageFile, resizeSettings);
-            response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, imageFile.getName());
+            InputStream inputStream = resizeImageAndBox(uploadSearchParams, imageFile, resizeSettings);
+            response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), inputStream, imageFile.getName());
         } else if (imageStream != null) {
-            byte[] imageBytes = resizeImage(uploadSearchParams, imageStream, resizeSettings);
-            response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), imageBytes, "image-stream");
+            InputStream inputStream = resizeImageAndBox(uploadSearchParams, imageStream, resizeSettings);
+            response = viSearchHttpClient.postImage("/uploadsearch", uploadSearchParams.toMap(), inputStream, "image-stream");
         } else {
             response = viSearchHttpClient.post("/uploadsearch", uploadSearchParams.toMap());
         }
         return getPagedResult(response);
     }
 
-    private byte[] resizeImage(UploadSearchParams uploadSearchParams, File imageFile, ResizeSettings resizeSettings) {
+    private InputStream resizeImageAndBox(UploadSearchParams uploadSearchParams, File imageFile, ResizeSettings resizeSettings) {
         try {
-            return resizeImage(uploadSearchParams, new FileInputStream(imageFile), resizeSettings);
-        } catch (FileNotFoundException e) {
-            throw new ViSearchException("Could not found the image file " + imageFile.getAbsolutePath(), e);
-        }
-    }
-
-    private byte[] resizeImage(UploadSearchParams uploadSearchParams, InputStream inputStream, ResizeSettings resizeSettings) {
-        try {
-            BufferedImage sourceImage = ImageIO.read(inputStream);
-            int imageWidth = sourceImage.getWidth();
-            int imageHeight = sourceImage.getHeight();
-            BufferedImage resizedImage;
-            if (imageWidth > resizeSettings.getWidth() && imageHeight > resizeSettings.getHeight()) {
-                resizedImage = Scalr.resize(sourceImage, resizeSettings.getWidth());
-            } else {
-                resizedImage = sourceImage;
-            }
-            scaleImageBox(uploadSearchParams, sourceImage, resizedImage);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            writeToOutputStream(outputStream, resizeSettings, resizedImage);
-            sourceImage.flush();
-            resizedImage.flush();
-            return outputStream.toByteArray();
+            ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageFile);
+            return processImageInputStream(uploadSearchParams, imageInputStream, resizeSettings);
+        } catch (IOException e) {
+            throw new ViSearchException("Caught IOException while processing the image file " + imageFile.getAbsolutePath(), e);
+        } catch (IllegalArgumentException e) {
+            throw new ViSearchException("The image file seems to be invalid");
         } catch (Exception e) {
-            throw new ViSearchException("Could not read the image from input stream.", e);
+            throw new ViSearchException("Could not process the image file", e);
         }
     }
 
-    private void scaleImageBox(UploadSearchParams uploadSearchParams, BufferedImage sourceImage, BufferedImage resizedImage) {
+    private InputStream resizeImageAndBox(UploadSearchParams uploadSearchParams, InputStream imageStream, ResizeSettings resizeSettings) {
+        try {
+            ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageStream);
+            return processImageInputStream(uploadSearchParams, imageInputStream, resizeSettings);
+        } catch (IOException e) {
+            throw new ViSearchException("Caught IOException while processing the image stream", e);
+        } catch (IllegalArgumentException e) {
+            throw new ViSearchException("The image stream seems to be invalid");
+        } catch (Exception e) {
+            throw new ViSearchException("Could not process the image stream", e);
+        }
+    }
+
+    private InputStream processImageInputStream(UploadSearchParams uploadSearchParams, ImageInputStream imageInputStream, ResizeSettings resizeSettings)
+            throws IOException {
+        BufferedImage origImage = readImage(imageInputStream);
+        BufferedImage scaledImage = scaleImage(origImage, resizeSettings.getWidth(), resizeSettings.getHeight());
+        scaleBox(uploadSearchParams, origImage, scaledImage);
+        BufferedImage rgbImage = getRGBImage(scaledImage);
+        return getJPGStream(rgbImage, resizeSettings.getQuality());
+    }
+
+    private BufferedImage readImage(ImageInputStream imageInputStream) throws IOException {
+        try {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(imageInputStream);
+            if (!readers.hasNext()) {
+                throw new IllegalArgumentException("No reader for the image stream");
+            }
+            ImageReader imageReader = readers.next();
+            try {
+                imageReader.setInput(imageInputStream);
+                ImageReadParam param = imageReader.getDefaultReadParam();
+                return imageReader.read(0, param);
+            } finally {
+                imageReader.dispose();
+            }
+        } finally {
+            imageInputStream.close();
+        }
+    }
+
+    private BufferedImage scaleImage(BufferedImage origImage, int targetWidth, int targetHeight) {
+        int origWidth = origImage.getWidth();
+        int origHeight = origImage.getHeight();
+        BufferedImage outputImage;
+        if (origWidth > targetWidth || origHeight > targetHeight) {
+            int resizedWidth;
+            int resizedHeight;
+            double origRatio = ((double) origWidth) / origHeight;
+            double targetRatio = ((double) targetWidth) / targetHeight;
+            if (targetRatio < origRatio) {
+                resizedWidth = targetWidth;
+                resizedHeight = (int) Math.round(targetWidth / origRatio);
+            } else {
+                resizedWidth = (int) Math.round(targetHeight * origRatio);
+                resizedHeight = targetHeight;
+            }
+            outputImage = resampleImage(origImage, resizedWidth, resizedHeight);
+        } else {
+            outputImage = origImage;
+        }
+        return outputImage;
+    }
+
+    private BufferedImage resampleImage(BufferedImage origImage, int width, int height) {
+        BufferedImageOp resampler = new ResampleOp(width, height, ResampleOp.FILTER_LANCZOS);
+        return resampler.filter(origImage, null);
+    }
+
+    private void scaleBox(UploadSearchParams uploadSearchParams, BufferedImage origImage, BufferedImage scaledImage) {
+        float origWidth = origImage.getWidth();
+        float scaledWidth = scaledImage.getWidth();
         if (uploadSearchParams.getBox() != null) {
             Box box = uploadSearchParams.getBox();
             if (box.allCoordsExist()) {
-                int imageWidth = sourceImage.getWidth();
-                int resizedWidth = resizedImage.getWidth();
-                float ratio = resizedWidth / (float) imageWidth;
+                float ratio = scaledWidth / origWidth;
                 uploadSearchParams.setBox(box.scale(ratio));
             }
         }
     }
 
-    private void writeToOutputStream(OutputStream outputStream, ResizeSettings resizeSettings, BufferedImage resizedImage) {
+    private BufferedImage getRGBImage(BufferedImage bufferedImage) {
+        int width = bufferedImage.getWidth();
+        int height = bufferedImage.getHeight();
+        BufferedImage rgbImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int pixel = bufferedImage.getRGB(x, y);
+                rgbImage.setRGB(x, y, pixel);
+            }
+        }
+        return rgbImage;
+    }
+
+    private InputStream getJPGStream(BufferedImage rgbImage, float quality) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            writeJPGStream(rgbImage, outputStream, quality);
+            return new ByteArrayInputStream(outputStream.toByteArray());
+        } finally {
+            outputStream.close();
+        }
+    }
+
+    private void writeJPGStream(BufferedImage bufferedImage, OutputStream outputStream, float quality) throws IOException {
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+        if (!writers.hasNext()) {
+            throw new IllegalArgumentException("No writer for jpg format");
+        }
+        ImageWriter imageWriter = writers.next();
         try {
             ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
-            Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("jpeg");
-            ImageWriter writer = it.next();
-            ImageWriteParam param = writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionQuality(resizeSettings.getQuality() / 100.0f);
-            writer.setOutput(imageOutputStream);
-            writer.write(null, new IIOImage(resizedImage, null, null), param);
-            writer.dispose();
-        } catch (IOException e) {
-            throw new ViSearchException("Could not write to buffer when scaling image before upload search. " +
-                    "Please ensure sufficient memory for your runtime and try again.", e);
+            try {
+                imageWriter.setOutput(imageOutputStream);
+                ImageWriteParam param = imageWriter.getDefaultWriteParam();
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality(quality);
+                imageWriter.write(null, new IIOImage(bufferedImage, null, null), param);
+            } finally {
+                imageOutputStream.close();
+            }
+        } finally {
+            imageWriter.dispose();
         }
     }
 
