@@ -38,7 +38,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <httpcomponents.version>4.4.1</httpcomponents.version>
         <guava.version>18.0</guava.version>
-        <jackson.version>2.5.2</jackson.version>
+        <jackson.version>2.5.3</jackson.version>
         <junit.version>4.12</junit.version>
         <imageio.version>3.1.0</imageio.version>
         <mockito.version>1.10.19</mockito.version>
@@ -113,7 +113,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
+                <version>3.3</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
