@@ -57,8 +57,8 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         credentials = new UsernamePasswordCredentials(accessKey, secretKey);
         this.httpClient = HttpClientBuilder
                 .create()
-                .setMaxConnTotal(100)
-                .setMaxConnPerRoute(100)
+                .setMaxConnTotal(1000)
+                .setMaxConnPerRoute(1000)
                 .setDefaultRequestConfig(conf)
                 .build();
     }
