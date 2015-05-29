@@ -51,7 +51,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         this.endpoint = endpoint;
         RequestConfig conf = RequestConfig
                 .custom()
-                .setConnectTimeout(10000)
+                .setConnectTimeout(30000)
                 .setSocketTimeout(60000)
                 .build();
         credentials = new UsernamePasswordCredentials(accessKey, secretKey);
