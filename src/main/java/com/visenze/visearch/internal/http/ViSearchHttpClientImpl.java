@@ -1,6 +1,7 @@
 package com.visenze.visearch.internal.http;
 
 import com.google.common.collect.Multimap;
+import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.NetworkException;
 import com.visenze.visearch.ViSearchException;
 import org.apache.http.Consts;
@@ -39,26 +40,33 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private final String endpoint;
     private final CloseableHttpClient httpClient;
+    private final ClientConfig clientConfig;
     private final UsernamePasswordCredentials credentials;
 
     public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey, CloseableHttpClient httpClient) {
         this.endpoint = endpoint;
         credentials = new UsernamePasswordCredentials(accessKey, secretKey);
         this.httpClient = httpClient;
+        this.clientConfig = new ClientConfig();
     }
 
     public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey) {
+        this(endpoint, accessKey, secretKey, new ClientConfig());
+    }
+
+    public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey, ClientConfig clientConfig) {
         this.endpoint = endpoint;
+        this.clientConfig = clientConfig;
         RequestConfig conf = RequestConfig
                 .custom()
-                .setConnectTimeout(30000)
-                .setSocketTimeout(60000)
+                .setConnectTimeout(clientConfig.getConnectionTimeout())
+                .setSocketTimeout(clientConfig.getSocketTimeout())
                 .build();
         credentials = new UsernamePasswordCredentials(accessKey, secretKey);
         this.httpClient = HttpClientBuilder
                 .create()
-                .setMaxConnTotal(1000)
-                .setMaxConnPerRoute(1000)
+                .setMaxConnTotal(clientConfig.getMaxConnection())
+                .setMaxConnPerRoute(clientConfig.getMaxConnection())
                 .setDefaultRequestConfig(conf)
                 .build();
     }
@@ -150,6 +158,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private String getStringResponse(HttpUriRequest request) {
         addAuthHeader(request);
+        addUserAgentHeader(request);
         CloseableHttpResponse response = executeRequest(request);
         return getStringFromEntity(response);
     }
@@ -161,6 +170,14 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
             throw new com.visenze.visearch.AuthenticationException("There was an error generating the " +
                     "HTTP basic authentication header. Please check your access key and secret key and try again", e);
         }
+    }
+
+    private void addUserAgentHeader(HttpUriRequest request) {
+        String userAgent = clientConfig.getUserAgent();
+        if (!userAgent.equals(ClientConfig.DEFAULT_USER_AGENT)) {
+            userAgent += " " + ClientConfig.DEFAULT_USER_AGENT;
+        }
+        request.addHeader(HttpHeaders.USER_AGENT, userAgent);
     }
 
     private CloseableHttpResponse executeRequest(HttpUriRequest request) {

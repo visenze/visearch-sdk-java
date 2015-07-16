@@ -16,6 +16,8 @@ import java.util.Map;
 
 public class ViSearch implements DataOperations, SearchOperations {
 
+    public static final String VISEACH_JAVA_SDK_VERSION = "1.2.2-SNAPSHOT";
+
     /**
      * Default ViSearch API base endpoint.
      */
@@ -75,6 +77,22 @@ public class ViSearch implements DataOperations, SearchOperations {
             throw new IllegalArgumentException("ViSearch endpoint must not be empty.");
         }
         ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(endpoint, accessKey, secretKey);
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
+        this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
+        this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
+    }
+
+    public ViSearch(String endpoint, String accessKey, String secretKey, ClientConfig clientConfig) {
+        if (endpoint == null) {
+            throw new IllegalArgumentException("ViSearch endpoint must not be null.");
+        }
+        if (endpoint.isEmpty()) {
+            throw new IllegalArgumentException("ViSearch endpoint must not be empty.");
+        }
+        if (clientConfig == null) {
+            throw new IllegalArgumentException();
+        }
+        ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(endpoint, accessKey, secretKey, clientConfig);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
         this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
         this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
