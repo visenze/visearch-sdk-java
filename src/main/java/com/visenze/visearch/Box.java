@@ -34,13 +34,4 @@ public class Box {
         return x1 != null && x2 != null && y1 != null && y2 != null;
     }
 
-    public Box scale(float ratio) {
-        return new Box(
-                (int) (x1 * ratio),
-                (int) (y1 * ratio),
-                (int) (x2 * ratio),
-                (int) (y2 * ratio)
-        );
-    }
-
 }

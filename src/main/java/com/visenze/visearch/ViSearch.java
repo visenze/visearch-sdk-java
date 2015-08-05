@@ -194,7 +194,9 @@ public class ViSearch implements DataOperations, SearchOperations {
      * @param uploadSearchParams the upload search parameters, must contain a image file or a url
      * @param resizeSettings     custom image resize option
      * @return the page of upload search result
+     * @deprecated from version 1.2.2
      */
+    @Deprecated
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
         return searchOperations.uploadSearch(uploadSearchParams, resizeSettings);

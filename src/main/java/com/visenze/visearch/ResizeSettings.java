@@ -1,6 +1,10 @@
 package com.visenze.visearch;
 
 
+/**
+ * ResizeSettings is deprecated and has no effect on the upload search image.
+ */
+@Deprecated
 public class ResizeSettings {
 
     public static ResizeSettings STANDARD = new ResizeSettings(512, 512, 0.97f);

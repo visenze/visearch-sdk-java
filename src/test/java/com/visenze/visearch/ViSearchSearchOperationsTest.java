@@ -16,9 +16,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Matchers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -317,22 +315,11 @@ public class ViSearchSearchOperationsTest {
 
     @Test
     public void testUploadSearchParamsNonFile() {
-        expectedException.expect(ViSearchException.class);
-        expectedException.expectMessage("Could not process the image file");
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Could not open the image file");
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         File nonFile = new File("nonFile");
         UploadSearchParams uploadSearchParams = new UploadSearchParams(nonFile);
-        searchOperations.uploadSearch(uploadSearchParams);
-    }
-
-    @Test
-    public void testUploadSearchParamsInvalidFile() throws Exception {
-        expectedException.expect(ViSearchException.class);
-        expectedException.expectMessage("The image file seems to be invalid");
-        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        URL url = getClass().getResource("/stub.txt");
-        File invalidFile = new File(url.getFile());
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(invalidFile);
         searchOperations.uploadSearch(uploadSearchParams);
     }
 
@@ -344,80 +331,5 @@ public class ViSearchSearchOperationsTest {
         InputStream inputStream = null;
         UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
         searchOperations.uploadSearch(uploadSearchParams);
-    }
-
-    @Test
-    public void testUploadSearchParamsInvalidStream() throws Exception {
-        expectedException.expect(ViSearchException.class);
-        expectedException.expectMessage("The image stream seems to be invalid");
-        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        URL url = getClass().getResource("/stub.txt");
-        File invalidFile = new File(url.getFile());
-        FileInputStream inputStream = new FileInputStream(invalidFile);
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
-        searchOperations.uploadSearch(uploadSearchParams);
-    }
-
-    @Test
-    public void testUploadSearchParamsImage() {
-        String response = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
-        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<InputStream>any(), anyString())).thenReturn(response);
-        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
-        File imageFile = new File(resourceUrl.getFile());
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(imageFile);
-        assertEquals(imageFile, uploadSearchParams.getImageFile());
-        searchOperations.uploadSearch(uploadSearchParams);
-        Multimap<String, String> params = HashMultimap.create();
-        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<InputStream>any(), eq(imageFile.getName()));
-    }
-
-    @Test
-    public void testUploadSearchParamsImageStream() throws Exception {
-        String response = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
-        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<InputStream>any(), anyString())).thenReturn(response);
-        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
-        File imageFile = new File(resourceUrl.getFile());
-        FileInputStream fileInputStream = new FileInputStream(imageFile);
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(fileInputStream);
-        assertEquals(fileInputStream, uploadSearchParams.getImageStream());
-        searchOperations.uploadSearch(uploadSearchParams);
-        Multimap<String, String> params = HashMultimap.create();
-        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<InputStream>any(), eq("image-stream"));
-    }
-
-    @Test
-    public void testUploadSearchParamsBox() {
-        String response = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
-        when(mockClient.postImage(anyString(), Matchers.<Multimap<String, String>>any(), Matchers.<InputStream>any(), anyString())).thenReturn(response);
-        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
-        URL resourceUrl = getClass().getResource("/1600x1600.jpeg");
-        File imageFile = new File(resourceUrl.getFile());
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(imageFile);
-        Box box = new Box(400, 400, 800, 800);
-        uploadSearchParams.setBox(box);
-        searchOperations.uploadSearch(uploadSearchParams);
-        Multimap<String, String> params = HashMultimap.create();
-        params.put("box", "128,128,256,256");
-        verify(mockClient).postImage(eq("/uploadsearch"), eq(params), Matchers.<InputStream>any(), eq(imageFile.getName()));
-    }
-
-    @Test
-    public void testResizeParamNormalQuality() {
-        ResizeSettings resizeSettings = new ResizeSettings(100, 100, 0.5f);
-        assertEquals(0.5f, resizeSettings.getQuality(), 0.000001f);
-    }
-
-    @Test
-    public void testResizeParamNegQuality() {
-        ResizeSettings resizeSettings = new ResizeSettings(100, 100, -1.0f);
-        assertEquals(0.0f, resizeSettings.getQuality(), 0.000001f);
-    }
-
-    @Test
-    public void testResizeParamOverOneQuality() {
-        ResizeSettings resizeSettings = new ResizeSettings(100, 100, 2.0f);
-        assertEquals(1.0f, resizeSettings.getQuality(), 0.000001f);
     }
 }

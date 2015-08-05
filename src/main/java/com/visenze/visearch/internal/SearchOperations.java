@@ -10,6 +10,7 @@ public interface SearchOperations {
 
     PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams);
 
+    @Deprecated
     PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings);
 
 }

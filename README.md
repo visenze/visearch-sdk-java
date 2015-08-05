@@ -20,7 +20,6 @@
 	  - 5.2 [Color Search](#52-color-search)
 	  - 5.3 [Upload Search](#53-upload-search)
 	    - 5.3.1 [Selection Box](#531-selection-box)
-	    - 5.3.2 [Resizing Settings](#532-resizing-settings)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
@@ -284,32 +283,6 @@ UploadSearchParams params = new UploadSearchParams(imageFile);
 Box box = new Box(50, 50, 200, 200);
 params.setBox(box);
 PagedSearchResult searchResult = client.uploadSearch(params);
-```
-
-####5.3.2 Resizing Settings
-
-When performing upload search, you might experience increasing search latency with increasing image file sizes. This is due to the increased time transferring your images to the ViSearch server, and the increased time for processing larger image files in ViSearch.
-
-To reduce upload search latency, by default the ```uploadSearch``` method makes a copy of your image file if both of the image dimensions exceed 512 pixels, and resizes the copy to dimensions not exceeding 512x512 pixels. This is the optimized size to lower search latency while not sacrificing search accuracy for general use cases:
-```java
-// client.uploadSearch(params) is equivalent to using STANDARD resize settings, 512x512 and jpeg 75 quality
-PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.STANDARD);
-```
-
-For instance, the blue rectangle image on the left will be resized to the one on the right:
-![resize example](img/resize_example.png)
-
-If your image contains fine details such as textile patterns and textures, use the HIGH resize settings to get better search results:
-```java
-// for images with fine details, use HIGH resize settings 1024x1024 and jpeg 75 quality
-PagedSearchResult searchResult = client.uploadSearch(params, ResizeSettings.HIGH);
-```
-
-Or provide customized resize settings:
-```java
-// using customized resize settings with width = 800, height = 600 and jpeg 80 quality
-ResizeSettings settings = new ResizeSettings(800, 600, 80);
-PagedSearchResult searchResult = client.uploadSearch(params, settings);
 ```
 
 ##6. Search Results
