@@ -34,7 +34,7 @@
     </developers>
 
     <properties>
-        <jdk.version>1.7</jdk.version>
+        <jdk.version>1.6</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <httpcomponents.version>4.4.1</httpcomponents.version>
         <guava.version>18.0</guava.version>
