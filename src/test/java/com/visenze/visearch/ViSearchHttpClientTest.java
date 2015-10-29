@@ -9,6 +9,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EncodingUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,6 +64,8 @@ public class ViSearchHttpClientTest {
         ArgumentCaptor<HttpUriRequest> argument = ArgumentCaptor.forClass(HttpUriRequest.class);
 
         CloseableHttpResponse response = mock(CloseableHttpResponse.class);
+        Header[] headers = { new BasicHeader("test-param", "123") };
+        when(response.getAllHeaders()).thenReturn(headers);
         when(response.getEntity()).thenReturn(new StringEntity("test"));
         when(mockedHttpClient.execute(argument.capture())).thenReturn(response);
 

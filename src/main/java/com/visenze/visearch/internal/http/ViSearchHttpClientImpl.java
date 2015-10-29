@@ -1,13 +1,11 @@
 package com.visenze.visearch.internal.http;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.NetworkException;
 import com.visenze.visearch.ViSearchException;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
@@ -24,7 +22,6 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,27 +69,27 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     }
 
     @Override
-    public String get(String path, Multimap<String, String> params) {
+    public ViSearchHttpResponse get(String path, Multimap<String, String> params) {
         HttpUriRequest request = buildGetRequest(endpoint + path, params);
-        return getStringResponse(request);
+        return getResponse(request);
     }
 
     @Override
-    public String post(String path, Multimap<String, String> params) {
+    public ViSearchHttpResponse post(String path, Multimap<String, String> params) {
         HttpUriRequest request = buildPostRequest(endpoint + path, params);
-        return getStringResponse(request);
+        return getResponse(request);
     }
 
     @Override
-    public String postImage(String path, Multimap<String, String> params, File file) {
+    public ViSearchHttpResponse postImage(String path, Multimap<String, String> params, File file) {
         HttpUriRequest request = buildPostRequestForImage(endpoint + path, params, file);
-        return getStringResponse(request);
+        return getResponse(request);
     }
 
     @Override
-    public String postImage(String path, Multimap<String, String> params, InputStream inputStream, String filename) {
+    public ViSearchHttpResponse postImage(String path, Multimap<String, String> params, InputStream inputStream, String filename) {
         HttpUriRequest request = buildPostRequestForImage(endpoint + path, params, inputStream, filename);
-        return getStringResponse(request);
+        return getResponse(request);
     }
 
     private HttpUriRequest buildGetRequest(String url, Multimap<String, String> params) {
@@ -156,11 +153,25 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private String getStringResponse(HttpUriRequest request) {
+    private ViSearchHttpResponse getResponse(HttpUriRequest request) {
         addAuthHeader(request);
         addUserAgentHeader(request);
         CloseableHttpResponse response = executeRequest(request);
-        return getStringFromEntity(response);
+        try {
+            Map<String, String> headers = Maps.newHashMap();
+            Header[] responseHeaders = response.getAllHeaders();
+            if (responseHeaders != null) {
+                for (Header header : responseHeaders) {
+                    headers.put(header.getName(), header.getValue());
+                }
+            }
+            ViSearchHttpResponse response1 = new ViSearchHttpResponse(response);
+            response1.setHeaders(headers);
+            return response1;
+        } catch (IllegalArgumentException e) {
+            throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
+                    "Please check your network connectivity and try again.", e);
+        }
     }
 
     private void addAuthHeader(HttpUriRequest request) {
@@ -185,19 +196,6 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
             return httpClient.execute(request);
         } catch (IOException e) {
             throw new NetworkException("A network error occurred when requesting to the ViSearch endpoint. " +
-                    "Please check your network connectivity and try again.", e);
-        }
-    }
-
-    private String getStringFromEntity(CloseableHttpResponse response) {
-        try {
-            HttpEntity entity = response.getEntity();
-            return EntityUtils.toString(entity);
-        } catch (IOException e) {
-            throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
-                    "Please check your network connectivity and try again.", e);
-        } catch (IllegalArgumentException e) {
-            throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
                     "Please check your network connectivity and try again.", e);
         }
     }

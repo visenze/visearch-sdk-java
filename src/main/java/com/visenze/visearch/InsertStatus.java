@@ -1,10 +1,12 @@
 package com.visenze.visearch;
 
 
+import com.visenze.visearch.internal.ResponseBase;
+
 import java.util.Date;
 import java.util.List;
 
-public class InsertStatus {
+public class InsertStatus extends ResponseBase {
 
     final private String transId;
     final private Integer processedPercent;

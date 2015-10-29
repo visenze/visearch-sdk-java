@@ -1,8 +1,10 @@
 package com.visenze.visearch;
 
+import com.visenze.visearch.internal.ResponseBase;
+
 import java.util.List;
 
-public class InsertTrans {
+public class InsertTrans extends ResponseBase {
 
     private String transId;
     private Integer total;
@@ -25,5 +27,4 @@ public class InsertTrans {
     public List<InsertError> getErrorList() {
         return errorList;
     }
-
 }

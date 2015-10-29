@@ -1,8 +1,10 @@
 package com.visenze.visearch;
 
+import com.visenze.visearch.internal.ResponseBase;
+
 import java.util.List;
 
-public class PagedResult<T> {
+public class PagedResult<T> extends ResponseBase {
 
     protected Integer page;
 

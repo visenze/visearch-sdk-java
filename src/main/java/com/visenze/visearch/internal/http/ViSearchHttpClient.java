@@ -7,12 +7,12 @@ import java.io.InputStream;
 
 public interface ViSearchHttpClient {
 
-    String get(String url, Multimap<String, String> params);
+    ViSearchHttpResponse get(String url, Multimap<String, String> params);
 
-    String post(String url, Multimap<String, String> params);
+    ViSearchHttpResponse post(String url, Multimap<String, String> params);
 
-    String postImage(String url, Multimap<String, String> params, File file);
+    ViSearchHttpResponse postImage(String url, Multimap<String, String> params, File file);
 
-    String postImage(String url, Multimap<String, String> params, InputStream inputStream, String filename);
+    ViSearchHttpResponse postImage(String url, Multimap<String, String> params, InputStream inputStream, String filename);
 
 }

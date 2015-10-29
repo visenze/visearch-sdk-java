@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
+import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
 import java.io.*;
 import java.util.List;
@@ -19,13 +20,13 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
     @Override
     public PagedSearchResult search(SearchParams searchParams) {
-        String response = viSearchHttpClient.get("/search", searchParams.toMap());
+        ViSearchHttpResponse response = viSearchHttpClient.get("/search", searchParams.toMap());
         return getPagedResult(response);
     }
 
     @Override
     public PagedSearchResult colorSearch(ColorSearchParams colorSearchParams) {
-        String response = viSearchHttpClient.get("/colorsearch", colorSearchParams.toMap());
+        ViSearchHttpResponse response = viSearchHttpClient.get("/colorsearch", colorSearchParams.toMap());
         return getPagedResult(response);
     }
 
@@ -44,7 +45,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
-        String response;
+        ViSearchHttpResponse response;
         if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
             throw new IllegalArgumentException("Must provide either an image File, InputStream of the image, or a valid image url to perform upload search");
         } else if (imageFile != null) {
@@ -61,7 +62,9 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         return getPagedResult(response);
     }
 
-    private PagedSearchResult getPagedResult(String response) {
+    private PagedSearchResult getPagedResult(ViSearchHttpResponse httpResponse) {
+        String response = httpResponse.getBody();
+        Map<String, String> headers = httpResponse.getHeaders();
         JsonNode node;
         try {
             node = objectMapper.readTree(response);
@@ -85,6 +88,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setQueryInfo(qinfo);
         }
         result.setRawJson(node.toString());
+        result.setHeaders(headers);
         return result;
     }
 

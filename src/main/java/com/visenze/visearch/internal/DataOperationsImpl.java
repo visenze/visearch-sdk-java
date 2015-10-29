@@ -13,6 +13,7 @@ import com.visenze.visearch.InsertStatus;
 import com.visenze.visearch.InsertTrans;
 import com.visenze.visearch.ViSearchException;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
+import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,14 +39,18 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
         for (Map.Entry<String, String> entry : customParams.entrySet()) {
             params.put(entry.getKey(), entry.getValue());
         }
-        String response = viSearchHttpClient.post("/insert", params);
+        ViSearchHttpResponse httpResponse = viSearchHttpClient.post("/insert", params);
+        String response = httpResponse.getBody();
+        Map<String, String> headers = httpResponse.getHeaders();
         try {
             JsonNode responseNode = objectMapper.readTree(response);
             JsonNode statusNode = responseNode.get("status");
             if (statusNode == null) {
                 throw new ViSearchException("There was a malformed ViSearch response: " + response, response);
             } else {
-                return deserializeObjectResult(response, InsertTrans.class);
+                InsertTrans insertTrans = deserializeObjectResult(response, InsertTrans.class);
+                insertTrans.setHeaders(headers);
+                return insertTrans;
             }
         } catch (JsonProcessingException e) {
             throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
@@ -57,8 +62,8 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
     @Override
     public InsertStatus insertStatus(String transId) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(transId), "trans_id must not be null or empty");
-        String response = viSearchHttpClient.get("/insert/status/" + transId, HashMultimap.<String, String>create());
-        return parseInsertStatus(response);
+        ViSearchHttpResponse response = viSearchHttpClient.get("/insert/status/" + transId, HashMultimap.<String, String>create());
+        return parseInsertStatus(response.getBody(), response.getHeaders());
     }
 
     @Override
@@ -69,11 +74,11 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
         Multimap<String, String> params = HashMultimap.create();
         params.put("error_page", errorPage.toString());
         params.put("error_limit", errorLimit.toString());
-        String response = viSearchHttpClient.get("/insert/status/" + transId, params);
-        return parseInsertStatus(response);
+        ViSearchHttpResponse response = viSearchHttpClient.get("/insert/status/" + transId, params);
+        return parseInsertStatus(response.getBody(), response.getHeaders());
     }
 
-    private InsertStatus parseInsertStatus(String response) {
+    private InsertStatus parseInsertStatus(String response, Map<String, String> headers) {
         try {
             JsonNode responseNode = objectMapper.readTree(response);
             JsonNode statusNode = responseNode.get("status");
@@ -92,7 +97,9 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
                     throw new ViSearchException("An error occurred calling ViSearch: " + message, response);
                 } else {
                     JsonNode resultNode = resultArrayNode.get(0);
-                    return deserializeObjectResult(resultNode.toString(), InsertStatus.class);
+                    InsertStatus insertStatus = deserializeObjectResult(resultNode.toString(), InsertStatus.class);
+                    insertStatus.setHeaders(headers);
+                    return insertStatus;
                 }
             }
         } catch (JsonProcessingException e) {
