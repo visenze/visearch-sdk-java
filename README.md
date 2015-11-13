@@ -340,6 +340,19 @@ for (ImageResult imageResult : imageResults) {
 }
 ```
 
+To retrieve all metadata of your image results, specify ```get_all_fl``` parameter and set it to ```true```:
+
+```java
+SearchParams params = new SearchParams("vintage_wingtips");
+params.setGetAllFl(true);
+PagedSearchResult searchResult = client.search(params);
+List<ImageResult> imageResults = searchResult.getResult();
+for (ImageResult imageResult : imageResults) {
+    Map<String, String> metadata = imageResult.getMetadata();
+    // read your metadata here
+}
+```
+
  > Only metadata of type string, int, and float can be retrieved from ViSearch. Metadata of type text is not available for retrieval.
 
 ###7.2 Filtering Results

@@ -23,6 +23,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     static final private List<String> DEFAULT_FL = Lists.newArrayList();
     static final private Boolean DEFAULT_QINFO = false;
     static final private Map<String, String> DEFAULT_CUSTOM = new HashMap<String, String>();
+    static final private Boolean DEFAULT_GET_ALL_FL = false;
 
     protected Optional<Integer> page = Optional.absent();
     protected Optional<Integer> limit = Optional.absent();
@@ -33,6 +34,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<Float> scoreMax = Optional.absent();
     protected Optional<Map<String, String>> fq = Optional.absent();
     protected Optional<List<String>> fl = Optional.absent();
+    protected Optional<Boolean> getAllFl = Optional.absent();
     protected Optional<Boolean> qInfo = Optional.absent();
     protected Optional<Map<String, String>> custom = Optional.absent();
 
@@ -91,6 +93,12 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     }
 
     @SuppressWarnings("unchecked")
+    public P setGetAllFl(Boolean getAllFl) {
+        this.getAllFl = Optional.fromNullable(getAllFl);
+        return (P) this;
+    }
+
+    @SuppressWarnings("unchecked")
     public P setQInfo(Boolean qInfo) {
         this.qInfo = Optional.fromNullable(qInfo);
         return (P) this;
@@ -138,6 +146,11 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return fl.or(DEFAULT_FL);
     }
 
+    public Boolean isGetAllFl()
+    {
+        return getAllFl.or(DEFAULT_GET_ALL_FL);
+    }
+
     public Boolean isQInfo() {
         return qInfo.or(DEFAULT_QINFO);
     }
@@ -180,6 +193,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
         for (String fl : getFl()) {
             map.put("fl", fl);
+        }
+
+        if (isGetAllFl()) {
+            map.put("get_all_fl", "true");
         }
 
         if (isQInfo()) {

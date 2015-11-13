@@ -95,6 +95,7 @@ public class ViSearchSearchOperationsTest {
                 .setScoreMax(0.75f)
                 .setFq(fq)
                 .setFl(Lists.newArrayList("field_x", "field_y"))
+                .setGetAllFl(true)
                 .setQInfo(true)
                 .setCustom(custom);
         searchOperations.search(searchParams);
@@ -109,6 +110,7 @@ public class ViSearchSearchOperationsTest {
         expectedParams.put("fq", "field_b:value_b");
         expectedParams.put("fl", "field_x");
         expectedParams.put("fl", "field_y");
+        expectedParams.put("get_all_fl", "true");
         expectedParams.put("qinfo", "true");
         expectedParams.put("custom_key", "custom_value");
         verify(mockClient).get("/search", expectedParams);
