@@ -340,11 +340,11 @@ for (ImageResult imageResult : imageResults) {
 }
 ```
 
-To retrieve all metadata of your image results, use ```get_all_fl``` property and set it to ```true```:
+To retrieve all metadata of your image results, specify ```get_all_fl``` parameter and set it to ```true```:
 
 ```java
 SearchParams params = new SearchParams("vintage_wingtips");
-params.setGet_all_fl(true);
+params.setGetAllFl(true);
 PagedSearchResult searchResult = client.search(params);
 List<ImageResult> imageResults = searchResult.getResult();
 for (ImageResult imageResult : imageResults) {

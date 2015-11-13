@@ -95,7 +95,7 @@ public class ViSearchSearchOperationsTest {
                 .setScoreMax(0.75f)
                 .setFq(fq)
                 .setFl(Lists.newArrayList("field_x", "field_y"))
-                .setGet_all_fl(true)
+                .setGetAllFl(true)
                 .setQInfo(true)
                 .setCustom(custom);
         searchOperations.search(searchParams);
