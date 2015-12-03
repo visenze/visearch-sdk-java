@@ -90,7 +90,7 @@ public class ViSearch implements DataOperations, SearchOperations {
             throw new IllegalArgumentException("ViSearch endpoint must not be empty.");
         }
         if (clientConfig == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("ClientConfig must not be null.");
         }
         ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(endpoint, accessKey, secretKey, clientConfig);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
