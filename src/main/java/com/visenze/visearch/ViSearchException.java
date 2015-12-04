@@ -2,7 +2,7 @@ package com.visenze.visearch;
 
 public class ViSearchException extends RuntimeException {
 
-    protected String json;
+    private String json;
 
     public ViSearchException(String message) {
         super(message);

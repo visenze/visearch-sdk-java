@@ -35,6 +35,9 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         return uploadSearchInternal(uploadSearchParams);
     }
 
+    /**
+     * @deprecated
+     * */
     @Deprecated
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
@@ -92,14 +95,14 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         return result;
     }
 
-    private void checkResponseStatus(JsonNode node) {
+    private static void checkResponseStatus(JsonNode node) {
         String json = node.toString();
         JsonNode statusNode = node.get("status");
         if (statusNode == null) {
             throw new ViSearchException("There was a malformed ViSearch response: " + json, json);
         } else {
             String status = statusNode.asText();
-            if (!status.equals("OK")) {
+            if (!"OK".equals(status)) {
                 JsonNode errorNode = node.get("error");
                 if (errorNode == null) {
                     throw new ViSearchException("An unknown error occurred in ViSearch: " + json, json);

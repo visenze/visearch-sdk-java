@@ -8,16 +8,16 @@ import java.util.List;
 
 public class InsertStatus extends ResponseBase {
 
-    final private String transId;
-    final private Integer processedPercent;
-    final private Integer total;
-    final private Integer successCount;
-    final private Integer failCount;
-    final private Date startTime;
-    final private Date updateTime;
-    final private List<InsertError> errorList;
-    final private Integer errorPage;
-    final private Integer errorLimit;
+    private final String transId;
+    private final Integer processedPercent;
+    private final Integer total;
+    private final Integer successCount;
+    private final Integer failCount;
+    private final Date startTime;
+    private final Date updateTime;
+    private final List<InsertError> errorList;
+    private final Integer errorPage;
+    private final Integer errorLimit;
 
     public InsertStatus(String transId, Integer processedPercent,
                         Integer total, Integer successCount, Integer failCount,

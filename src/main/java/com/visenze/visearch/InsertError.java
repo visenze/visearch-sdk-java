@@ -3,10 +3,10 @@ package com.visenze.visearch;
 
 public class InsertError {
 
-    final private String imName;
-    final private Integer index;
-    final private Integer errorCode;
-    final private String errorMessage;
+    private final String imName;
+    private final Integer index;
+    private final Integer errorCode;
+    private final String errorMessage;
 
     public InsertError(String imName, Integer index, Integer errorCode, String errorMessage) {
         this.imName = imName;

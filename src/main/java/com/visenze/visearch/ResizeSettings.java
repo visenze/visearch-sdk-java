@@ -3,15 +3,16 @@ package com.visenze.visearch;
 
 /**
  * ResizeSettings is deprecated and has no effect on the upload search image.
+ * @deprecated
  */
 @Deprecated
 public class ResizeSettings {
 
-    public static ResizeSettings STANDARD = new ResizeSettings(512, 512, 0.97f);
+    public static final ResizeSettings STANDARD = new ResizeSettings(512, 512, 0.97f);
 
-    public static ResizeSettings HIGH = new ResizeSettings(1024, 1024, 0.985f);
+    public static final ResizeSettings HIGH = new ResizeSettings(1024, 1024, 0.985f);
 
-    private static float DELTA = 0.000001f;
+    private static final float DELTA = 0.000001f;
 
     private int width;
     private int height;

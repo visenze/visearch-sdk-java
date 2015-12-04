@@ -87,7 +87,7 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
             } else {
                 String status = statusNode.asText();
                 JsonNode resultArrayNode = responseNode.get("result");
-                if (status.equals("fail") ||
+                if ("fail".equals(status) ||
                         resultArrayNode == null || !resultArrayNode.isArray() || resultArrayNode.get(0) == null) {
                     JsonNode errorNode = responseNode.get("error");
                     if (errorNode == null || !errorNode.isArray() || errorNode.get(0) == null) {
@@ -116,7 +116,7 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
         viSearchHttpClient.post("/remove", params);
     }
 
-    private Multimap<String, String> imageListToParams(List<Image> imageList) {
+    private static Multimap<String, String> imageListToParams(List<Image> imageList) {
         Multimap<String, String> params = HashMultimap.create();
         for (int i = 0; i < imageList.size(); i++) {
             Image image = imageList.get(i);
@@ -134,7 +134,7 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
         return params;
     }
 
-    private Map<String, String> imageNameListToParams(List<String> imNameList) {
+    private static Map<String, String> imageNameListToParams(List<String> imNameList) {
         Map<String, String> params = new HashMap<String, String>();
         for (int i = 0; i < imNameList.size(); i++) {
             String imName = imNameList.get(i);

@@ -99,7 +99,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                 .build();
     }
 
-    private URI buildGetUri(String url, List<NameValuePair> nameValuePairList) {
+    private static URI buildGetUri(String url, List<NameValuePair> nameValuePairList) {
         try {
             return new URIBuilder(url).addParameters(nameValuePairList).build();
         } catch (URISyntaxException e) {
@@ -108,7 +108,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private URI buildPostUri(String url) {
+    private static URI buildPostUri(String url) {
         try {
             return new URIBuilder(url).build();
         } catch (URISyntaxException e) {
@@ -126,13 +126,13 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                 .build();
     }
 
-    private HttpUriRequest buildMultipartPostRequest(String url, HttpEntity entity) {
+    private static HttpUriRequest buildMultipartPostRequest(String url, HttpEntity entity) {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(entity);
         return httpPost;
     }
 
-    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
+    private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setCharset(Charset.forName("utf-8"));
         for (Map.Entry<String, String> entry : params.entries()) {
@@ -143,7 +143,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
+    private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
