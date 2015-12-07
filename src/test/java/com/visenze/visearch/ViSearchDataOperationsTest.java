@@ -121,6 +121,71 @@ public class ViSearchDataOperationsTest {
     }
 
     @Test
+    public void testRemoveNoStatus() throws Exception {
+        String insertResponse = "{\"method\":\"remove\",\"result\":[],\"error\":[],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveNoTotal() throws Exception {
+        String insertResponse = "{\"status\":\"OK\",\"method\":\"remove\",\"result\":[],\"error\":[]}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveFailNoError() throws Exception {
+        String insertResponse = "{\"status\":\"fail\",\"method\":\"remove\",\"result\":[],\"error\":[],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveFailWithError() throws Exception {
+        String insertResponse = "{\"status\":\"fail\",\"method\":\"remove\",\"result\":[],\"error\":[\"Error Message\"],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals("Error Message", removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveJsonFormatError() throws Exception {
+        String insertResponse = "{\"status\":\"fail\" \"method\":\"remove\",\"result\":[],\"error\":[\"Error Message\"],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
     public void testInsertStatusErrorPageParams() throws Exception {
         String insertResponse = "{\"status\":\"OK\",\"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":1,\"fail_count\":1,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\",\"error_list\":[{\"im_name\":\"test_im\",\"error_code\":201,\"error_message\":\"Could not download the image from im_url.\"}],\"error_page\":1,\"error_limit\":10}]}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -166,6 +231,32 @@ public class ViSearchDataOperationsTest {
         assertEquals(new Integer(1), insertTrans.getTotal());
         assertEquals("317503499455827968", insertTrans.getTransId());
         assertNull(insertTrans.getErrorList());
+    }
+
+    @Test
+    public void testInsertOneImageNoStatus() throws Exception {
+        String insertResponse = "{\"trans_id\":317503499455827968,\"method\":\"insert\",\"total\":1}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<Image> imageList = new ArrayList<Image>();
+        InsertTrans insertTrans = dataOperations.insert(imageList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), insertTrans.getErrorMessage());
+        assertEquals(insertResponse, insertTrans.getRawResponseMessage());
+    }
+
+    @Test
+    public void testInsertOneImageErrorJsonFormat() throws Exception {
+        String insertResponse = "{\"status\":\"OK\" \"trans_id\":317503499455827968,\"method\":\"insert\",\"total\":1}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<Image> imageList = new ArrayList<Image>();
+        InsertTrans insertTrans = dataOperations.insert(imageList);
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), insertTrans.getErrorMessage());
+        assertEquals(insertResponse, insertTrans.getRawResponseMessage());
     }
 
     @Test
@@ -257,6 +348,18 @@ public class ViSearchDataOperationsTest {
         assertNull(insertStatus.getErrorPage());
         assertNull(insertStatus.getErrorLimit());
         assertNull(insertStatus.getErrorList());
+    }
+
+    @Test
+    public void testInsertStatusNoStatus() throws Exception {
+        String insertResponse = "{\"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":2,\"fail_count\":0,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\"}]}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968");
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), insertStatus.getErrorMessage());
+        assertEquals(insertResponse, insertStatus.getRawResponseMessage());
     }
 
     @Test

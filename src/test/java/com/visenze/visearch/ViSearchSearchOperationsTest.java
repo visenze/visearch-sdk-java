@@ -321,6 +321,20 @@ public class ViSearchSearchOperationsTest {
     }
 
     @Test
+    public void testColorSearchJsonFormatError() {
+        String responseBody = "{\"status\":\"OK\" \"method\":\"colorsearch\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        ColorSearchParams colorSearchParams = new ColorSearchParams("123ABC");
+        assertEquals("123ABC", colorSearchParams.getColor());
+        PagedSearchResult searchResult = searchOperations.colorSearch(colorSearchParams);
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), searchResult.getErrorMessage());
+        assertEquals(responseBody, searchResult.getRawResponseMessage());
+    }
+
+    @Test
     public void testColorSearchParamsInvalid() {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("Invalid color. " +
