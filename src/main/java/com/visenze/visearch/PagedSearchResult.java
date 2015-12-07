@@ -15,6 +15,12 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
         super(pagedResult.getPage(), pagedResult.getLimit(), pagedResult.getTotal(), pagedResult.getResult());
     }
 
+    public PagedSearchResult(String errorMessage, Throwable e, String rawResponse) {
+        super.setErrorMessage(errorMessage);
+        super.setCause(e);
+        super.setRawResponseMessage(rawResponse);
+    }
+
     public void setFacets(List<Facet> facets) {
         this.facets = facets;
     }

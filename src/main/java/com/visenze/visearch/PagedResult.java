@@ -14,6 +14,8 @@ public class PagedResult<T> extends ResponseBase {
 
     protected List<T> result;
 
+    public PagedResult() {}
+
     public PagedResult(Integer page, Integer limit, Integer total, List<T> result) {
         this.page = page;
         this.limit = limit;
