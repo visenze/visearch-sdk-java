@@ -16,6 +16,12 @@ public class InsertTrans extends ResponseBase {
         this.errorList = errorList;
     }
 
+    public InsertTrans(String errorMessage, Throwable e, String rawResponseMessage) {
+        super.setErrorMessage(errorMessage);
+        super.setCause(e);
+        super.setRawResponseMessage(rawResponseMessage);
+    }
+
     public String getTransId() {
         return transId;
     }

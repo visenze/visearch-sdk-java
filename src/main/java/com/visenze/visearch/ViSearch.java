@@ -90,7 +90,7 @@ public class ViSearch implements DataOperations, SearchOperations {
             throw new IllegalArgumentException("ViSearch endpoint must not be empty.");
         }
         if (clientConfig == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("ClientConfig must not be null.");
         }
         ViSearchHttpClient viSearchHttpClient = new ViSearchHttpClientImpl(endpoint, accessKey, secretKey, clientConfig);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
@@ -149,10 +149,11 @@ public class ViSearch implements DataOperations, SearchOperations {
      * Remove a list of images from the ViSearch App, identified by their im_names.
      *
      * @param imNameList the list of im_names of the images to be removed
+     * @return the remove status
      */
     @Override
-    public void remove(List<String> imNameList) {
-        dataOperations.remove(imNameList);
+    public RemoveStatus remove(List<String> imNameList) {
+        return dataOperations.remove(imNameList);
     }
 
     /**

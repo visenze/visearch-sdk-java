@@ -16,14 +16,14 @@ import java.util.Map;
  */
 public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
-    static final private Boolean DEFAULT_FACET = false;
-    static final private List<String> DEFAULT_FACET_FIELD = Lists.newArrayList();
-    static final private Boolean DEFAULT_SCORE = false;
-    static final private Map<String, String> DEFAULT_FQ = new HashMap<String, String>();
-    static final private List<String> DEFAULT_FL = Lists.newArrayList();
-    static final private Boolean DEFAULT_QINFO = false;
-    static final private Map<String, String> DEFAULT_CUSTOM = new HashMap<String, String>();
-    static final private Boolean DEFAULT_GET_ALL_FL = false;
+    private static final Boolean DEFAULT_FACET = false;
+    private static final List<String> DEFAULT_FACET_FIELD = Lists.newArrayList();
+    private static final Boolean DEFAULT_SCORE = false;
+    private static final Map<String, String> DEFAULT_FQ = new HashMap<String, String>();
+    private static final List<String> DEFAULT_FL = Lists.newArrayList();
+    private static final Boolean DEFAULT_QINFO = false;
+    private static final Map<String, String> DEFAULT_CUSTOM = new HashMap<String, String>();
+    private static final Boolean DEFAULT_GET_ALL_FL = false;
 
     protected Optional<Integer> page = Optional.absent();
     protected Optional<Integer> limit = Optional.absent();
@@ -169,7 +169,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
             map.put("limit", getLimit().toString());
         }
 
-        if (isFacet() && getFacetField().size() > 0) {
+        if (isFacet() && !getFacetField().isEmpty()) {
             map.put("facet", "true");
             for (String facetFieldItem : getFacetField()) {
                 map.put("facet_field", facetFieldItem);
@@ -191,8 +191,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
             map.put("fq", entry.getKey() + ":" + entry.getValue());
         }
 
-        for (String fl : getFl()) {
-            map.put("fl", fl);
+        for (String filter : getFl()) {
+            map.put("fl", filter);
         }
 
         if (isGetAllFl()) {

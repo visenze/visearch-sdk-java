@@ -2,6 +2,7 @@ package com.visenze.visearch;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.visenze.visearch.internal.InternalViSearchException;
 import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
@@ -121,7 +122,7 @@ public class ViSearchHttpClientTest {
 
     @Test
     public void testInvalidEndPointUsingGetMethod() {
-        expectedException.expect(ViSearchException.class);
+        expectedException.expect(InternalViSearchException.class);
         ViSearchHttpClientImpl client;
         client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
         client.get(path, params);
@@ -129,7 +130,7 @@ public class ViSearchHttpClientTest {
 
     @Test
     public void testInvalidEndPointUsingPostMethod() {
-        expectedException.expect(ViSearchException.class);
+        expectedException.expect(InternalViSearchException.class);
         ViSearchHttpClientImpl client;
         client = new ViSearchHttpClientImpl(invalidEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
         client.post(path, params);
@@ -153,7 +154,7 @@ public class ViSearchHttpClientTest {
 
     @Test
     public void testHttpClientThrowsIOExceptionUsingPostMethod() throws Exception {
-        expectedException.expect(NetworkException.class);
+        expectedException.expect(InternalViSearchException.class);
         ViSearchHttpClientImpl client;
         client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
         when(mockedHttpClient.execute(Matchers.<HttpUriRequest>any())).thenThrow(new IOException("test IOException"));
@@ -162,7 +163,7 @@ public class ViSearchHttpClientTest {
 
     @Test
     public void testCloseableHttpResponseThrowsIllegalArgumentExceptionUsingPostMethod() throws Exception {
-        expectedException.expect(NetworkException.class);
+        expectedException.expect(InternalViSearchException.class);
         ViSearchHttpClientImpl client;
         client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
         CloseableHttpResponse response = mock(CloseableHttpResponse.class);

@@ -3,6 +3,7 @@ package com.visenze.visearch.internal;
 import com.visenze.visearch.Image;
 import com.visenze.visearch.InsertStatus;
 import com.visenze.visearch.InsertTrans;
+import com.visenze.visearch.RemoveStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,6 @@ public interface DataOperations {
 
     InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit);
 
-    void remove(List<String> imNameList);
+    RemoveStatus remove(List<String> imNameList);
 
 }

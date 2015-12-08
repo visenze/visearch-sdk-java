@@ -55,6 +55,9 @@ public class ViSearchDataOperationsTest {
         imageList.add(image1);
         InsertTrans insertTrans = dataOperations.insert(imageList);
         assertEquals(responseHeaders, insertTrans.getHeaders());
+        assertEquals(null, insertTrans.getErrorMessage());
+        assertEquals(null, insertTrans.getCause());
+        assertEquals(null, insertTrans.getRawResponseMessage());
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name[0]", "test_im_0");
         expectedParams.put("im_url[0]", "http://www.example.com/test_im_0.jpeg");
@@ -104,6 +107,10 @@ public class ViSearchDataOperationsTest {
 
     @Test
     public void testRemoveParams() throws Exception {
+        String insertResponse = "{\"status\":\"OK\",\"method\":\"remove\",\"result\":[],\"error\":[],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
         dataOperations.remove(imNameList);
@@ -111,6 +118,71 @@ public class ViSearchDataOperationsTest {
         expectedParams.put("im_name[0]", "test_im_0");
         expectedParams.put("im_name[1]", "test_im_1");
         verify(mockClient).post("/remove", expectedParams);
+    }
+
+    @Test
+    public void testRemoveNoStatus() throws Exception {
+        String insertResponse = "{\"method\":\"remove\",\"result\":[],\"error\":[],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveNoTotal() throws Exception {
+        String insertResponse = "{\"status\":\"OK\",\"method\":\"remove\",\"result\":[],\"error\":[]}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveFailNoError() throws Exception {
+        String insertResponse = "{\"status\":\"fail\",\"method\":\"remove\",\"result\":[],\"error\":[],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveFailWithError() throws Exception {
+        String insertResponse = "{\"status\":\"fail\",\"method\":\"remove\",\"result\":[],\"error\":[\"Error Message\"],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals("Error Message", removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
+    }
+
+    @Test
+    public void testRemoveJsonFormatError() throws Exception {
+        String insertResponse = "{\"status\":\"fail\" \"method\":\"remove\",\"result\":[],\"error\":[\"Error Message\"],\"total\":2}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<String> imNameList = Lists.newArrayList("test_im_0", "test_im_1");
+        RemoveStatus removeStatus = dataOperations.remove(imNameList);
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), removeStatus.getErrorMessage());
+        assertEquals(insertResponse, removeStatus.getRawResponseMessage());
     }
 
     @Test
@@ -159,6 +231,32 @@ public class ViSearchDataOperationsTest {
         assertEquals(new Integer(1), insertTrans.getTotal());
         assertEquals("317503499455827968", insertTrans.getTransId());
         assertNull(insertTrans.getErrorList());
+    }
+
+    @Test
+    public void testInsertOneImageNoStatus() throws Exception {
+        String insertResponse = "{\"trans_id\":317503499455827968,\"method\":\"insert\",\"total\":1}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<Image> imageList = new ArrayList<Image>();
+        InsertTrans insertTrans = dataOperations.insert(imageList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), insertTrans.getErrorMessage());
+        assertEquals(insertResponse, insertTrans.getRawResponseMessage());
+    }
+
+    @Test
+    public void testInsertOneImageErrorJsonFormat() throws Exception {
+        String insertResponse = "{\"status\":\"OK\" \"trans_id\":317503499455827968,\"method\":\"insert\",\"total\":1}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        List<Image> imageList = new ArrayList<Image>();
+        InsertTrans insertTrans = dataOperations.insert(imageList);
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), insertTrans.getErrorMessage());
+        assertEquals(insertResponse, insertTrans.getRawResponseMessage());
     }
 
     @Test
@@ -253,6 +351,18 @@ public class ViSearchDataOperationsTest {
     }
 
     @Test
+    public void testInsertStatusNoStatus() throws Exception {
+        String insertResponse = "{\"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":2,\"fail_count\":0,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\"}]}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968");
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), insertStatus.getErrorMessage());
+        assertEquals(insertResponse, insertStatus.getRawResponseMessage());
+    }
+
+    @Test
     public void testInsertStatusMixed() throws Exception {
         String insertResponse = "{\"status\":\"OK\",\"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":1,\"fail_count\":1,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\",\"error_list\":[{\"im_name\":\"test_im\",\"error_code\":201,\"error_message\":\"Could not download the image from im_url.\"}],\"error_page\":1,\"error_limit\":10}]}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -304,7 +414,6 @@ public class ViSearchDataOperationsTest {
         assertEquals("Could not download the image from im_url.", error.getErrorMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testInsertResponseMissingStatus() throws Exception {
         String insertResponse = "{\"trans_id\":317503499455827968,\"method\":\"insert\"," +
                 "\"total\":0,\"error\":[{\"error_code\":104,\"error_message\":\"No image inserted.\"}]}";
@@ -314,9 +423,9 @@ public class ViSearchDataOperationsTest {
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         List<Image> imageList = new ArrayList<Image>();
         InsertTrans insertTrans = dataOperations.insert(imageList);
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), insertTrans.getErrorMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testInsertResponseMalformed0() throws Exception {
         String insertResponse = "{\"status\":\"fail\" \"trans_id\":317503499455827968,\"method\":\"insert\"," +
                 "\"total\":0,\"error\":[{\"error_code\":104,\"error_message\":\"No image inserted.\"}]}";
@@ -326,9 +435,9 @@ public class ViSearchDataOperationsTest {
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         List<Image> imageList = new ArrayList<Image>();
         InsertTrans insertTrans = dataOperations.insert(imageList);
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), insertTrans.getErrorMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testInsertResponseMalformed1() throws Exception {
         String insertResponse = "{\"status\":\"fail\",\"trans_id\":317503499455827968,\"method\":\"insert\"," +
                 "\"total\":0,\"error\":{\"error_code\":104,\"error_message\":\"No image inserted.\"}}";
@@ -338,9 +447,10 @@ public class ViSearchDataOperationsTest {
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         List<Image> imageList = new ArrayList<Image>();
         InsertTrans insertTrans = dataOperations.insert(imageList);
+        assertEquals("No image inserted.", insertTrans.getErrorMessage());
+        assertEquals(insertResponse, insertTrans.getRawResponseMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testInsertStatusNotFound() throws Exception {
         String insertResponse = "{\"status\":\"fail\",\"method\":\"insert/status\",\"result\":[],\"error\":[\"Unable to find trans_id\"]}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -348,9 +458,11 @@ public class ViSearchDataOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968");
+        assertEquals("Unable to find trans_id", insertStatus.getErrorMessage());
+        assertEquals(null, insertStatus.getCause());
+        assertEquals(insertResponse, insertStatus.getRawResponseMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testhttpResponseMissingStatus() throws Exception {
         String insertResponse = "{\"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":0,\"fail_count\":2,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\",\"error_list\":[{\"im_name\":\"test_im_0\",\"error_code\":201,\"error_message\":\"Could not download the image from im_url.\"},{\"im_name\":\"test_im_1\",\"error_code\":202,\"error_message\":\"Unsupported image format.\"}],\"error_page\":1,\"error_limit\":10}]}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -358,9 +470,9 @@ public class ViSearchDataOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968");
+        assertEquals(ResponseMessages.INVALID_RESPONSE_FORMAT.getMessage(), insertStatus.getErrorMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testhttpResponseMalformed0() throws Exception {
         String insertResponse = "{\"status\":\"OK\" \"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":0,\"fail_count\":2,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\",\"error_list\":[{\"im_name\":\"test_im_0\",\"error_code\":201,\"error_message\":\"Could not download the image from im_url.\"},{\"im_name\":\"test_im_1\",\"error_code\":202,\"error_message\":\"Unsupported image format.\"}],\"error_page\":1,\"error_limit\":10}]}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -368,9 +480,9 @@ public class ViSearchDataOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968");
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), insertStatus.getErrorMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testhttpResponseMalformed1() throws Exception {
         String insertResponse = "{\"status\":\"OK\",\"method\":\"insert/status\",\"result\":[]}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -378,9 +490,9 @@ public class ViSearchDataOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968");
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), insertStatus.getErrorMessage());
     }
 
-    @Test(expected = ViSearchException.class)
     public void testhttpResponseMalformed2() throws Exception {
         String insertResponse = "{\"status\":\"OK\",\"method\":\"insert/status\",\"result\":{}}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -388,5 +500,6 @@ public class ViSearchDataOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
         DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
         InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968");
+        assertEquals(ResponseMessages.PARSE_RESPONSE_ERROR.getMessage(), insertStatus.getErrorMessage());
     }
 }

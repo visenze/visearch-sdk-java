@@ -3,8 +3,8 @@ package com.visenze.visearch.internal.http;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.visenze.visearch.ClientConfig;
-import com.visenze.visearch.NetworkException;
-import com.visenze.visearch.ViSearchException;
+import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.internal.InternalViSearchException;
 import org.apache.http.*;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -99,21 +99,23 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                 .build();
     }
 
-    private URI buildGetUri(String url, List<NameValuePair> nameValuePairList) {
+    private static URI buildGetUri(String url, List<NameValuePair> nameValuePairList) {
         try {
             return new URIBuilder(url).addParameters(nameValuePairList).build();
         } catch (URISyntaxException e) {
-            throw new ViSearchException("There was an error parsing the ViSearch endpoint. Please ensure " +
-                    "that your provided ViSearch endpoint is a well-formed URL and try again.", e);
+            throw new InternalViSearchException(ResponseMessages.INVALID_ENDPOINT, e);
+            //throw new ViSearchException("There was an error parsing the ViSearch endpoint. Please ensure " +
+            //        "that your provided ViSearch endpoint is a well-formed URL and try again.", e);
         }
     }
 
-    private URI buildPostUri(String url) {
+    private static URI buildPostUri(String url) {
         try {
             return new URIBuilder(url).build();
         } catch (URISyntaxException e) {
-            throw new ViSearchException("There was an error parsing the ViSearch endpoint. Please ensure " +
-                    "that your provided ViSearch endpoint is a well-formed URL and try again.", e);
+            throw new InternalViSearchException(ResponseMessages.INVALID_ENDPOINT, e);
+            //throw new ViSearchException("There was an error parsing the ViSearch endpoint. Please ensure " +
+            //        "that your provided ViSearch endpoint is a well-formed URL and try again.", e);
         }
     }
 
@@ -126,13 +128,13 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                 .build();
     }
 
-    private HttpUriRequest buildMultipartPostRequest(String url, HttpEntity entity) {
+    private static HttpUriRequest buildMultipartPostRequest(String url, HttpEntity entity) {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(entity);
         return httpPost;
     }
 
-    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
+    private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setCharset(Charset.forName("utf-8"));
         for (Map.Entry<String, String> entry : params.entries()) {
@@ -143,7 +145,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
+    private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
@@ -169,8 +171,9 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
             response1.setHeaders(headers);
             return response1;
         } catch (IllegalArgumentException e) {
-            throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
-                    "Please check your network connectivity and try again.", e);
+            throw new InternalViSearchException(ResponseMessages.SYSTEM_ERROR, e);
+            // throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
+            //        "Please check your network connectivity and try again.", e);
         }
     }
 
@@ -178,8 +181,9 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         try {
             request.addHeader(new BasicScheme().authenticate(credentials, request, null));
         } catch (AuthenticationException e) {
-            throw new com.visenze.visearch.AuthenticationException("There was an error generating the " +
-                    "HTTP basic authentication header. Please check your access key and secret key and try again", e);
+            throw new InternalViSearchException(ResponseMessages.UNAUTHORIZED, e);
+            // throw new com.visenze.visearch.internal.AuthenticationException("There was an error generating the " +
+            //        "HTTP basic authentication header. Please check your access key and secret key and try again", e);
         }
     }
 
@@ -195,8 +199,9 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         try {
             return httpClient.execute(request);
         } catch (IOException e) {
-            throw new NetworkException("A network error occurred when requesting to the ViSearch endpoint. " +
-                    "Please check your network connectivity and try again.", e);
+            throw new InternalViSearchException(ResponseMessages.NETWORK_ERROR, e);
+            // throw new NetworkException("A network error occurred when requesting to the ViSearch endpoint. " +
+            //        "Please check your network connectivity and try again.", e);
         }
     }
 
