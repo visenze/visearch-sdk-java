@@ -104,6 +104,16 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
         PagedResult<ImageResult> pagedResult = pagify(response, response, ImageResult.class);
         PagedSearchResult result = new PagedSearchResult(pagedResult);
+        JsonNode productTypesNode = node.get("product_types");
+        if (productTypesNode != null) {
+            List<ProductType> productTypes = deserializeListResult(response, productTypesNode, ProductType.class);
+            result.setProductTypes(productTypes);
+        }
+        JsonNode productTypesListNode = node.get("product_types_list");
+        if (productTypesListNode != null) {
+            List<ProductType> productTypesList = deserializeListResult(response, productTypesListNode, ProductType.class);
+            result.setProductTypesList(productTypesList);
+        }
         JsonNode facetsNode = node.get("facets");
         if (facetsNode != null) {
             List<Facet> facets = deserializeListResult(response, facetsNode, Facet.class);

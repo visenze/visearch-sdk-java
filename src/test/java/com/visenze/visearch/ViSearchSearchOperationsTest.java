@@ -10,6 +10,7 @@ import com.visenze.visearch.internal.SearchOperationsImpl;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 import com.visenze.visearch.internal.json.ViSearchModule;
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 public class ViSearchSearchOperationsTest {
@@ -356,6 +359,36 @@ public class ViSearchSearchOperationsTest {
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
         verify(mockClient).post("/uploadsearch", expectedParams);
+    }
+
+    @Test
+    public void testUploadSearchParamsURLWithDetection() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"uploadsearch\",\"error\":[],\"page\":1,\"limit\":10,\"total\":0,\"product_types\":[{\"type\":\"top\",\"score\":1,\"box\":[84,223,425,639]},{\"type\":\"shoe\",\"score\":0.24432674050331116,\"box\":[522,77,865,337]},{\"type\":\"bag\",\"score\":0.2392924576997757,\"box\":[538,437,684,694]}],\"product_types_list\":[{\"type\":\"bag\"},{\"type\":\"bottom\"},{\"type\":\"dress\"},{\"type\":\"shoe\"},{\"type\":\"top\"},{\"type\":\"other\"}],\"result\":[]}\n";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/test_im.jpeg");
+        uploadSearchParams.setDetection("dress");
+        assertEquals("http://www.example.com/test_im.jpeg", uploadSearchParams.getImageUrl());
+        PagedSearchResult uploadSearchResult = searchOperations.uploadSearch(uploadSearchParams);
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
+        expectedParams.put("detection", "dress");
+        verify(mockClient).post("/uploadsearch", expectedParams);
+        assertEquals(3, uploadSearchResult.getProductTypes().size());
+        assertEquals(6, uploadSearchResult.getProductTypesList().size());
+        for (ProductType productType : uploadSearchResult.getProductTypes()) {
+            assertNotNull(productType.getType());
+            assertNotNull(productType.getScore());
+            assertNotNull(productType.getBox());
+            assertEquals(4, productType.getBox().size());
+        }
+        for (ProductType productType : uploadSearchResult.getProductTypesList()) {
+            assertNotNull(productType.getType());
+            assertNull(productType.getScore());
+            assertNull(productType.getBox());
+        }
     }
 
     @Test

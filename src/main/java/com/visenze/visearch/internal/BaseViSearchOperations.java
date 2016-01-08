@@ -57,7 +57,7 @@ class BaseViSearchOperations {
         String json = node.toString();
         try {
             CollectionType listType = TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
-            return (List<T>) objectMapper.reader(listType).readValue(json);
+            return (List<T>) objectMapper.readerFor(listType).readValue(json);
         } catch (IOException e) {
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
             // throw new ViSearchException("Could not parse the ViSearch response for list of " +
@@ -70,7 +70,7 @@ class BaseViSearchOperations {
         String json = node.toString();
         try {
             MapType mapType = TypeFactory.defaultInstance().constructMapType(HashMap.class, keyClass, valueClass);
-            return (Map<T, U>) objectMapper.reader(mapType).readValue(node);
+            return (Map<T, U>) objectMapper.readerFor(mapType).readValue(node);
         } catch (IOException e) {
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
             //throw new ViSearchException("Could not parse the ViSearch response for map<" +

@@ -10,12 +10,10 @@ import java.io.InputStream;
 public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     private File imageFile;
-
     private InputStream imageStream;
-
     private Box box;
-
     private String imageUrl;
+    private String detection;
 
     public UploadSearchParams(File imageFile) {
         super();
@@ -44,6 +42,15 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         return this.box;
     }
 
+    public UploadSearchParams setDetection(String detection) {
+        this.detection = detection;
+        return this;
+    }
+
+    public String getDetection(String detection) {
+        return detection;
+    }
+
     public File getImageFile() {
         return imageFile;
     }
@@ -64,6 +71,9 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         }
         if (imageUrl != null) {
             map.put("im_url", imageUrl);
+        }
+        if (detection != null) {
+            map.put("detection", detection);
         }
         return map;
     }

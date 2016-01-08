@@ -5,6 +5,10 @@ import java.util.Map;
 
 public class PagedSearchResult extends PagedResult<ImageResult> {
 
+    private List<ProductType> productTypes;
+
+    private List<ProductType> productTypesList;
+
     private List<Facet> facets;
 
     private Map<String, String> queryInfo;
@@ -19,6 +23,22 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
         super.setErrorMessage(errorMessage);
         super.setCause(e);
         super.setRawResponseMessage(rawResponse);
+    }
+
+    public void setProductTypes(List<ProductType> productTypes) {
+        this.productTypes = productTypes;
+    }
+
+    public List<ProductType> getProductTypes() {
+        return productTypes;
+    }
+
+    public void setProductTypesList(List<ProductType> productTypesList) {
+        this.productTypesList = productTypesList;
+    }
+
+    public List<ProductType> getProductTypesList() {
+        return productTypesList;
     }
 
     public void setFacets(List<Facet> facets) {
