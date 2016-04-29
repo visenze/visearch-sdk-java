@@ -9,6 +9,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<ProductType> productTypesList;
 
+    private String imId;
+
     private List<Facet> facets;
 
     private Map<String, String> queryInfo;
@@ -39,6 +41,14 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public List<ProductType> getProductTypesList() {
         return productTypesList;
+    }
+
+    public void setImId(String imId) {
+        this.imId = imId;
+    }
+
+    public String getImId() {
+        return imId;
     }
 
     public void setFacets(List<Facet> facets) {

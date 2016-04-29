@@ -13,6 +13,7 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
     private InputStream imageStream;
     private Box box;
     private String imageUrl;
+    private String imId;
     private String detection;
 
     public UploadSearchParams(File imageFile) {
@@ -33,6 +34,10 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         this.imageUrl = imageUrl;
     }
 
+    public UploadSearchParams() {
+        super();
+    }
+
     public UploadSearchParams setBox(Box box) {
         this.box = box;
         return this;
@@ -49,6 +54,15 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     public String getDetection(String detection) {
         return detection;
+    }
+
+    public UploadSearchParams setImId(String imId) {
+        this.imId = imId;
+        return this;
+    }
+
+    public String getImId() {
+        return imId;
     }
 
     public File getImageFile() {
@@ -71,6 +85,9 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         }
         if (imageUrl != null) {
             map.put("im_url", imageUrl);
+        }
+        if (imId != null) {
+            map.put("im_id", imId);
         }
         if (detection != null) {
             map.put("detection", detection);

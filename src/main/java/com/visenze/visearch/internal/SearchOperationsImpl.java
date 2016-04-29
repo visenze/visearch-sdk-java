@@ -114,6 +114,10 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             List<ProductType> productTypesList = deserializeListResult(response, productTypesListNode, ProductType.class);
             result.setProductTypesList(productTypesList);
         }
+        JsonNode imIdNode = node.get("im_id");
+        if (imIdNode != null) {
+            result.setImId(imIdNode.asText());
+        }
         JsonNode facetsNode = node.get("facets");
         if (facetsNode != null) {
             List<Facet> facets = deserializeListResult(response, facetsNode, Facet.class);

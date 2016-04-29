@@ -30,7 +30,6 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
 
     @Override
     public InsertTrans insert(List<Image> imageList, Map<String, String> customParams) {
-
         Preconditions.checkNotNull(imageList, "image list must not be null");
         Preconditions.checkNotNull(customParams, "custom params must not be null");
 
