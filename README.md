@@ -428,7 +428,7 @@ PagedSearchResult searchResult = client.search(params);
 
 ViSearch provides tracking solution to understand how your customer interact with the search results. In addition, to improve subsequent search quality, it is recommended to send user actions when they interact with the results.
 
-User action can be sent through our Java SDK.
+User action can be sent through our Java SDK as:
 
 ```java
 Map<String,String> params = new HashMap<String,String>();
@@ -438,16 +438,16 @@ params.put("im_name","xyool-12-9");
 PagedSearchResult searchResult = client.sendEvent(params);
 ```
 
-* `reqid` is the request id of the search request. This `reqid` can be obtained from the search responses object.
-```java
-SearchParams params = ....
-// only retrieve search results with scores between 0.5 and 0.8
-PagedSearchResult searchResult = client.search(params);
-// Get reqid from previous solution result.
-String reqId = searchResult.getReqId()
-```
+* `reqid` is the request id of the search request related with this action. This `reqid` can be obtained from the search response object.
+    ```java
+    SearchParams params = ....
+    // Conducting find similar
+    PagedSearchResult searchResult = client.search(params);
+    // Get reqid from previous solution result.
+    String reqId = searchResult.getReqId()
+    ```
 
-* `action` is the action type of this event. Following types of events are supported:
+* `action` is the action type of this event. you may have following types of events:
     - "click" when user click on the results found using the ViSenze solution
     - "add_cart" products found using the ViSenze solution and added to their cart.
     - "buy" products found using the ViSenze solution that were ultimately purchased
