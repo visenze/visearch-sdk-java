@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.DataOperations;
 import com.visenze.visearch.internal.SearchOperations;
+import com.visenze.visearch.internal.TrackOperations;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -25,7 +27,13 @@ public class ViSearchTest {
     public void setup() throws Exception {
         dataOperations = mock(DataOperations.class);
         searchOperations = mock(SearchOperations.class);
-        visearch = new ViSearch(dataOperations, searchOperations);
+        TrackOperations trackOperations = null;
+        visearch = new ViSearch(dataOperations, searchOperations, trackOperations);
+    }
+
+    @Test
+    public void testVersion() {
+        assertNotEquals(ViSearch.VISEACH_JAVA_SDK_VERSION, "1.3.0");
     }
 
     @Test

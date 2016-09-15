@@ -5,6 +5,10 @@ import java.util.Map;
 
 public class PagedSearchResult extends PagedResult<ImageResult> {
 
+    private static final String X_LOG_ID = "X-Log-ID";
+    
+    private static final String X_LOG_ID_EMPTY = "";
+
     private List<ProductType> productTypes;
 
     private List<ProductType> productTypesList;
@@ -73,5 +77,16 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public String getRawJson() {
         return rawJson;
+    }
+
+    /**
+     * Get the request id to identify this request.
+     * @return
+     */
+    public String getReqId(){
+        if(this.headers!=null && this.headers.containsKey(X_LOG_ID)){
+            return headers.get(X_LOG_ID);
+        }
+        return X_LOG_ID_EMPTY;
     }
 }

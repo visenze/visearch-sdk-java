@@ -69,6 +69,11 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     }
 
     @Override
+    public UsernamePasswordCredentials getCredentials() {
+        return credentials;
+    }
+
+    @Override
     public ViSearchHttpResponse get(String path, Multimap<String, String> params) {
         HttpUriRequest request = buildGetRequest(endpoint + path, params);
         return getResponse(request);
