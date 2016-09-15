@@ -17,7 +17,7 @@
 	  - 4.5 [Check Indexing Status](#45-check-indexing-status)
  5. [Solutions](#5-solutions)
 	  - 5.1 [Find Similar](#51-find-similar)
-	  - 5.2 [Color Search](#52-you-may-also-like)
+	  - 5.2 [You May Also Like](#52-you-may-also-like)
 	  - 5.3 [Search by Image](#53-search-by-image)
 	    - 5.3.1 [Selection Box](#531-selection-box)
 	  - 5.4 [Search by Color](#54-search-by-color)
@@ -37,7 +37,7 @@ ViSearch is an API that provides accurate, reliable and scalable image search. V
 
 The ViSearch Java SDK is an open source software for easy integration with your Java back-end applications and services. For source code and references, visit the [Github Repository](https://github.com/visenze/visearch-sdk-java).
 
- * Current stable version: 1.3.0
+ * Current stable version: 1.4.0
  * Minimum JDK version: 1.6
 
 ## 2. Setup
@@ -47,18 +47,18 @@ For Maven projects, include the dependency in ```pom.xml```:
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.3.0</version>
+  <version>1.4.0</version>
 </dependency>
 ```
 
 For Gradle projects, include this line in your ```build.gradle``` dependencies block:
 ```
-compile 'com.visenze:visearch-java-sdk:1.3.0'
+compile 'com.visenze:visearch-java-sdk:1.4.0'
 ```
 
 For SBT projects, add the following line to ```build.sbt```:
 ```
-libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.3.0"
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.4.0"
 ```
 
 ##3. Initialization
