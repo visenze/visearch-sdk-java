@@ -6,6 +6,8 @@ public interface SearchOperations {
 
     PagedSearchResult search(SearchParams searchParams);
 
+    PagedSearchResult recommendation(SearchParams searchParams);
+
     PagedSearchResult colorSearch(ColorSearchParams colorSearchParams);
 
     PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams);

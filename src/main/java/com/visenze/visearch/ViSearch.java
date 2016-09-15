@@ -168,6 +168,15 @@ public class ViSearch implements DataOperations, SearchOperations {
     }
 
     /**
+     * Recommendation for similar images from the ViSearch App given an existing image in the App.
+     * @param searchParams
+     * @return
+     */
+    public PagedSearchResult recommendation(SearchParams searchParams) {
+        return searchOperations.recommendation(searchParams);
+    }
+
+    /**
      * Search for similar images from the ViSearch App given a hex color.
      *
      * @param colorSearchParams the color search parameters, must contain the hex color
