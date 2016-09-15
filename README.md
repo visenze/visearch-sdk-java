@@ -5,7 +5,7 @@
 
 ---
 
-##Table of Contents
+## Table of Contents
  1. [Overview](#1-overview)
  2. [Setup](#2-setup)
  3. [Initialization](#3-initialization)
@@ -15,21 +15,23 @@
 	  - 4.3 [Updating Images](#43-updating-images)
 	  - 4.4 [Removing Images](#44-removing-images)
 	  - 4.5 [Check Indexing Status](#45-check-indexing-status)
- 5. [Searching Images](#5-searching-images)
-	  - 5.1 [Pre-indexed Search](#51-pre-indexed-search)
-	  - 5.2 [Color Search](#52-color-search)
-	  - 5.3 [Upload Search](#53-upload-search)
+ 5. [Solutions](#5-solutions)
+	  - 5.1 [Find Similar](#51-find-similar)
+	  - 5.2 [Color Search](#52-you-may-also-like)
+	  - 5.3 [Search by Image](#53-search-by-image)
 	    - 5.3.1 [Selection Box](#531-selection-box)
+	  - 5.4 [Search by Color](#54-search-by-color)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
 	  - 7.2 [Filtering Results](#72-filtering-results)
 	  - 7.3 [Result Score](#73-result-score)
- 8. [Code Samples](#8-code-samples)
+ 8. [Event Tracking](#8-event-tracking)
+
 
 ---
 
-##1. Overview
+## 1. Overview
 
 ViSearch is an API that provides accurate, reliable and scalable image search. ViSearch API provides endpoints that let developers index their images and perform image searches efficiently. ViSearch API can be easily integrated into your web and mobile applications. For more details, see [ViSearch API Documentation](http://www.visenze.com/docs).
 
@@ -38,7 +40,7 @@ The ViSearch Java SDK is an open source software for easy integration with your 
  * Current stable version: 1.3.0
  * Minimum JDK version: 1.6
 
-##2. Setup
+## 2. Setup
 
 For Maven projects, include the dependency in ```pom.xml```:
 ```
@@ -66,13 +68,13 @@ To start using ViSearch API, initialize ViSearch client with your ViSearch API c
 ViSearch client = new ViSearch("access_key", "secret_key");
 ```
 
-##4. Indexing Images
+## 4. Indexing Images
 
-###4.1 Indexing Your First Images
+### 4.1 Indexing Your First Images
 
 Built for scalability, ViSearch API enables fast and accurate searches on high volume of images. Before making your first image search, you need to prepare a list of images and index them into ViSearch by calling the ```insert``` endpoint. Each image must have a distinct name (```im_name```) which serves as this image's unique identifier and a publicly downloadable URL (```im_url```). ViSearch will fetch and index your images from the given URLs. You can check the status of this process using instructions described in [Section 4.5](#45-check-indexing-status). After the image indexes are built, you can start searching for [similar images using the unique identifier](#51-pre-indexed-search), [using a color](#52-color-search), or [using another image](#53-upload-search).
 
-To index your images, prepare a list of Images and call the ```insert``` endpoint. 
+To index your images, prepare a list of Images and call the ```insert``` endpoint.
 ```java
 // the list of images to be indexed
 List<Image> images = new ArrayList<Image>();
@@ -101,10 +103,10 @@ System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().siz
 System.out.println("Error list: ");
 for (int i = 0; i < trans.getErrorList().size(); i++) {
     System.out.println(trans.getErrorList().get(i));
-} 
+}
 ```
 
-###4.2 Image with Metadata
+### 4.2 Image with Metadata
 
 Images usually come with descriptive text or numeric values as metadata, for example:
 
@@ -145,9 +147,9 @@ client.insert(images);
 
 > Metadata keys are case-sensitive, and metadata without a matching key in the schema will not be processed by ViSearch. Make sure to configure metadata schema in [ViSearch Dashboard](https://dashboard.visenze.com) for all of your metadata keys.
 
-###4.3 Updating Images
+### 4.3 Updating Images
 
-If you need to update an image or its metadata, call the ```insert``` endpoint with the same unique identifier of the image. ViSearch will fetch the image from the updated URL and index the new image, and replace the metadata of the image if provided. 
+If you need to update an image or its metadata, call the ```insert``` endpoint with the same unique identifier of the image. ViSearch will fetch the image from the updated URL and index the new image, and replace the metadata of the image if provided.
 
 ```java
 List<Image> images = new ArrayList<Image>();
@@ -180,7 +182,7 @@ client.remove(removeList);
 ```
  > We recommend calling ```remove``` in batches of 100 images for optimized image indexing speed.
 
-###4.5 Check Indexing Status
+### 4.5 Check Indexing Status
 
 The fetching and indexing process take time, and you may only search for images after their indexs are built. If you want to keep track of this process, you can call the ```insertStatus``` endpoint with the image's trasaction identifier.
 
@@ -230,29 +232,30 @@ if (status.getFailCount() > 0) {
 }
 ```
 
-##5. Searching Images
+## 5. Solutions
 
-###5.1 Pre-indexed Search
+### 5.1 Find Similar
 
-Searches for similar images based on the your indexed image by its unique identifier:
+**Find similar** solution is to search for visually similar images in the image database giving an indexed image’s unique identifier (im_name).
 
 ```java
 SearchParams params = new SearchParams("vintage_wingtips");
 PagedSearchResult searchResult = client.search(params);
 ```
 
-###5.2 Color Search
+### 5.2 You May Also Like
 
-Searches for images related to a color by providing a hexadecimal RGB color code:
+**You may also like** solution is to provide a list of recommended items from the indexed image database based on customizable rules giving an indexed image’s unique identifier (im_name).
 
 ```java
-ColorSearchParams params = new ColorSearchParams("9b351b");
-PagedSearchResult searchResult = client.colorSearch(params);
-``` 
+SearchParams params = new SearchParams("vintage_wingtips");
+PagedSearchResult searchResult = client.recommendation(params);
+```
 
-###5.3 Upload Search
 
-Searches for similar images by uploading an image or providing an image URL:
+### 5.3 Search by Image
+
+**Search by image** solution is to search similar images by uploading an image or providing an image url.
 
  - Using an image from a local file path:
 ```java
@@ -268,7 +271,7 @@ UploadSearchParams params = new UploadSearchParams(url);
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
-####5.3.1 Selection Box
+#### 5.3.1 Selection Box
 
 If the object you wish to search for takes up only a small portion of your image, or if other irrelevant objects exists in the same image, chances are the search result could become inaccurate. Use the Box parameter to refine the search area of the image to improve accuracy. The box coordinates are set with respect to the original size of the uploading image:
 (note: if the box coordinates are invalid(negative or exceed the image boundary), this search will be equivalent to the normal Upload Search)
@@ -285,7 +288,16 @@ params.setBox(box);
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
-##6. Search Results
+### 5.4 Search by Color
+
+**Search by color** solution is to search images with similar color by providing a color code. The color code should be in Hexadecimal and passed to the colorsearch service.
+
+```java
+ColorSearchParams params = new ColorSearchParams("9b351b");
+PagedSearchResult searchResult = client.colorSearch(params);
+```
+
+## 6. Search Results
 
 ViSearch returns a maximum number of 1000 most relevant image search results. You can provide pagination parameters to control the paging of the image search results.
 
@@ -319,9 +331,9 @@ PagedSearchResult nextPageOfSearchResult = client.search(params);
 ```
 
 
-##7. Advanced Search Parameters
+## 7. Advanced Search Parameters
 
-###7.1 Retrieving Metadata
+### 7.1 Retrieving Metadata
 
 To retrieve metadata of your image results, provide the list of metadata keys for the metadata value to be returned in the `fl` (field list) property:
 
@@ -355,7 +367,7 @@ for (ImageResult imageResult : imageResults) {
 
  > Only metadata of type string, int, and float can be retrieved from ViSearch. Metadata of type text is not available for retrieval.
 
-###7.2 Filtering Results
+### 7.2 Filtering Results
 
 To filter search results based on metadata values, provide a map of metadata key to filter value in the `fq` (filter query) property:
 
@@ -380,7 +392,7 @@ text | Metadata value will be indexed using full-text-search engine and supports
 int | Metadata value can be either: <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. int value 99 would match ranged query ```0,199```</li></ul>
 float | Metadata value can be either <ul><li>exactly matched with the query value</li><li>matched with a ranged query ```minValue,maxValue```, e.g. float value 99.99 would match ranged query ```0.0,199.99```</li></ul>
 
-###7.3 Result Score
+### 7.3 Result Score
 
 ViSearch image search results are ranked in descending order i.e. from the highest scores to the lowest, ranging from 1.0 to 0.0. By default, the score for each image result is not returned. You can turn on the ```score``` property to retrieve the scores for each image result:
 
@@ -410,3 +422,34 @@ params.setScoreMax(0.8f);
 // only retrieve search results with scores between 0.5 and 0.8
 PagedSearchResult searchResult = client.search(params);
 ```
+
+
+## 8. Event Tracking
+
+ViSearch provides tracking solution to understand how your customer interact with the search results. In addition, to improve subsequent search quality, it is recommended to send user actions when they interact with the results.
+
+User action can be sent through our Java SDK.
+
+```java
+Map<String,String> params = new HashMap<String,String>();
+params.put("action","click");
+params.put("reqid","543577997719293952");
+params.put("im_name","xyool-12-9");
+PagedSearchResult searchResult = client.sendEvent(params);
+```
+
+* `reqid` is the request id of the search request. This `reqid` can be obtained from the search responses object.
+```java
+SearchParams params = ....
+// only retrieve search results with scores between 0.5 and 0.8
+PagedSearchResult searchResult = client.search(params);
+// Get reqid from previous solution result.
+String reqId = searchResult.getReqId()
+```
+
+* `action` is the action type of this event. Following types of events are supported:
+    - "click" when user click on the results found using the ViSenze solution
+    - "add_cart" products found using the ViSenze solution and added to their cart.
+    - "buy" products found using the ViSenze solution that were ultimately purchased
+
+* `im_name` is the name of the image which the user has clicked on. im_name is the unique identifier of the indexed image, in this case the searched result.
