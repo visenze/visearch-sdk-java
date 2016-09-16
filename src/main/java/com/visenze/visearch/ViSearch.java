@@ -1,27 +1,42 @@
 package com.visenze.visearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.visearch.internal.DataOperations;
-import com.visenze.visearch.internal.DataOperationsImpl;
-import com.visenze.visearch.internal.SearchOperations;
-import com.visenze.visearch.internal.SearchOperationsImpl;
+import com.visenze.visearch.internal.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import com.visenze.visearch.internal.json.ViSearchModule;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 
-public class ViSearch implements DataOperations, SearchOperations {
+public class ViSearch implements DataOperations, SearchOperations, TrackOperations {
 
-    public static final String VISEACH_JAVA_SDK_VERSION = "1.2.2-SNAPSHOT";
+    public static String VISEACH_JAVA_SDK_VERSION;
 
     /**
      * Default ViSearch API base endpoint.
      */
     private static final String DEFAULT_VISEARCH_ENDPOINT = "http://visearch.visenze.com";
+
+    private static final String DEFAULT_TRACKING_ENDPOINT = "http://track.visenze.com";
+
+    static {
+        // load properties values
+        try {
+            Properties prop = new Properties();
+            InputStream inputStream = ViSearch.class.getClassLoader().getResourceAsStream("visearch.sdk.properties");
+            if (inputStream != null) {
+                prop.load(inputStream);
+            }
+            VISEACH_JAVA_SDK_VERSION = prop.getProperty("visearch.sdk.version", "1.3.0");
+        } catch (Exception e){
+           e.printStackTrace();
+        }
+    }
 
     /**
      * ViSearch Data API i.e. /insert, /insert/status, /remove.
@@ -32,6 +47,11 @@ public class ViSearch implements DataOperations, SearchOperations {
      * ViSearch Search API i.e. /search, /uploadsearch, /colorsearch.
      */
     private final SearchOperations searchOperations;
+
+    /**
+     * ViSearch Tracking API
+     */
+    private final TrackOperations trackOperations;
 
     /**
      * Construct a ViSearch client to call the default ViSearch API endpoint with access key and secret key.
@@ -46,9 +66,10 @@ public class ViSearch implements DataOperations, SearchOperations {
     /**
      * (For testing) stub constructor
      */
-    public ViSearch(DataOperations dataOperations, SearchOperations searchOperations) {
+    public ViSearch(DataOperations dataOperations, SearchOperations searchOperations, TrackOperations trackOperations) {
         this.dataOperations = dataOperations;
         this.searchOperations = searchOperations;
+        this.trackOperations = trackOperations;
     }
 
     /**
@@ -80,6 +101,7 @@ public class ViSearch implements DataOperations, SearchOperations {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
         this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
         this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
+        this.trackOperations = new TrackOperationsImpl(new ViSearchHttpClientImpl(DEFAULT_TRACKING_ENDPOINT, accessKey, secretKey));
     }
 
     public ViSearch(String endpoint, String accessKey, String secretKey, ClientConfig clientConfig) {
@@ -96,6 +118,7 @@ public class ViSearch implements DataOperations, SearchOperations {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
         this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
         this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
+        this.trackOperations = new TrackOperationsImpl(new ViSearchHttpClientImpl(DEFAULT_TRACKING_ENDPOINT, accessKey, secretKey));
     }
 
     /**
@@ -168,6 +191,15 @@ public class ViSearch implements DataOperations, SearchOperations {
     }
 
     /**
+     * Recommendation for similar images from the ViSearch App given an existing image in the App.
+     * @param searchParams
+     * @return
+     */
+    public PagedSearchResult recommendation(SearchParams searchParams) {
+        return searchOperations.recommendation(searchParams);
+    }
+
+    /**
      * Search for similar images from the ViSearch App given a hex color.
      *
      * @param colorSearchParams the color search parameters, must contain the hex color
@@ -203,4 +235,12 @@ public class ViSearch implements DataOperations, SearchOperations {
         return searchOperations.uploadSearch(uploadSearchParams, resizeSettings);
     }
 
+    /**
+     * Send tracking event to our tracking server
+     * @param params
+     */
+    @Override
+    public void sendEvent(Map<String, String> params) {
+        trackOperations.sendEvent(params);
+    }
 }

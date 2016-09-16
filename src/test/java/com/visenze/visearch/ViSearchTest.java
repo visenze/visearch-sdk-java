@@ -4,14 +4,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.DataOperations;
 import com.visenze.visearch.internal.SearchOperations;
+import com.visenze.visearch.internal.TrackOperations;
+import com.visenze.visearch.internal.TrackOperationsImpl;
+import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 
@@ -20,12 +26,19 @@ public class ViSearchTest {
     private ViSearch visearch;
     private DataOperations dataOperations;
     private SearchOperations searchOperations;
+    private TrackOperations trackOperations;
 
     @Before
     public void setup() throws Exception {
         dataOperations = mock(DataOperations.class);
         searchOperations = mock(SearchOperations.class);
-        visearch = new ViSearch(dataOperations, searchOperations);
+        trackOperations = spy(new TrackOperationsImpl(new ViSearchHttpClientImpl("http://track.visenze.com","1", "2")));
+        visearch = new ViSearch(dataOperations, searchOperations, trackOperations);
+    }
+
+    @Test
+    public void testVersion() {
+        assertNotEquals(ViSearch.VISEACH_JAVA_SDK_VERSION, "1.3.0");
     }
 
     @Test
@@ -89,5 +102,15 @@ public class ViSearchTest {
         ResizeSettings resizeSettings = new ResizeSettings(500, 500, 80);
         visearch.uploadSearch(uploadSearchParams, resizeSettings);
         verify(searchOperations).uploadSearch(uploadSearchParams, resizeSettings);
+    }
+
+    @Test
+    public void testSendEvent() {
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("action","click");
+        params.put("reqid","543577997719293952");
+        params.put("im_name","xyool-12-9");
+        visearch.sendEvent(params);
+        verify(trackOperations).sendEvent(params);
     }
 }

@@ -1,6 +1,7 @@
 package com.visenze.visearch.internal;
 
 import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 public abstract class ResponseBase {
@@ -11,7 +12,7 @@ public abstract class ResponseBase {
 
     private String rawResponseMessage;
 
-    private Map<String, String> headers = Maps.newHashMap();
+    protected Map<String, String> headers = Maps.newHashMap();
 
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;

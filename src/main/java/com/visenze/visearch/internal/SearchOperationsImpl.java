@@ -16,6 +16,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
     private static final String ENDPOINT_UPLOAD_SEARCH = "/uploadsearch";
     private static final String ENDPOINT_SEARCH = "/search";
+    private static final String ENDPOINT_RECOMMENDATION = "/recommendation";
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
 
     public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
@@ -26,6 +27,16 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     public PagedSearchResult search(SearchParams searchParams) {
         try {
             ViSearchHttpResponse response = viSearchHttpClient.get(ENDPOINT_SEARCH, searchParams.toMap());
+            return getPagedResult(response);
+        } catch (InternalViSearchException e) {
+            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
+
+    @Override
+    public PagedSearchResult recommendation(SearchParams searchParams) {
+        try {
+            ViSearchHttpResponse response = viSearchHttpClient.get(ENDPOINT_RECOMMENDATION, searchParams.toMap());
             return getPagedResult(response);
         } catch (InternalViSearchException e) {
             return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
