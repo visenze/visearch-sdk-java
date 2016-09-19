@@ -5,8 +5,6 @@ import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.DataOperations;
 import com.visenze.visearch.internal.SearchOperations;
 import com.visenze.visearch.internal.TrackOperations;
-import com.visenze.visearch.internal.TrackOperationsImpl;
-import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +15,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 
@@ -32,7 +29,7 @@ public class ViSearchTest {
     public void setup() throws Exception {
         dataOperations = mock(DataOperations.class);
         searchOperations = mock(SearchOperations.class);
-        trackOperations = spy(new TrackOperationsImpl(new ViSearchHttpClientImpl("http://track.visenze.com","1", "2")));
+        trackOperations = mock(TrackOperations.class);
         visearch = new ViSearch(dataOperations, searchOperations, trackOperations);
     }
 

@@ -30,7 +30,7 @@ public class ViSearchTrackOperationsTest {
     }
 
     @Test
-    public void testSearchParamsBasic() {
+    public void testSearchParamsBasic() throws InterruptedException {
         String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
         when(response.getBody()).thenReturn(responseBody);
@@ -49,6 +49,7 @@ public class ViSearchTrackOperationsTest {
         expectedParams.put("reqid", "1111");
         expectedParams.put("im_name", "imName1111");
         expectedParams.put("cid", "");
+        Thread.sleep(200);
         verify(mockClient).get("/__aq.gif", expectedParams);
     }
 

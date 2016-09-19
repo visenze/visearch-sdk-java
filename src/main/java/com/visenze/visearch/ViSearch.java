@@ -1,6 +1,7 @@
 package com.visenze.visearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
@@ -8,6 +9,7 @@ import com.visenze.visearch.internal.json.ViSearchModule;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -187,7 +189,12 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      */
     @Override
     public PagedSearchResult search(SearchParams searchParams) {
-        return searchOperations.search(searchParams);
+        PagedSearchResult result = searchOperations.search(searchParams);
+        if(result!=null) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("search", reqId);
+        }
+        return result;
     }
 
     /**
@@ -196,7 +203,12 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      * @return
      */
     public PagedSearchResult recommendation(SearchParams searchParams) {
-        return searchOperations.recommendation(searchParams);
+        PagedSearchResult result = searchOperations.recommendation(searchParams);
+        if(result!=null) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("recommendation", reqId);
+        }
+        return result;
     }
 
     /**
@@ -207,7 +219,12 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      */
     @Override
     public PagedSearchResult colorSearch(ColorSearchParams colorSearchParams) {
-        return searchOperations.colorSearch(colorSearchParams);
+        PagedSearchResult result = searchOperations.colorSearch(colorSearchParams);
+        if(result!=null) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("colorsearch", reqId);
+        }
+        return result;
     }
 
     /**
@@ -218,7 +235,12 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      */
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams) {
-        return searchOperations.uploadSearch(uploadSearchParams);
+        PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams);
+        if(result!=null) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("uploadsearch", reqId);
+        }
+        return result;
     }
 
     /**
@@ -232,7 +254,26 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Deprecated
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
-        return searchOperations.uploadSearch(uploadSearchParams, resizeSettings);
+        PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams, resizeSettings);
+        if(result!=null) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("uploadsearch", reqId);
+        }
+        return result;
+    }
+
+    /**
+     * send search actions after finishing search
+     * @param action
+     * @param reqId
+     */
+    private void sendSolutionActions(String action, String reqId){
+        if(reqId!=null && !reqId.equals("")) {
+            Map<String, String> map = Maps.newHashMap();
+            map.put("action", action);
+            map.put("reqid", reqId);
+            this.sendEvent(map);
+        }
     }
 
     /**

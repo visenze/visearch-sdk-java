@@ -7,6 +7,8 @@ import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import org.apache.http.auth.UsernamePasswordCredentials;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by dejun on 15/9/16.
@@ -17,6 +19,10 @@ public class TrackOperationsImpl implements TrackOperations {
 
     private static final String ENDPOINT_SEND_ACTIONS = "/__aq.gif";
     private final String userId;
+    private static Executor executor;
+    static {
+        executor = Executors.newWorkStealingPool(2);
+    }
 
     public TrackOperationsImpl(ViSearchHttpClient viSearchHttpClient) {
         this.viSearchHttpClient = viSearchHttpClient;
@@ -32,17 +38,22 @@ public class TrackOperationsImpl implements TrackOperations {
      * send event
      * @param params
      */
-    public void sendEvent(Map<String, String> params) {
-        // put user id
-        params.put("cid", userId);
-        Multimap queryParams = HashMultimap.create();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            Preconditions.checkNotNull(key, "Custom search param key must not be null.");
-            Preconditions.checkNotNull(value, "Custom search param value must not be null.");
-            queryParams.put(key, value);
-        }
-        viSearchHttpClient.get(ENDPOINT_SEND_ACTIONS, queryParams);
+    public void sendEvent(final Map<String, String> params) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                // put user id
+                params.put("cid", userId);
+                Multimap queryParams = HashMultimap.create();
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    Preconditions.checkNotNull(key, "Custom search param key must not be null.");
+                    Preconditions.checkNotNull(value, "Custom search param value must not be null.");
+                    queryParams.put(key, value);
+                }
+                viSearchHttpClient.get(ENDPOINT_SEND_ACTIONS, queryParams);
+            }
+        });
     }
 }
