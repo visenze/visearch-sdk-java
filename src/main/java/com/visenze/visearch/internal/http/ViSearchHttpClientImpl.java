@@ -162,7 +162,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private ViSearchHttpResponse getResponse(HttpUriRequest request) {
         addAuthHeader(request);
-        addUserAgentHeader(request);
+        addOtherHeaders(request);
         CloseableHttpResponse response = executeRequest(request);
         try {
             Map<String, String> headers = Maps.newHashMap();
@@ -192,12 +192,16 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private void addUserAgentHeader(HttpUriRequest request) {
+    private void addOtherHeaders(HttpUriRequest request) {
+        // add user agent header
         String userAgent = clientConfig.getUserAgent();
         if (!userAgent.equals(ClientConfig.DEFAULT_USER_AGENT)) {
             userAgent += " " + ClientConfig.DEFAULT_USER_AGENT;
         }
         request.addHeader(HttpHeaders.USER_AGENT, userAgent);
+
+        // add x-request-with header
+        request.addHeader("X-Requested-With", clientConfig.DEFAULT_XREQUEST_WITH);
     }
 
     private CloseableHttpResponse executeRequest(HttpUriRequest request) {
