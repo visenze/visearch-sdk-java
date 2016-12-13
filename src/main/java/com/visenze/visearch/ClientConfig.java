@@ -31,7 +31,7 @@ public class ClientConfig {
         String javaVMVersion = System.getProperty("java.vm.version");
         String javaVersion = System.getProperty("java.version");
         String language = System.getProperty("user.language");
-        String defaultUserAgent = String.format("visearch-sdk-java/%s ", version);
+        String defaultUserAgent = String.format("visearch-java-sdk/%s ", version);
         defaultUserAgent += String.format("%s/%s ", osName, osVersion);
         defaultUserAgent += String.format("%s/%s/%s/%s", javaVMName, javaVMVersion, javaVersion, language);
         return defaultUserAgent;
@@ -39,7 +39,7 @@ public class ClientConfig {
 
     public static String getDefaultXRequestWith() {
         String version = ViSearch.VISEACH_JAVA_SDK_VERSION;
-        String xRequestWith = String.format("visearch-sdk-java/%s", version);
+        String xRequestWith = String.format("visearch-java-sdk/%s", version);
         return xRequestWith;
     }
 
