@@ -5,8 +5,16 @@ import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.DataOperations;
 import com.visenze.visearch.internal.SearchOperations;
 import com.visenze.visearch.internal.TrackOperations;
+import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
 import java.util.HashMap;
@@ -14,10 +22,15 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.verifyNew;
 
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ViSearch.class, ViSearchHttpClientImpl.class})
+@PowerMockIgnore("javax.net.ssl.*")
 public class ViSearchTest {
 
     private ViSearch visearch;
@@ -36,6 +49,23 @@ public class ViSearchTest {
     @Test
     public void testVersion() {
         assertNotEquals(ViSearch.VISEACH_JAVA_SDK_VERSION, "1.3.0");
+    }
+
+
+    @Test
+    public void testInitWithEndpoint() throws Exception {
+        PowerMockito.mock(ViSearchHttpClientImpl.class);
+        PowerMockito.whenNew(ViSearchHttpClientImpl.class).withAnyArguments().thenReturn(Mockito.mock(ViSearchHttpClientImpl.class));
+        ViSearch viSearch = new ViSearch("localhost", "accessKey", "secretKey");
+        verifyNew(ViSearchHttpClientImpl.class).withArguments(eq("localhost"), eq("accessKey"), eq("secretKey"));
+    }
+
+    @Test
+    public void testInitWithClientConfig() throws Exception {
+        PowerMockito.mock(ViSearchHttpClientImpl.class);
+        PowerMockito.whenNew(ViSearchHttpClientImpl.class).withAnyArguments().thenReturn(Mockito.mock(ViSearchHttpClientImpl.class));
+        ViSearch viSearch = new ViSearch("localhost", "accessKey", "secretKey", new ClientConfig());
+        verifyNew(ViSearchHttpClientImpl.class).withArguments(eq("localhost"), eq("accessKey"), eq("secretKey"), Matchers.any(ClientConfig.class));
     }
 
     @Test
