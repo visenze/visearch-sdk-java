@@ -16,12 +16,11 @@ import java.util.concurrent.Executors;
 public class TrackOperationsImpl implements TrackOperations {
 
     final ViSearchHttpClient viSearchHttpClient;
-
     private static final String ENDPOINT_SEND_ACTIONS = "/__aq.gif";
     private final String userId;
     private static Executor executor;
     static {
-        executor = Executors.newWorkStealingPool(2);
+        executor = Executors.newFixedThreadPool(10);
     }
 
     public TrackOperationsImpl(ViSearchHttpClient viSearchHttpClient) {
