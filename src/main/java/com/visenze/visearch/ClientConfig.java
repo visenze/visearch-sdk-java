@@ -13,7 +13,7 @@ public class ClientConfig {
 
     public static final String DEFAULT_USER_AGENT = getDefaultUserAgent();
 
-    private static volatile String defaultUserAgent;
+    public static final String DEFAULT_XREQUEST_WITH = getDefaultXRequestWith();
 
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 
@@ -24,25 +24,23 @@ public class ClientConfig {
     private String userAgent = DEFAULT_USER_AGENT;
 
     public static String getDefaultUserAgent() {
-        if (defaultUserAgent == null) {
-            synchronized (ClientConfig.class) {
-                if (defaultUserAgent == null) {
-                    String platform = "java";
-                    String version = ViSearch.VISEACH_JAVA_SDK_VERSION;
-                    String osName = System.getProperty("os.name");
-                    String osVersion = System.getProperty("os.version");
-                    String javaVMName = System.getProperty("java.vm.name");
-                    String javaVMVersion = System.getProperty("java.vm.version");
-                    String javaVersion = System.getProperty("java.version");
-                    String language = System.getProperty("user.language");
-                    String region = System.getProperty("user.region");
-                    defaultUserAgent = String.format("visearch-sdk-%s/%s ", platform, version);
-                    defaultUserAgent += String.format("%s/%s ", osName, osVersion);
-                    defaultUserAgent += String.format("%s/%s/%s/%s_%s", javaVMName, javaVMVersion, javaVersion, language, region);
-                }
-            }
-        }
+        String version = ViSearch.VISEACH_JAVA_SDK_VERSION;
+        String osName = System.getProperty("os.name");
+        String osVersion = System.getProperty("os.version");
+        String javaVMName = System.getProperty("java.vm.name");
+        String javaVMVersion = System.getProperty("java.vm.version");
+        String javaVersion = System.getProperty("java.version");
+        String language = System.getProperty("user.language");
+        String defaultUserAgent = String.format("visearch-java-sdk/%s ", version);
+        defaultUserAgent += String.format("%s/%s ", osName, osVersion);
+        defaultUserAgent += String.format("%s/%s/%s/%s", javaVMName, javaVMVersion, javaVersion, language);
         return defaultUserAgent;
+    }
+
+    public static String getDefaultXRequestWith() {
+        String version = ViSearch.VISEACH_JAVA_SDK_VERSION;
+        String xRequestWith = String.format("visearch-java-sdk/%s", version);
+        return xRequestWith;
     }
 
     public int getConnectionTimeout() {
