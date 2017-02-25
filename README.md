@@ -26,6 +26,7 @@
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
 	  - 7.2 [Filtering Results](#72-filtering-results)
 	  - 7.3 [Result Score](#73-result-score)
+	  - 7.4 [Deduplication](#74-deduplication)
  8. [Event Tracking](#8-event-tracking)
 
 
@@ -423,6 +424,23 @@ params.setScoreMax(0.8f);
 PagedSearchResult searchResult = client.search(params);
 ```
 
+### 7.4 Deduplication
+
+ViSearch provide a way to remove any duplicated images in the search response. This is achieved by comparing the confidence score between the search results. Hence you will be able to input a threshold for the system to filter out to how much is difference between the confidence is considered as a duplicate.  
+
+The default threshold is 0.0.
+The default parameter for deduplication is false.
+
+```java
+SearchParams params = new SearchParams("vintage_wingtips");
+params.setDedup(true);
+params.setDedupThreshold(0.001f);
+PagedSearchResult searchResult = client.search(params);
+List<ImageResult> imageResults = searchResult.getResult();
+for (ImageResult imageResult : imageResults) {
+    // do something with the score
+}
+```
 
 ## 8. Event Tracking
 

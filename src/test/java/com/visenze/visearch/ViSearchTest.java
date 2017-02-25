@@ -132,6 +132,15 @@ public class ViSearchTest {
     }
 
     @Test
+    public void testUploadSearchWithDedup() throws Exception {
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
+        uploadSearchParams.setDedup(true);
+        uploadSearchParams.setDedupThreshold(0.0001F);
+        visearch.uploadSearch(uploadSearchParams);
+        verify(searchOperations).uploadSearch(uploadSearchParams);
+    }
+
+    @Test
     public void testSendEvent() {
         Map<String,String> params = new HashMap<String,String>();
         params.put("action","click");
