@@ -24,6 +24,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     private static final Boolean DEFAULT_QINFO = false;
     private static final Map<String, String> DEFAULT_CUSTOM = new HashMap<String, String>();
     private static final Boolean DEFAULT_GET_ALL_FL = false;
+    private static final Boolean DEFAULT_DEDUP = false;
 
     protected Optional<Integer> page = Optional.absent();
     protected Optional<Integer> limit = Optional.absent();
@@ -37,6 +38,9 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<Boolean> getAllFl = Optional.absent();
     protected Optional<Boolean> qInfo = Optional.absent();
     protected Optional<Map<String, String>> custom = Optional.absent();
+
+    protected Optional<Boolean> dedup = Optional.absent();
+    protected Optional<Float> dedupThreshold = Optional.absent();
 
     @SuppressWarnings("unchecked")
     public P setPage(Integer page) {
@@ -110,6 +114,18 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return (P) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public P setDedup(Boolean dedup) {
+        this.dedup = Optional.fromNullable(dedup);
+        return (P) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public P setDedupThreshold(Float dedupThreshold) {
+        this.dedupThreshold = Optional.fromNullable(dedupThreshold);
+        return (P) this;
+    }
+
     public Integer getPage() {
         return page.orNull();
     }
@@ -159,6 +175,14 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return custom.or(DEFAULT_CUSTOM);
     }
 
+    public boolean isDedup() {
+        return dedup.or(DEFAULT_DEDUP);
+    }
+
+    public Float getDedupThreshold() {
+        return dedupThreshold.orNull();
+    }
+
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = HashMultimap.create();
 
@@ -201,6 +225,14 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
         if (isQInfo()) {
             map.put("qinfo", "true");
+        }
+
+        if (isDedup()) {
+            map.put("dedup", "true");
+        }
+
+        if (getDedupThreshold() != null) {
+            map.put("dedup_score_threshold", getDedupThreshold().toString());
         }
 
         for (Map.Entry<String, String> entry : getCustom().entrySet()) {
