@@ -1,5 +1,6 @@
 package com.visenze.visearch;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.DataOperations;
@@ -11,6 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.Times;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -22,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.verifyNew;
 
 
@@ -148,5 +152,29 @@ public class ViSearchTest {
         params.put("im_name","xyool-12-9");
         visearch.sendEvent(params);
         verify(trackOperations).sendEvent(params);
+    }
+
+    @Test
+    public void testWithoutAutoSolutionAction() throws InterruptedException {
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
+        uploadSearchParams.setDedup(true);
+        uploadSearchParams.setDedupThreshold(0.0001F);
+        when(searchOperations.uploadSearch(any(UploadSearchParams.class))).then(new Answer<PagedSearchResult>() {
+            @Override
+            public PagedSearchResult answer(InvocationOnMock invocationOnMock) throws Throwable {
+                PagedSearchResult result = new PagedSearchResult(new PagedResult());
+                result.setHeaders(ImmutableMap.of("X-Log-ID","11111"));
+                return result;
+            }
+        });
+        // with auto solution action
+        visearch.uploadSearch(uploadSearchParams);
+        verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
+        visearch.setEnableAutoSolutionActionTrack(false);
+
+        // without auto solution action
+        reset(trackOperations);
+        visearch.uploadSearch(uploadSearchParams);
+        verify(trackOperations, new Times(0)).sendEvent(any(Map.class));
     }
 }
