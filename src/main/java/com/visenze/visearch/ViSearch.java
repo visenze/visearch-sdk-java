@@ -9,7 +9,6 @@ import com.visenze.visearch.internal.json.ViSearchModule;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -39,6 +38,12 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
            e.printStackTrace();
         }
     }
+
+    /**
+     * Whether send a solution action event automatic when finished any solution API Calling.
+     * Default value: false;
+     */
+    private boolean enableAutoSolutionActionTrack=false;
 
     /**
      * ViSearch Data API i.e. /insert, /insert/status, /remove.
@@ -190,7 +195,7 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult search(SearchParams searchParams) {
         PagedSearchResult result = searchOperations.search(searchParams);
-        if(result!=null) {
+        if(result!=null && enableAutoSolutionActionTrack) {
             String reqId = result.getReqId();
             this.sendSolutionActions("search", reqId);
         }
@@ -204,7 +209,7 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      */
     public PagedSearchResult recommendation(SearchParams searchParams) {
         PagedSearchResult result = searchOperations.recommendation(searchParams);
-        if(result!=null) {
+        if(result!=null && enableAutoSolutionActionTrack) {
             String reqId = result.getReqId();
             this.sendSolutionActions("recommendation", reqId);
         }
@@ -220,7 +225,7 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult colorSearch(ColorSearchParams colorSearchParams) {
         PagedSearchResult result = searchOperations.colorSearch(colorSearchParams);
-        if(result!=null) {
+        if(result!=null && enableAutoSolutionActionTrack) {
             String reqId = result.getReqId();
             this.sendSolutionActions("colorsearch", reqId);
         }
@@ -236,7 +241,7 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams) {
         PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams);
-        if(result!=null) {
+        if(result!=null && enableAutoSolutionActionTrack) {
             String reqId = result.getReqId();
             this.sendSolutionActions("uploadsearch", reqId);
         }
@@ -255,7 +260,7 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
         PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams, resizeSettings);
-        if(result!=null) {
+        if(result!=null && enableAutoSolutionActionTrack) {
             String reqId = result.getReqId();
             this.sendSolutionActions("uploadsearch", reqId);
         }
@@ -283,5 +288,17 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public void sendEvent(Map<String, String> params) {
         trackOperations.sendEvent(params);
+    }
+
+
+    /**
+     * Setting if need to send a solution action event automatic when finished any solution API Calling.
+     * If false,  you need call send event manually.
+     * @param enableAutoSolutionActionTrack
+     * @return
+     */
+    public ViSearch setEnableAutoSolutionActionTrack(boolean enableAutoSolutionActionTrack) {
+        this.enableAutoSolutionActionTrack = enableAutoSolutionActionTrack;
+        return this;
     }
 }
