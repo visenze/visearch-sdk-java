@@ -41,9 +41,9 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
 
     /**
      * Whether send a solution action event automatic when finished any solution API Calling.
-     * Default value: false;
+     * Default value: true;
      */
-    private boolean enableAutoSolutionActionTrack=false;
+    private boolean enableAutoSolutionActionTrack=true;
 
     /**
      * ViSearch Data API i.e. /insert, /insert/status, /remove.
