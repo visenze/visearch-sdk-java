@@ -71,13 +71,15 @@ public class ViSearchSearchOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im")
-                .setFacet(true)
-                .setFacetField(Lists.newArrayList("brand"));
+                .setFacets(Lists.newArrayList("brand"))
+                .setFacetsLimit(10)
+                .setFacetsShowCount(true);
         searchOperations.search(searchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "test_im");
-        expectedParams.put("facet", "true");
-        expectedParams.put("facet_field", "brand");
+        expectedParams.put("facets", "brand");
+        expectedParams.put("facets_limit", "10");
+        expectedParams.put("facets_show_count", "true");
         verify(mockClient).get("/search", expectedParams);
     }
 
@@ -150,8 +152,7 @@ public class ViSearchSearchOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im")
-                .setFacet(true)
-                .setFacetField(Lists.newArrayList("brand"));
+                .setFacets(Lists.newArrayList("brand"));
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
         assertEquals(new Integer(1), pagedResult.getPage());
         assertEquals(new Integer(1), pagedResult.getLimit());

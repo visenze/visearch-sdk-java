@@ -1,5 +1,6 @@
 package com.visenze.visearch;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
@@ -16,7 +17,6 @@ import java.util.Map;
  */
 public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
-    private static final Boolean DEFAULT_FACET = false;
     private static final List<String> DEFAULT_FACET_FIELD = Lists.newArrayList();
     private static final Boolean DEFAULT_SCORE = false;
     private static final Map<String, String> DEFAULT_FQ = new HashMap<String, String>();
@@ -28,8 +28,9 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
     protected Optional<Integer> page = Optional.absent();
     protected Optional<Integer> limit = Optional.absent();
-    protected Optional<Boolean> facet = Optional.absent();
-    protected Optional<List<String>> facetField = Optional.absent();
+    protected Optional<List<String>> facets = Optional.absent();
+    protected Optional<Integer> facetsLimit = Optional.absent();
+    protected Optional<Boolean> facetsShowCount = Optional.absent();
     protected Optional<Boolean> score = Optional.absent();
     protected Optional<Float> scoreMin = Optional.absent();
     protected Optional<Float> scoreMax = Optional.absent();
@@ -55,14 +56,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     }
 
     @SuppressWarnings("unchecked")
-    public P setFacet(Boolean facet) {
-        this.facet = Optional.fromNullable(facet);
-        return (P) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public P setFacetField(List<String> facetField) {
-        this.facetField = Optional.fromNullable(facetField);
+    public P setFacets(List<String> facetField) {
+        this.facets = Optional.fromNullable(facetField);
         return (P) this;
     }
 
@@ -126,6 +121,18 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return (P) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public P setFacetsLimit(Integer facetsLimit) {
+        this.facetsLimit = Optional.fromNullable(facetsLimit);
+        return (P) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public P setFacetsShowCount(Boolean facetsShowCount) {
+        this.facetsShowCount = Optional.fromNullable(facetsShowCount);
+        return (P) this;
+    }
+
     public Integer getPage() {
         return page.orNull();
     }
@@ -134,12 +141,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return limit.orNull();
     }
 
-    public boolean isFacet() {
-        return facet.or(DEFAULT_FACET);
-    }
-
-    public List<String> getFacetField() {
-        return facetField.or(DEFAULT_FACET_FIELD);
+    public List<String> getFacets() {
+        return facets.or(DEFAULT_FACET_FIELD);
     }
 
     public boolean isScore() {
@@ -183,6 +186,14 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return dedupThreshold.orNull();
     }
 
+    public Integer getFacetsLimit() {
+        return facetsLimit.orNull();
+    }
+
+    public Boolean getFacetsShowCount() {
+        return facetsShowCount.orNull();
+    }
+
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = HashMultimap.create();
 
@@ -193,13 +204,15 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
             map.put("limit", getLimit().toString());
         }
 
-        if (isFacet() && !getFacetField().isEmpty()) {
-            map.put("facet", "true");
-            for (String facetFieldItem : getFacetField()) {
-                map.put("facet_field", facetFieldItem);
-            }
+        if (!getFacets().isEmpty()) {
+            map.put("facets", Joiner.on(",").join(getFacets()));
         }
-
+        if (facetsLimit.isPresent()) {
+            map.put("facets_limit", facetsLimit.get().toString());
+        }
+        if (facetsShowCount.isPresent()) {
+            map.put("facets_show_count", facetsShowCount.get().toString());
+        }
         if (isScore()) {
             map.put("score", "true");
         }
