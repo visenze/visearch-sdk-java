@@ -420,4 +420,21 @@ public class ViSearchSearchOperationsTest {
         UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
         searchOperations.uploadSearch(uploadSearchParams);
     }
+
+    // should not throw anything
+    @Test
+    public void testUploadSearchParamsImId() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_0\"},{\"im_name\":\"test_im_1\"},{\"im_name\":\"test_im_2\"},{\"im_name\":\"test_im_3\"},{\"im_name\":\"test_im_4\"},{\"im_name\":\"test_im_5\"},{\"im_name\":\"test_im_6\"},{\"im_name\":\"test_im_7\"},{\"im_name\":\"test_im_8\"},{\"im_name\":\"test_im_9\"}]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams();
+        uploadSearchParams.setImId("abc");
+        PagedSearchResult sr = searchOperations.uploadSearch(uploadSearchParams);
+
+        assertEquals(null, sr.getErrorMessage());
+
+    }
 }
