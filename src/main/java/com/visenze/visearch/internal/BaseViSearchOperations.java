@@ -83,7 +83,6 @@ class BaseViSearchOperations {
             CollectionType listType = TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
             return (List<T>) objectMapper.readerFor(listType).readValue(json);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
 //             throw new ViSearchException("Could not parse the ViSearch response for list of " +
 //                    clazz.getSimpleName() + ": " + json, e, json);
