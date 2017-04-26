@@ -364,7 +364,7 @@ public class ViSearchSearchOperationsTest {
 
     @Test
     public void testUploadSearchParamsURLWithDetection() {
-        String responseBody = "{\"status\":\"OK\",\"method\":\"uploadsearch\",\"error\":[],\"page\":1,\"limit\":10,\"total\":0,\"product_types\":[{\"type\":\"top\",\"score\":1,\"box\":[84,223,425,639]},{\"type\":\"shoe\",\"score\":0.24432674050331116,\"box\":[522,77,865,337]},{\"type\":\"bag\",\"score\":0.2392924576997757,\"box\":[538,437,684,694]}],\"product_types_list\":[{\"type\":\"bag\"},{\"type\":\"bottom\"},{\"type\":\"dress\"},{\"type\":\"shoe\"},{\"type\":\"top\"},{\"type\":\"other\"}],\"result\":[]}\n";
+        String responseBody = "{\"status\":\"OK\",\"method\":\"uploadsearch\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"product_types\":[{\"type\":\"top\",\"score\":1,\"box\":[84,223,425,639]},{\"type\":\"shoe\",\"score\":0.24432674050331116,\"box\":[522,77,865,337]},{\"type\":\"bag\",\"score\":0.2392924576997757,\"box\":[538,437,684,694]}],\"product_types_list\":[{\"type\":\"bag\"},{\"type\":\"bottom\"},{\"type\":\"dress\"},{\"type\":\"shoe\"},{\"type\":\"top\"},{\"type\":\"other\"}],\"result\":[],\"im_id\":\"abc.png\"}\n";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
         when(response.getBody()).thenReturn(responseBody);
         when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
@@ -390,6 +390,8 @@ public class ViSearchSearchOperationsTest {
             assertNull(productType.getScore());
             assertNull(productType.getBox());
         }
+
+        assertEquals("abc.png", uploadSearchResult.getImId());
     }
 
     @Test
@@ -423,18 +425,53 @@ public class ViSearchSearchOperationsTest {
 
     @Test
     public void testSimilarProductsSearchParamsURL() {
-        String responseBody = "{\"status\":\"OK\",\"method\":\"similarproducts\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"group_result\":[[{\"im_name\":\"test_im_1\"}]]}";
+        String responseBody = "{\"status\":\"OK\",\"method\":\"similarproducts\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"qinfo\":{\"im_url\":\"http://www.example.com/test_im.jpeg\",\"price\":\"49.99\",\"title\":\"java sdk\"},\"product_types\":[{\"type\":\"top\",\"score\":1,\"box\":[84,223,425,639]},{\"type\":\"shoe\",\"score\":0.24432674050331116,\"box\":[522,77,865,337]},{\"type\":\"bag\",\"score\":0.2392924576997757,\"box\":[538,437,684,694]}],\"product_types_list\":[{\"type\":\"bag\"},{\"type\":\"bottom\"},{\"type\":\"dress\"},{\"type\":\"shoe\"},{\"type\":\"top\"},{\"type\":\"other\"}],\"group_result\":[[{\"im_name\":\"test_im_0\",\"score\":0.43719249963760376,\"value_map\":{\"price\":\"67.500000\",\"title\":\"sdk test\"}}]],\"im_id\":\"abc.png\"}";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
         when(response.getBody()).thenReturn(responseBody);
         when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/test_im.jpeg");
         assertEquals("http://www.example.com/test_im.jpeg", uploadSearchParams.getImageUrl());
-        searchOperations.similarProductsSearch(uploadSearchParams);
+        PagedSearchGroupResult uploadSearchResult = searchOperations.similarProductsSearch(uploadSearchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
         expectedParams.put("detection", "all");
         verify(mockClient).post("/similarproducts", expectedParams);
+        assertEquals(3, uploadSearchResult.getProductTypes().size());
+        assertEquals(6, uploadSearchResult.getProductTypesList().size());
+        for (ProductType productType : uploadSearchResult.getProductTypes()) {
+            assertNotNull(productType.getType());
+            assertNotNull(productType.getScore());
+            assertNotNull(productType.getBox());
+            assertEquals(4, productType.getBox().size());
+        }
+        for (ProductType productType : uploadSearchResult.getProductTypesList()) {
+            assertNotNull(productType.getType());
+            assertNull(productType.getScore());
+            assertNull(productType.getBox());
+        }
+        assertEquals(responseBody, uploadSearchResult.getRawJson());
+        assertEquals(new Integer(1), uploadSearchResult.getPage());
+        assertEquals(new Integer(10), uploadSearchResult.getLimit());
+        assertEquals(new Integer(20), uploadSearchResult.getTotal());
+        List<GroupImageResult> results = uploadSearchResult.getResult();
+        assertEquals(1, results.size());
+
+        Map<String, String> qinfo = Maps.newHashMap();
+        qinfo.put("im_url", "http://www.example.com/test_im.jpeg");
+        qinfo.put("price", "49.99");
+        qinfo.put("title", "java sdk");
+        assertEquals(qinfo, uploadSearchResult.getQueryInfo());
+
+        assertEquals("abc.png", uploadSearchResult.getImId());
+
+        ImageResult image = results.get(0).getImageResultList().get(0);
+        assertEquals("test_im_0", image.getImName());
+        assertEquals(new Float(0.43719249963760376), image.getScore());
+        Map<String, String> metadata = Maps.newHashMap();
+        metadata.put("price", "67.500000");
+        metadata.put("title", "sdk test");
+        assertEquals(metadata, image.getMetadata());
     }
 
     @Test

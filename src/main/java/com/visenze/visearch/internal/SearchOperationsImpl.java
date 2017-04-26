@@ -173,11 +173,6 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         if (imIdNode != null) {
             result.setImId(imIdNode.asText());
         }
-        JsonNode facetsNode = node.get("facets");
-        if (facetsNode != null) {
-            List<Facet> facets = deserializeListResult(response, facetsNode, Facet.class);
-            result.setFacets(facets);
-        }
         JsonNode qinfoNode = node.get("qinfo");
         if (qinfoNode != null) {
             Map<String, String> qinfo = deserializeMapResult(response, qinfoNode, String.class, String.class);

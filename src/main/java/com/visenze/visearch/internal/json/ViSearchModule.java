@@ -12,6 +12,7 @@ public class ViSearchModule extends SimpleModule {
     @Override
     public void setupModule(SetupContext context) {
         context.setMixInAnnotations(ImageResult.class, ImageResultMixin.class);
+        context.setMixInAnnotations(GroupImageResult.class, GroupImageResultMixin.class);
         context.setMixInAnnotations(ProductType.class, ProductTypeMixin.class);
         context.setMixInAnnotations(Facet.class, FacetMixin.class);
         context.setMixInAnnotations(FacetItem.class, FacetItemMixin.class);

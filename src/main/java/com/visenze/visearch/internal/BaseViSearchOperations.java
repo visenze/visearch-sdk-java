@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.visenze.visearch.ImageResult;
-import com.visenze.visearch.PagedResult;
-import com.visenze.visearch.PagedSearchResult;
-import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 
 import java.io.IOException;
@@ -34,7 +31,7 @@ class BaseViSearchOperations {
             if(node.has("result"))
                 result = deserializeListResult(rawResponse, node.get("result"), clazz);
             else if (node.has("group_result"))
-                result = (List<T>) deserializeListMultiResult(rawResponse, node.get("group_result"), ImageResult.class);
+                result = (List<T>) deserializeListMultiResult(rawResponse, node.get("group_result"));
             JsonNode pageNode = node.get("page");
             JsonNode limitNode = node.get("limit");
             JsonNode totalNode = node.get("total");
@@ -59,21 +56,13 @@ class BaseViSearchOperations {
         }
     }
 
-    <T> List<T> deserializeListMultiResult(String rawResponse, JsonNode node, Class<T> clazz) {
-        try {
-            List<T> list = new ArrayList<T>();
-            CollectionType listType = TypeFactory.defaultInstance().constructCollectionType(List.class, ImageResult.class);
-            for(int i=0; i<node.size(); i++) {
-                String json = node.get(i).toString();
-                list.add((T) objectMapper.readerFor(listType).readValue(json));
-            }
-            return list;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
-//             throw new ViSearchException("Could not parse the ViSearch response for list of " +
-//                    clazz.getSimpleName() + ": " + json, e, json);
+    <T> List<T> deserializeListMultiResult(String rawResponse, JsonNode node) {
+        List<T> list = new ArrayList<T>();
+        for(int i=0; i<node.size(); i++) {
+            GroupImageResult r = new GroupImageResult(deserializeListResult(rawResponse, node.get(i), ImageResult.class));
+            list.add((T) r);
         }
+        return list;
     }
 
     @SuppressWarnings("unchecked")

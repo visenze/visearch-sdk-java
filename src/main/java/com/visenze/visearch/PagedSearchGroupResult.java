@@ -15,8 +15,6 @@ public class PagedSearchGroupResult extends PagedResult<GroupImageResult> {
 
     private String imId;
 
-    private List<Facet> facets;
-
     private Map<String, String> queryInfo;
 
     private String rawJson;
@@ -53,14 +51,6 @@ public class PagedSearchGroupResult extends PagedResult<GroupImageResult> {
 
     public String getImId() {
         return imId;
-    }
-
-    public void setFacets(List<Facet> facets) {
-        this.facets = facets;
-    }
-
-    public List<Facet> getFacets() {
-        return facets;
     }
 
     public void setQueryInfo(Map<String, String> queryInfo) {
