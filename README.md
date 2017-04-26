@@ -1,4 +1,4 @@
-#ViSearch Java SDK
+# ViSearch Java SDK
 
 [![Build Status](https://api.travis-ci.org/visenze/visearch-sdk-java.svg?branch=master)](https://travis-ci.org/visenze/visearch-sdk-java)
 [![Coverage Status](https://coveralls.io/repos/visenze/visearch-sdk-java/badge.svg)](https://coveralls.io/r/visenze/visearch-sdk-java)
@@ -15,12 +15,11 @@
 	  - 4.3 [Updating Images](#43-updating-images)
 	  - 4.4 [Removing Images](#44-removing-images)
 	  - 4.5 [Check Indexing Status](#45-check-indexing-status)
- 5. [Solutions](#5-solutions)
-	  - 5.1 [Find Similar](#51-find-similar)
-	  - 5.2 [You May Also Like](#52-you-may-also-like)
-	  - 5.3 [Search by Image](#53-search-by-image)
-	    - 5.3.1 [Selection Box](#531-selection-box)
-	  - 5.4 [Search by Color](#54-search-by-color)
+ 5. [Solution APIs](#5-solution-apis)
+	  - 5.1 [Visually Similar Recommendations](#51-visually-similar-recommendations)
+	  - 5.2 [Search by Image](#52-search-by-image)
+	    - 5.2.1 [Selection Box](#521-selection-box)
+	  - 5.3 [Search by Color](#53-search-by-color)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
@@ -233,28 +232,23 @@ if (status.getFailCount() > 0) {
 }
 ```
 
-## 5. Solutions
+## 5. Solution APIs
 
-### 5.1 Find Similar
+### 5.1 Visually Similar Recommendations 
 
-**Find similar** solution is to search for visually similar images in the image database giving an indexed image’s unique identifier (im_name).
+GET /search
+
+**Visually Similar Recommendations** solution is to search for visually similar images in the image database giving an indexed image’s unique identifier (im_name).
 
 ```java
 SearchParams params = new SearchParams("vintage_wingtips");
 PagedSearchResult searchResult = client.search(params);
 ```
 
-### 5.2 You May Also Like
 
-**You may also like** solution is to provide a list of recommended items from the indexed image database based on customizable rules giving an indexed image’s unique identifier (im_name).
+### 5.2 Search by Image 
 
-```java
-SearchParams params = new SearchParams("vintage_wingtips");
-PagedSearchResult searchResult = client.recommendation(params);
-```
-
-
-### 5.3 Search by Image
+POST /uploadsearch
 
 **Search by image** solution is to search similar images by uploading an image or providing an image url.
 
@@ -272,7 +266,7 @@ UploadSearchParams params = new UploadSearchParams(url);
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
-#### 5.3.1 Selection Box
+#### 5.2.1 Selection Box
 
 If the object you wish to search for takes up only a small portion of your image, or if other irrelevant objects exists in the same image, chances are the search result could become inaccurate. Use the Box parameter to refine the search area of the image to improve accuracy. The box coordinates are set with respect to the original size of the uploading image:
 (note: if the box coordinates are invalid(negative or exceed the image boundary), this search will be equivalent to the normal Upload Search)
@@ -289,7 +283,9 @@ params.setBox(box);
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
-### 5.4 Search by Color
+### 5.3 Search by Color 
+
+GET /colorsearch
 
 **Search by color** solution is to search images with similar color by providing a color code. The color code should be in Hexadecimal and passed to the colorsearch service.
 

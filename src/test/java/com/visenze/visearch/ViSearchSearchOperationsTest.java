@@ -71,13 +71,15 @@ public class ViSearchSearchOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im")
-                .setFacet(true)
-                .setFacetField(Lists.newArrayList("brand"));
+                .setFacets(Lists.newArrayList("brand"))
+                .setFacetsLimit(10)
+                .setFacetsShowCount(true);
         searchOperations.search(searchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "test_im");
-        expectedParams.put("facet", "true");
-        expectedParams.put("facet_field", "brand");
+        expectedParams.put("facets", "brand");
+        expectedParams.put("facets_limit", "10");
+        expectedParams.put("facets_show_count", "true");
         verify(mockClient).get("/search", expectedParams);
     }
 
@@ -150,8 +152,7 @@ public class ViSearchSearchOperationsTest {
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         SearchParams searchParams = new SearchParams("test_im")
-                .setFacet(true)
-                .setFacetField(Lists.newArrayList("brand"));
+                .setFacets(Lists.newArrayList("brand"));
         PagedSearchResult pagedResult = searchOperations.search(searchParams);
         assertEquals(new Integer(1), pagedResult.getPage());
         assertEquals(new Integer(1), pagedResult.getLimit());
@@ -463,5 +464,22 @@ public class ViSearchSearchOperationsTest {
         InputStream inputStream = null;
         UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
         searchOperations.similarProductsSearch(uploadSearchParams);
+    }
+
+    // should not throw anything
+    @Test
+    public void testUploadSearchParamsImId() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_0\"},{\"im_name\":\"test_im_1\"},{\"im_name\":\"test_im_2\"},{\"im_name\":\"test_im_3\"},{\"im_name\":\"test_im_4\"},{\"im_name\":\"test_im_5\"},{\"im_name\":\"test_im_6\"},{\"im_name\":\"test_im_7\"},{\"im_name\":\"test_im_8\"},{\"im_name\":\"test_im_9\"}]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams();
+        uploadSearchParams.setImId("abc");
+        PagedSearchResult sr = searchOperations.uploadSearch(uploadSearchParams);
+
+        assertEquals(null, sr.getErrorMessage());
+
     }
 }
