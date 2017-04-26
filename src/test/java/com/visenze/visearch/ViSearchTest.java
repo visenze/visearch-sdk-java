@@ -145,6 +145,13 @@ public class ViSearchTest {
     }
 
     @Test
+    public void testSimilarProductsSearch() throws Exception {
+        UploadSearchParams similarProductsSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
+        visearch.similarProductsSearch(similarProductsSearchParams);
+        verify(searchOperations).similarProductsSearch(similarProductsSearchParams);
+    }
+
+    @Test
     public void testSendEvent() {
         Map<String,String> params = new HashMap<String,String>();
         params.put("action","click");
@@ -176,5 +183,21 @@ public class ViSearchTest {
         reset(trackOperations);
         visearch.uploadSearch(uploadSearchParams);
         verify(trackOperations, new Times(0)).sendEvent(any(Map.class));
+    }
+
+    @Test
+    public void testSimilarProductsWithoutAutoSolutionAction() throws InterruptedException {
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
+        when(searchOperations.similarProductsSearch(any(UploadSearchParams.class))).then(new Answer<PagedSearchGroupResult>() {
+            @Override
+            public PagedSearchGroupResult answer(InvocationOnMock invocationOnMock) throws Throwable {
+                PagedSearchGroupResult result = new PagedSearchGroupResult(new PagedResult());
+                result.setHeaders(ImmutableMap.of("X-Log-ID","11111"));
+                return result;
+            }
+        });
+        // with auto solution action
+        visearch.similarProductsSearch(uploadSearchParams);
+        verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
     }
 }

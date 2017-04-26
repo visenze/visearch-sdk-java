@@ -38,5 +38,4 @@ public class PagedResult<T> extends ResponseBase {
     public List<T> getResult() {
         return result;
     }
-
 }
