@@ -419,4 +419,49 @@ public class ViSearchSearchOperationsTest {
         UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
         searchOperations.uploadSearch(uploadSearchParams);
     }
+
+    @Test
+    public void testSimilarProductsSearchParamsURL() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"similarproducts\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"group_result\":[[{\"im_name\":\"test_im_1\"}]]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/test_im.jpeg");
+        assertEquals("http://www.example.com/test_im.jpeg", uploadSearchParams.getImageUrl());
+        searchOperations.similarProductsSearch(uploadSearchParams);
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
+        expectedParams.put("detection", "all");
+        verify(mockClient).post("/similarproducts", expectedParams);
+    }
+
+    @Test
+    public void testSimilarProductsSearchParamsNullFile() {
+        expectedException.expect(NullPointerException.class);
+        expectedException.expectMessage("The image file must not be null");
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        File nullFile = null;
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(nullFile);
+        searchOperations.similarProductsSearch(uploadSearchParams);
+    }
+
+    @Test
+    public void testSimilarProductsSearchParamsNonFile() {
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        File nonFile = new File("nonFile");
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(nonFile);
+        PagedSearchGroupResult response = searchOperations.similarProductsSearch(uploadSearchParams);
+        assertEquals(ResponseMessages.INVALID_IMAGE_OR_URL.getMessage(), response.getErrorMessage());
+    }
+
+    @Test
+    public void testSimilarProductsSearchParamsNullStream() {
+        expectedException.expect(NullPointerException.class);
+        expectedException.expectMessage("The image input stream must not be null");
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        InputStream inputStream = null;
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
+        searchOperations.similarProductsSearch(uploadSearchParams);
+    }
 }
