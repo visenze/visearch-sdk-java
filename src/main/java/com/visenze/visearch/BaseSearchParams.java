@@ -35,7 +35,9 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<Float> scoreMin = Optional.absent();
     protected Optional<Float> scoreMax = Optional.absent();
     protected Optional<Map<String, String>> fq = Optional.absent();
+    protected Optional<Map<String, String>> vsfq = Optional.absent();
     protected Optional<List<String>> fl = Optional.absent();
+    protected Optional<List<String>> vsfl = Optional.absent();
     protected Optional<Boolean> getAllFl = Optional.absent();
     protected Optional<Boolean> qInfo = Optional.absent();
     protected Optional<Map<String, String>> custom = Optional.absent();
@@ -83,6 +85,22 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     public P setFq(Map<String, String> fq) {
         this.fq = Optional.fromNullable(fq);
         return (P) this;
+    }
+
+    public Optional<Map<String, String>> getVsfq() {
+        return vsfq;
+    }
+
+    public void setVsfq(Map<String, String> vsfq) {
+        this.vsfq = Optional.fromNullable(vsfq);
+    }
+
+    public Optional<List<String>> getVsfl() {
+        return vsfl;
+    }
+
+    public void setVsfl(List<String> vsfl) {
+        this.vsfl = Optional.fromNullable(vsfl);
     }
 
     @SuppressWarnings("unchecked")
@@ -226,6 +244,16 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
         for (Map.Entry<String, String> entry : getFq().entrySet()) {
             map.put("fq", entry.getKey() + ":" + entry.getValue());
+        }
+        if (vsfq.isPresent()) {
+            for (Map.Entry<String, String> entry : vsfq.get().entrySet()) {
+                map.put("vs_fq", entry.getKey() + ":" + entry.getValue());
+            }
+        }
+        if (vsfl.isPresent()) {
+            for (String filter : vsfl.get()) {
+                map.put("vs_fl", filter);
+            }
         }
 
         for (String filter : getFl()) {
