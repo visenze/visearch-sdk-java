@@ -152,8 +152,10 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        Charset utf8 = Charset.forName("utf-8");
+        ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), utf8);
         for (Map.Entry<String, String> entry : params.entries()) {
-            builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
+            builder.addTextBody(entry.getKey(), entry.getValue(), contentType);
         }
         builder.addPart("image", new InputStreamBody(inputStream, filename));
         HttpEntity entity = builder.build();
