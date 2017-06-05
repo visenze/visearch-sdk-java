@@ -128,14 +128,6 @@ public class ViSearchTest {
     }
 
     @Test
-    public void testUploadSearch1() throws Exception {
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
-        ResizeSettings resizeSettings = new ResizeSettings(500, 500, 80);
-        visearch.uploadSearch(uploadSearchParams, resizeSettings);
-        verify(searchOperations).uploadSearch(uploadSearchParams, resizeSettings);
-    }
-
-    @Test
     public void testUploadSearchWithDedup() throws Exception {
         UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
         uploadSearchParams.setDedup(true);

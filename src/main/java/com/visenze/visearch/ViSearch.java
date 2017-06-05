@@ -266,25 +266,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     }
 
     /**
-     * Search for similar images from the ViSearch App given an image file or url, with customized image resize option.
-     *
-     * @param uploadSearchParams the upload search parameters, must contain a image file or a url
-     * @param resizeSettings     custom image resize option
-     * @return the page of upload search result
-     * @deprecated from version 1.2.2
-     */
-    @Deprecated
-    @Override
-    public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
-        PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams, resizeSettings);
-        if(result!=null && enableAutoSolutionActionTrack) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("uploadsearch", reqId);
-        }
-        return result;
-    }
-
-    /**
      * send search actions after finishing search
      * @param action
      * @param reqId

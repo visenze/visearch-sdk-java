@@ -65,19 +65,6 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
     }
 
-    /**
-     * @deprecated
-     * */
-    @Deprecated
-    @Override
-    public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
-        try {
-            return uploadSearchInternal(uploadSearchParams);
-        } catch (InternalViSearchException e) {
-            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
-        }
-    }
-
     private PagedSearchResult uploadSearchInternal(UploadSearchParams uploadSearchParams) {
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
