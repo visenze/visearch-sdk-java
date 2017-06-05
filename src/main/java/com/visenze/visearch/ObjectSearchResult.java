@@ -14,7 +14,7 @@ public class ObjectSearchResult {
     private Map<String, List<String>> attributesList;
     private int total;
     private List<ImageResult> result;
-
+    private List<Facet> facets;
 
     public ObjectSearchResult() {
 
@@ -74,5 +74,13 @@ public class ObjectSearchResult {
 
     public void setAttributesList(Map<String, List<String>> attributesList) {
         this.attributesList = attributesList;
+    }
+
+    public List<Facet> getFacets() {
+        return facets;
+    }
+
+    public void setFacets(List<Facet> facets) {
+        this.facets = facets;
     }
 }
