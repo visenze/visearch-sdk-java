@@ -36,7 +36,7 @@ import java.util.Map;
 public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private final String endpoint;
-    private final CloseableHttpClient httpClient;
+    CloseableHttpClient httpClient;
     private final ClientConfig clientConfig;
     private final UsernamePasswordCredentials credentials;
 
