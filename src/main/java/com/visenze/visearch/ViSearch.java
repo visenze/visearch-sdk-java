@@ -256,11 +256,11 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      * @return the page of upload search result
      */
     @Override
-    public PagedSearchGroupResult similarProductsSearch(UploadSearchParams similarProductsSearchParams) {
-        PagedSearchGroupResult result = searchOperations.similarProductsSearch(similarProductsSearchParams);
-        if(result!=null) {
+    public PagedSearchResult discoverSearch(UploadSearchParams similarProductsSearchParams) {
+        PagedSearchResult result = searchOperations.discoverSearch(similarProductsSearchParams);
+        if(result!=null && enableAutoSolutionActionTrack) {
             String reqId = result.getReqId();
-            this.sendSolutionActions("similarproductssearch", reqId);
+            this.sendSolutionActions("discoversearch", reqId);
         }
         return result;
     }

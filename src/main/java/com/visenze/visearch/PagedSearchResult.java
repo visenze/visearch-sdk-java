@@ -21,6 +21,17 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private String rawJson;
 
+    private List<ObjectSearchResult> objects;
+
+    private List<ProductType> objectTypesList;
+
+    public PagedSearchResult(Integer page, Integer limit, Integer total, List<ImageResult> result) {
+        this.page = page;
+        this.limit = limit;
+        this.total = total;
+        this.result = result;
+    }
+
     public PagedSearchResult(PagedResult<ImageResult> pagedResult) {
         super(pagedResult.getPage(), pagedResult.getLimit(), pagedResult.getTotal(), pagedResult.getResult());
     }
@@ -81,12 +92,39 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     /**
      * Get the request id to identify this request.
-     * @return
      */
     public String getReqId(){
         if(this.headers!=null && this.headers.containsKey(X_LOG_ID)){
             return headers.get(X_LOG_ID);
         }
         return X_LOG_ID_EMPTY;
+    }
+
+    /**
+     * Get discoversearch(multiple product search) object result list.
+     * Available only in {@link ViSearch#discoverSearch(UploadSearchParams)}
+     * {@link ViSearch#discoverSearch(UploadSearchParams)}
+     * @return detected object and search result
+     */
+    public List<ObjectSearchResult> getObjects() {
+        return objects;
+    }
+
+    /**
+     * Set discoversearch(multiple product search) object result list.
+     * Available only in {@link ViSearch#discoverSearch(UploadSearchParams)}
+     * {@link ViSearch#discoverSearch(UploadSearchParams)}
+     * @param objects
+     */
+    public void setObjects(List<ObjectSearchResult> objects) {
+        this.objects = objects;
+    }
+
+    public List<ProductType> getObjectTypesList() {
+        return objectTypesList;
+    }
+
+    public void setObjectTypesList(List<ProductType> objectTypesList) {
+        this.objectTypesList = objectTypesList;
     }
 }
