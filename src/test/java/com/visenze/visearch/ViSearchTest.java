@@ -161,7 +161,7 @@ public class ViSearchTest {
         when(searchOperations.uploadSearch(any(UploadSearchParams.class))).then(new Answer<PagedSearchResult>() {
             @Override
             public PagedSearchResult answer(InvocationOnMock invocationOnMock) throws Throwable {
-                PagedSearchResult result = new PagedSearchResult(new PagedResult());
+                PagedSearchResult result = new PagedSearchResult(null);
                 result.setHeaders(ImmutableMap.of("X-Log-ID","11111"));
                 return result;
             }
@@ -183,7 +183,7 @@ public class ViSearchTest {
         when(searchOperations.discoverSearch(any(UploadSearchParams.class))).then(new Answer<PagedSearchResult>() {
             @Override
             public PagedSearchResult answer(InvocationOnMock invocationOnMock) throws Throwable {
-                PagedSearchResult result = new PagedSearchResult(new PagedResult());
+                PagedSearchResult result = new PagedSearchResult(null);
                 result.setHeaders(ImmutableMap.of("X-Log-ID","11111"));
                 return result;
             }
@@ -191,5 +191,10 @@ public class ViSearchTest {
         // with auto solution action
         visearch.discoverSearch(uploadSearchParams);
         verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
+    }
+
+    @Test
+    public void testDiscoverSearch1() {
+
     }
 }

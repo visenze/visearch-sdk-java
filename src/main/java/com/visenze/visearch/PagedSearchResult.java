@@ -25,15 +25,15 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<ProductType> objectTypesList;
 
+    public PagedSearchResult(List<ImageResult> result) {
+        this.result = result;
+    }
+
     public PagedSearchResult(Integer page, Integer limit, Integer total, List<ImageResult> result) {
         this.page = page;
         this.limit = limit;
         this.total = total;
         this.result = result;
-    }
-
-    public PagedSearchResult(PagedResult<ImageResult> pagedResult) {
-        super(pagedResult.getPage(), pagedResult.getLimit(), pagedResult.getTotal(), pagedResult.getResult());
     }
 
     public PagedSearchResult(String errorMessage, Throwable e, String rawResponse) {
@@ -127,4 +127,6 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
     public void setObjectTypesList(List<ProductType> objectTypesList) {
         this.objectTypesList = objectTypesList;
     }
+
+
 }
