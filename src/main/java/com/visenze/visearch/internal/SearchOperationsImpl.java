@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class SearchOperationsImpl extends BaseViSearchOperations implements SearchOperations {
 
+    private static final String ENDPOINT_DISCOVER_SEARCH = "/discoversearch";
     private static final String ENDPOINT_UPLOAD_SEARCH = "/uploadsearch";
     private static final String ENDPOINT_SEARCH = "/search";
     private static final String ENDPOINT_RECOMMENDATION = "/recommendation";
@@ -64,28 +65,6 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
     }
 
-    @Override
-    public PagedSearchGroupResult similarProductsSearch(UploadSearchParams similarProductsSearchPararms) {
-        try {
-            return similarProductsSearchInternal(similarProductsSearchPararms);
-        } catch (InternalViSearchException e) {
-            return new PagedSearchGroupResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
-        }
-    }
-
-    /**
-     * @deprecated
-     * */
-    @Deprecated
-    @Override
-    public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings) {
-        try {
-            return uploadSearchInternal(uploadSearchParams);
-        } catch (InternalViSearchException e) {
-            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
-        }
-    }
-
     private PagedSearchResult uploadSearchInternal(UploadSearchParams uploadSearchParams) {
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
@@ -114,73 +93,51 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         return getPagedResult(response);
     }
 
-    private PagedSearchGroupResult similarProductsSearchInternal(UploadSearchParams uploadSearchParams) {
+    /**
+     * Perform real disover search
+     * @param uploadSearchParams
+     * @return
+     */
+    @Override
+    public PagedSearchResult discoverSearch(UploadSearchParams uploadSearchParams) {
+        try {
+            return discoverSearchInternal(uploadSearchParams);
+        } catch (InternalViSearchException e) {
+            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
+
+    /**
+     * Perform real disover search
+     * @param uploadSearchParams
+     * @return
+     */
+    private PagedSearchResult discoverSearchInternal(UploadSearchParams uploadSearchParams) {
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
-
-        //detection should always set to "all"
-        uploadSearchParams.setDetection(DETECTION_ALL);
-
         ViSearchHttpResponse response;
-        if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
+
+        // if im_id is available no need to check for image
+        if (!Strings.isNullOrEmpty(uploadSearchParams.getImId())){
+            response = viSearchHttpClient.post(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap());
+        }
+        else if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
             throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_SOURCE);
             // throw new IllegalArgumentException("Must provide either an image File, InputStream of the image, or a valid image url to perform upload search");
         } else if (imageFile != null) {
             try {
-                response = viSearchHttpClient.postImage(ENDPOINT_SIMILAR_PRODUCTS_SEARCH, uploadSearchParams.toMap(), new FileInputStream(imageFile), imageFile.getName());
+                response = viSearchHttpClient.postImage(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap(), new FileInputStream(imageFile), imageFile.getName());
             } catch (FileNotFoundException e) {
                 throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
                 // throw new IllegalArgumentException("Could not open the image file.", e);
             }
         } else if (imageStream != null) {
-            response = viSearchHttpClient.postImage(ENDPOINT_SIMILAR_PRODUCTS_SEARCH, uploadSearchParams.toMap(), imageStream, "image-stream");
+            response = viSearchHttpClient.postImage(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap(), imageStream, "image-stream");
         } else {
-            response = viSearchHttpClient.post(ENDPOINT_SIMILAR_PRODUCTS_SEARCH, uploadSearchParams.toMap());
+            response = viSearchHttpClient.post(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap());
         }
-        return getPagedSearchGroupResult(response);
-    }
-
-    private PagedSearchGroupResult getPagedSearchGroupResult(ViSearchHttpResponse httpResponse) {
-        String response = httpResponse.getBody();
-        Map<String, String> headers = httpResponse.getHeaders();
-        JsonNode node;
-        try {
-            node = objectMapper.readTree(response);
-        } catch (JsonProcessingException e) {
-            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, response);
-            // throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
-        } catch (IOException e) {
-            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, response);
-            // throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
-        }
-        checkResponseStatus(node);
-
-        PagedResult<GroupImageResult> pagedResult = pagify(response, response, GroupImageResult.class);
-        PagedSearchGroupResult result = new PagedSearchGroupResult(pagedResult);
-
-        JsonNode productTypesNode = node.get("product_types");
-        if (productTypesNode != null) {
-            List<ProductType> productTypes = deserializeListResult(response, productTypesNode, ProductType.class);
-            result.setProductTypes(productTypes);
-        }
-        JsonNode productTypesListNode = node.get("product_types_list");
-        if (productTypesListNode != null) {
-            List<ProductType> productTypesList = deserializeListResult(response, productTypesListNode, ProductType.class);
-            result.setProductTypesList(productTypesList);
-        }
-        JsonNode imIdNode = node.get("im_id");
-        if (imIdNode != null) {
-            result.setImId(imIdNode.asText());
-        }
-        JsonNode qinfoNode = node.get("qinfo");
-        if (qinfoNode != null) {
-            Map<String, String> qinfo = deserializeMapResult(response, qinfoNode, String.class, String.class);
-            result.setQueryInfo(qinfo);
-        }
-        result.setRawJson(node.toString());
-        result.setHeaders(headers);
-        return result;
+        return getPagedResult(response);
     }
 
     private PagedSearchResult getPagedResult(ViSearchHttpResponse httpResponse) {
@@ -198,8 +155,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
         checkResponseStatus(node);
 
-        PagedResult<ImageResult> pagedResult = pagify(response, response, ImageResult.class);
-        PagedSearchResult result = new PagedSearchResult(pagedResult);
+        PagedSearchResult result = pagify(response, response);
 
         JsonNode productTypesNode = node.get("product_types");
         if (productTypesNode != null) {
@@ -210,6 +166,11 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         if (productTypesListNode != null) {
             List<ProductType> productTypesList = deserializeListResult(response, productTypesListNode, ProductType.class);
             result.setProductTypesList(productTypesList);
+        }
+        JsonNode objectTypesListNode = node.get("object_types_list");
+        if (objectTypesListNode != null) {
+            List<ProductType> objectTypesList = deserializeListResult(response, objectTypesListNode, ProductType.class);
+            result.setObjectTypesList(objectTypesList);
         }
         JsonNode imIdNode = node.get("im_id");
         if (imIdNode != null) {

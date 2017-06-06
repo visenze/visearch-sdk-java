@@ -24,14 +24,15 @@ class BaseViSearchOperations {
         this.objectMapper = objectMapper;
     }
 
-    <T> PagedResult<T> pagify(String rawResponse, String json, Class<T> clazz) {
+    PagedSearchResult pagify(String rawResponse, String json) {
         try {
             JsonNode node = objectMapper.readTree(json);
-            List<T> result = new ArrayList<T>();
+            List<ImageResult> result = new ArrayList<ImageResult>();
+            List<ObjectSearchResult> objects = null;
             if(node.has("result"))
-                result = deserializeListResult(rawResponse, node.get("result"), clazz);
-            else if (node.has("group_result"))
-                result = (List<T>) deserializeListMultiResult(rawResponse, node.get("group_result"));
+                result = deserializeListResult(rawResponse, node.get("result"), ImageResult.class);
+            else if (node.has("objects"))
+                objects = deserializeListResult(rawResponse, node.get("objects"), ObjectSearchResult.class);
             JsonNode pageNode = node.get("page");
             JsonNode limitNode = node.get("limit");
             JsonNode totalNode = node.get("total");
@@ -39,7 +40,9 @@ class BaseViSearchOperations {
                 throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, rawResponse);
                 // throw new ViSearchException("Could not parse the paged ViSearch response: " + json, json);
             }
-            return new PagedResult<T>(pageNode.asInt(), limitNode.asInt(), totalNode.asInt(), result);
+            PagedSearchResult pagedResult = new PagedSearchResult(pageNode.asInt(), limitNode.asInt(), totalNode.asInt(), result);
+            pagedResult.setObjects(objects);
+            return pagedResult;
         } catch (IOException e) {
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
             // throw new ViSearchException("Could not parse the paged ViSearch response: " + json, e, json);
@@ -56,15 +59,6 @@ class BaseViSearchOperations {
         }
     }
 
-    <T> List<T> deserializeListMultiResult(String rawResponse, JsonNode node) {
-        List<T> list = new ArrayList<T>();
-        for(int i=0; i<node.size(); i++) {
-            GroupImageResult r = new GroupImageResult(deserializeListResult(rawResponse, node.get(i), ImageResult.class));
-            list.add((T) r);
-        }
-        return list;
-    }
-
     @SuppressWarnings("unchecked")
     <T> List<T> deserializeListResult(String rawResponse, JsonNode node, Class<T> clazz) {
         String json = node.toString();
@@ -73,8 +67,6 @@ class BaseViSearchOperations {
             return (List<T>) objectMapper.readerFor(listType).readValue(json);
         } catch (IOException e) {
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
-//             throw new ViSearchException("Could not parse the ViSearch response for list of " +
-//                    clazz.getSimpleName() + ": " + json, e, json);
         }
     }
 
@@ -86,9 +78,6 @@ class BaseViSearchOperations {
             return (Map<T, U>) objectMapper.readerFor(mapType).readValue(node);
         } catch (IOException e) {
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
-            //throw new ViSearchException("Could not parse the ViSearch response for map<" +
-            //        keyClass.getSimpleName() + ", " +
-            //        valueClass.getSimpleName() + ">: " + json, e, json);
         }
     }
 }

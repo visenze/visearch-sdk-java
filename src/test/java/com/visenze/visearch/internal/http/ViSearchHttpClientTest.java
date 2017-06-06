@@ -1,4 +1,4 @@
-package com.visenze.visearch;
+package com.visenze.visearch.internal.http;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -186,5 +187,12 @@ public class ViSearchHttpClientTest {
         ViSearchHttpClientImpl client;
         client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey, mockedHttpClient);
         client.postImage(path, params, null, "test file name String");
+    }
+
+    @Test
+    public void testHttpClientWithClientConfig() {
+        ViSearchHttpClientImpl client = new ViSearchHttpClientImpl(validEndpoint, validAccessKey, validSecretKey);
+        assertEquals(validAccessKey, client.getCredentials().getUserName());
+        assertEquals(validSecretKey, client.getCredentials().getPassword());
     }
 }

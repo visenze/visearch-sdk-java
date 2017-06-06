@@ -128,14 +128,6 @@ public class ViSearchTest {
     }
 
     @Test
-    public void testUploadSearch1() throws Exception {
-        UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
-        ResizeSettings resizeSettings = new ResizeSettings(500, 500, 80);
-        visearch.uploadSearch(uploadSearchParams, resizeSettings);
-        verify(searchOperations).uploadSearch(uploadSearchParams, resizeSettings);
-    }
-
-    @Test
     public void testUploadSearchWithDedup() throws Exception {
         UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
         uploadSearchParams.setDedup(true);
@@ -145,10 +137,10 @@ public class ViSearchTest {
     }
 
     @Test
-    public void testSimilarProductsSearch() throws Exception {
+    public void testDiscoverSearch() throws Exception {
         UploadSearchParams similarProductsSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
-        visearch.similarProductsSearch(similarProductsSearchParams);
-        verify(searchOperations).similarProductsSearch(similarProductsSearchParams);
+        visearch.discoverSearch(similarProductsSearchParams);
+        verify(searchOperations).discoverSearch(similarProductsSearchParams);
     }
 
     @Test
@@ -186,18 +178,18 @@ public class ViSearchTest {
     }
 
     @Test
-    public void testSimilarProductsWithoutAutoSolutionAction() throws InterruptedException {
+    public void testDiscoverSearchWithoutAutoSolutionAction() throws InterruptedException {
         UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
-        when(searchOperations.similarProductsSearch(any(UploadSearchParams.class))).then(new Answer<PagedSearchGroupResult>() {
+        when(searchOperations.discoverSearch(any(UploadSearchParams.class))).then(new Answer<PagedSearchResult>() {
             @Override
-            public PagedSearchGroupResult answer(InvocationOnMock invocationOnMock) throws Throwable {
-                PagedSearchGroupResult result = new PagedSearchGroupResult(new PagedResult());
+            public PagedSearchResult answer(InvocationOnMock invocationOnMock) throws Throwable {
+                PagedSearchResult result = new PagedSearchResult(new PagedResult());
                 result.setHeaders(ImmutableMap.of("X-Log-ID","11111"));
                 return result;
             }
         });
         // with auto solution action
-        visearch.similarProductsSearch(uploadSearchParams);
+        visearch.discoverSearch(uploadSearchParams);
         verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
     }
 }

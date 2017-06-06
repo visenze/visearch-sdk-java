@@ -12,12 +12,5 @@ public interface SearchOperations {
 
     PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams);
 
-    PagedSearchGroupResult similarProductsSearch(UploadSearchParams similarProductsSearchPararms);
-
-    /**
-     * @deprecated
-     * */
-    @Deprecated
-    PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams, ResizeSettings resizeSettings);
-
+    PagedSearchResult discoverSearch(UploadSearchParams similarProductsSearchParams);
 }
