@@ -33,19 +33,21 @@ class BaseViSearchOperations {
                 result = deserializeListResult(rawResponse, node.get("result"), ImageResult.class);
             else if (node.has("objects"))
                 objects = deserializeListResult(rawResponse, node.get("objects"), ObjectSearchResult.class);
+            JsonNode methodNode = node.get("method");
+            if (methodNode == null) {
+                throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, rawResponse);
+            }
             JsonNode pageNode = node.get("page");
             JsonNode limitNode = node.get("limit");
             JsonNode totalNode = node.get("total");
-            if (pageNode == null || limitNode == null || totalNode == null) {
-                throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, rawResponse);
-                // throw new ViSearchException("Could not parse the paged ViSearch response: " + json, json);
-            }
-            PagedSearchResult pagedResult = new PagedSearchResult(pageNode.asInt(), limitNode.asInt(), totalNode.asInt(), result);
+            PagedSearchResult pagedResult = new PagedSearchResult(result);
+            if(pageNode!=null) pagedResult.setPage(pageNode.asInt());
+            if(limitNode!=null) pagedResult.setLimit(limitNode.asInt());
+            if(totalNode!=null) pagedResult.setTotal(totalNode.asInt());
             pagedResult.setObjects(objects);
             return pagedResult;
         } catch (IOException e) {
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
-            // throw new ViSearchException("Could not parse the paged ViSearch response: " + json, e, json);
         }
     }
 

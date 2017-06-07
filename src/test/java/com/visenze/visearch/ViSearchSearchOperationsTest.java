@@ -271,7 +271,7 @@ public class ViSearchSearchOperationsTest {
 
     @Test
     public void testSearchResponseMalformed2() {
-        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"total\":20,\"result\":[]}";
+        String responseBody = "{\"status\":\"OK\",\"error\":[],\"total\":20,\"result\":[]}";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
         when(response.getBody()).thenReturn(responseBody);
         when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
