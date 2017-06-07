@@ -192,9 +192,4 @@ public class ViSearchTest {
         visearch.discoverSearch(uploadSearchParams);
         verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
     }
-
-    @Test
-    public void testDiscoverSearch1() {
-
-    }
 }
