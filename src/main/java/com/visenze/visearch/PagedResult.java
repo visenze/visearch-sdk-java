@@ -16,13 +16,6 @@ public class PagedResult<T> extends ResponseBase {
 
     public PagedResult() {}
 
-    public PagedResult(Integer page, Integer limit, Integer total, List<T> result) {
-        this.page = page;
-        this.limit = limit;
-        this.total = total;
-        this.result = result;
-    }
-
     public Integer getPage() {
         return page;
     }

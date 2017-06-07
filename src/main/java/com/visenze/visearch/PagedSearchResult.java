@@ -29,13 +29,6 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
         this.result = result;
     }
 
-    public PagedSearchResult(Integer page, Integer limit, Integer total, List<ImageResult> result) {
-        this.page = page;
-        this.limit = limit;
-        this.total = total;
-        this.result = result;
-    }
-
     public PagedSearchResult(String errorMessage, Throwable e, String rawResponse) {
         super.setErrorMessage(errorMessage);
         super.setCause(e);

@@ -136,6 +136,7 @@
                     <instrumentation>
                         <excludes>
                             <exclude>com/visenze/visearch/internal/json/*</exclude>
+                            <exclude>com/visenze/visearch/Box</exclude>
                         </excludes>
                     </instrumentation>
                     <aggregate>true</aggregate>
