@@ -83,6 +83,30 @@ public class ViSearchSearchOperationsTest {
     }
 
     @Test
+    public void testSearchParamsFacetOnNumber() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}],\"facets\":[{\"key\":\"brand\",\"range\":{\"min\":1, \"max\":420}}]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im")
+                .setFacets(Lists.newArrayList("brand"))
+                .setFacetsLimit(10)
+                .setFacetsShowCount(true);
+        PagedSearchResult searchResult = searchOperations.search(searchParams);
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "test_im");
+        expectedParams.put("facets", "brand");
+        expectedParams.put("facets_limit", "10");
+        expectedParams.put("facets_show_count", "true");
+        verify(mockClient).get("/search", expectedParams);
+        List<Facet> facets = searchResult.getFacets();
+        assertEquals(1, facets.size());
+        assertEquals(1, facets.get(0).getRange().getMin());
+        assertEquals(420, facets.get(0).getRange().getMax());
+    }
+
+    @Test
     public void testSearchParamsFull() {
         String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":10,\"limit\":1,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\"}]}";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
