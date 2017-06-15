@@ -12,5 +12,8 @@ public interface SearchOperations {
 
     PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams);
 
-    PagedSearchResult discoverSearch(UploadSearchParams similarProductsSearchParams);
+    PagedSearchResult discoverSearch(UploadSearchParams discoverSearchParams);
+
+    @Deprecated
+    PagedSearchResult similarProductsSearch(UploadSearchParams similarProductsSearchParams);
 }

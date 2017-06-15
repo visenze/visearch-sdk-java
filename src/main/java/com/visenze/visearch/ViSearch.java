@@ -252,15 +252,33 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      * Detect multiple objects and search for similar images from the ViSearch App
      * The input will be an image file or url.
      *
+     * @param discoverSearchParams the upload search parameters, must contain a image file or a url
+     * @return the page of upload search result
+     */
+    @Override
+    public PagedSearchResult discoverSearch(UploadSearchParams discoverSearchParams) {
+        PagedSearchResult result = searchOperations.discoverSearch(discoverSearchParams);
+        if(result!=null && enableAutoSolutionActionTrack) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("discoversearch", reqId);
+        }
+        return result;
+    }
+
+    /**
+     * Detect multiple objects and search for similar images from the ViSearch App
+     * The input will be an image file or url.
+     *
      * @param similarProductsSearchParams the upload search parameters, must contain a image file or a url
      * @return the page of upload search result
      */
     @Override
-    public PagedSearchResult discoverSearch(UploadSearchParams similarProductsSearchParams) {
-        PagedSearchResult result = searchOperations.discoverSearch(similarProductsSearchParams);
-        if(result!=null && enableAutoSolutionActionTrack) {
+    @Deprecated
+    public PagedSearchResult similarProductsSearch(UploadSearchParams similarProductsSearchParams) {
+        PagedSearchResult result = searchOperations.similarProductsSearch(similarProductsSearchParams);
+        if(result!=null) {
             String reqId = result.getReqId();
-            this.sendSolutionActions("discoversearch", reqId);
+            this.sendSolutionActions("similarproductssearch", reqId);
         }
         return result;
     }
