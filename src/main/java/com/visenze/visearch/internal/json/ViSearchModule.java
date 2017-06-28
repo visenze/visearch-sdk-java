@@ -18,5 +18,6 @@ public class ViSearchModule extends SimpleModule {
         context.setMixInAnnotations(InsertTrans.class, InsertTransMixin.class);
         context.setMixInAnnotations(InsertStatus.class, InsertStatusMixin.class);
         context.setMixInAnnotations(InsertError.class, InsertErrorMixin.class);
+        context.setMixInAnnotations(GroupSearchResult.class, GroupSearchResultMixin.class);
     }
 }

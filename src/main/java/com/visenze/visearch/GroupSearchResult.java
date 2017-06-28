@@ -11,13 +11,13 @@ import java.util.List;
 public class GroupSearchResult {
 
     private List<ImageResult> result;
-    private String groupValue;
+    private String groupByValue;
 
     public GroupSearchResult() {}
 
     public GroupSearchResult(String groupValue, List<ImageResult> result) {
         this.result = result;
-        this.groupValue = groupValue;
+        this.groupByValue = groupValue;
     }
 
     public List<ImageResult> getResult() {
@@ -28,11 +28,11 @@ public class GroupSearchResult {
         this.result = result;
     }
 
-    public String getGroupValue() {
-        return groupValue;
+    public String getGroupByValue() {
+        return groupByValue;
     }
 
-    public void setGroupValue(String groupValue) {
-        this.groupValue = groupValue;
+    public void setGroupByValue(String groupByValue) {
+        this.groupByValue = groupByValue;
     }
 }

@@ -16,6 +16,8 @@ public class PagedResult<T> extends ResponseBase {
 
     protected Integer groupLimit;
 
+    protected String groupByKey ;
+
     public PagedResult() {}
 
     public Integer getPage() {
@@ -36,6 +38,8 @@ public class PagedResult<T> extends ResponseBase {
 
     public Integer getGroupLimit() { return groupLimit; }
 
+    public String getGroupByKey() { return groupByKey; }
+
     public void setPage(Integer page) {
         this.page = page;
     }
@@ -49,4 +53,6 @@ public class PagedResult<T> extends ResponseBase {
     }
 
     public void setGroupLimit(Integer groupLimit) { this.groupLimit = groupLimit; }
+
+    public void setGroupByKey(String groupByKey) { this.groupByKey = groupByKey; }
 }

@@ -22,6 +22,7 @@ class BaseViSearchOperations {
     public static final String TOTAL = "total";
     public static final String GROUP_LIMIT = "group_limit";
     public static final String GROUP_RESULTS = "group_results";
+    public static final String GROUP_BY_KEY = "group_by_key";
 
     final ViSearchHttpClient viSearchHttpClient;
     final ObjectMapper objectMapper;
@@ -42,39 +43,8 @@ class BaseViSearchOperations {
                 result = deserializeListResult(rawResponse, node.get(RESULT), ImageResult.class);
             else if (node.has(OBJECTS))
                 objects = deserializeListResult(rawResponse, node.get(OBJECTS), ObjectSearchResult.class);
-            else if (node.has(GROUP_RESULTS)) {
-                JsonNode groupResultsNode = node.get(GROUP_RESULTS) ;
-                if (groupResultsNode instanceof ArrayNode){
-                    ArrayNode arrayNode = (ArrayNode) groupResultsNode;
-                    groupResults = new ArrayList<GroupSearchResult>(arrayNode.size());
-                    int len = arrayNode.size();
-                    for (int i = 0 ; i < len ; i++) {
-                        JsonNode groupNode = arrayNode.get(i);
-
-                        GroupSearchResult groupSearchResult = new GroupSearchResult();
-
-                        // extract group value
-                        Iterator<String> it = groupNode.fieldNames();
-                        while (it.hasNext())
-                        {
-                            String key = it.next();
-                            if (key.equals(RESULT))
-                            {
-                                groupSearchResult.setResult(deserializeListResult(rawResponse, groupNode.get(RESULT), ImageResult.class));
-                            }
-                            else {
-                                groupSearchResult.setGroupValue(groupNode.get(key).textValue());
-                            }
-                        }
-
-
-                        groupResults.add(groupSearchResult);
-
-                    }
-                }
-
-            }
-
+            else if (node.has(GROUP_RESULTS))
+                groupResults =  deserializeListResult(rawResponse, node.get(GROUP_RESULTS), GroupSearchResult.class);
 
             JsonNode methodNode = node.get(METHOD);
             if (methodNode == null) {
@@ -84,16 +54,17 @@ class BaseViSearchOperations {
             JsonNode limitNode = node.get(LIMIT);
             JsonNode totalNode = node.get(TOTAL);
             JsonNode groupLimitNode = node.get(GROUP_LIMIT) ;
+            JsonNode groupByKeyNode = node.get(GROUP_BY_KEY) ;
 
             PagedSearchResult pagedResult = new PagedSearchResult(result);
             if(pageNode!=null) pagedResult.setPage(pageNode.asInt());
             if(limitNode!=null) pagedResult.setLimit(limitNode.asInt());
             if(totalNode!=null) pagedResult.setTotal(totalNode.asInt());
             if(groupLimitNode!=null) pagedResult.setGroupLimit(groupLimitNode.asInt());
+            if(groupByKeyNode!=null) pagedResult.setGroupByKey(groupByKeyNode.asText());
 
             pagedResult.setObjects(objects);
             pagedResult.setGroupSearchResults(groupResults);
-
 
             return pagedResult;
         } catch (IOException e) {
