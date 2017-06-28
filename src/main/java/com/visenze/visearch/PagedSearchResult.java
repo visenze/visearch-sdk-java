@@ -25,6 +25,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<ProductType> objectTypesList;
 
+    private List<GroupSearchResult> groupSearchResults;
+
     public PagedSearchResult(List<ImageResult> result) {
         this.result = result;
     }
@@ -121,5 +123,7 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
         this.objectTypesList = objectTypesList;
     }
 
+    public List<GroupSearchResult> getGroupSearchResults() { return groupSearchResults; }
 
+    public void setGroupSearchResults(List<GroupSearchResult> groupSearchResults) { this.groupSearchResults = groupSearchResults; }
 }

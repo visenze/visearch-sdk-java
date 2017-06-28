@@ -26,6 +26,13 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
     private static final String ENDPOINT_SIMILAR_PRODUCTS_SEARCH = "/similarproducts";
     private static final String DETECTION_ALL = "all";
+    public static final String PRODUCT_TYPES = "product_types";
+    public static final String PRODUCT_TYPES_LIST = "product_types_list";
+    public static final String IM_ID = "im_id";
+    public static final String FACETS = "facets";
+    public static final String QINFO = "qinfo";
+    public static final String OBJECT_TYPES_LIST = "object_types_list";
+    public static final String GROUP_RESULT = "group_result";
 
     public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
         super(viSearchHttpClient, objectMapper);
@@ -176,37 +183,37 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
         PagedSearchResult result = pagify(response, response);
 
-        JsonNode productTypesNode = node.get("product_types");
+        JsonNode productTypesNode = node.get(PRODUCT_TYPES);
         if (productTypesNode != null) {
             List<ProductType> productTypes = deserializeListResult(response, productTypesNode, ProductType.class);
             result.setProductTypes(productTypes);
         }
-        JsonNode productTypesListNode = node.get("product_types_list");
+        JsonNode productTypesListNode = node.get(PRODUCT_TYPES_LIST);
         if (productTypesListNode != null) {
             List<ProductType> productTypesList = deserializeListResult(response, productTypesListNode, ProductType.class);
             result.setProductTypesList(productTypesList);
         }
-        JsonNode objectTypesListNode = node.get("object_types_list");
+        JsonNode objectTypesListNode = node.get(OBJECT_TYPES_LIST);
         if (objectTypesListNode != null) {
             List<ProductType> objectTypesList = deserializeListResult(response, objectTypesListNode, ProductType.class);
             result.setObjectTypesList(objectTypesList);
         }
-        JsonNode imIdNode = node.get("im_id");
+        JsonNode imIdNode = node.get(IM_ID);
         if (imIdNode != null) {
             result.setImId(imIdNode.asText());
         }
-        JsonNode facetsNode = node.get("facets");
+        JsonNode facetsNode = node.get(FACETS);
         if (facetsNode != null) {
             List<Facet> facets = deserializeListResult(response, facetsNode, Facet.class);
             result.setFacets(facets);
         }
-        JsonNode qinfoNode = node.get("qinfo");
+        JsonNode qinfoNode = node.get(QINFO);
         if (qinfoNode != null) {
             Map<String, String> qinfo = deserializeMapResult(response, qinfoNode, String.class, String.class);
             result.setQueryInfo(qinfo);
         }
         // For similarproducts search, try to cover it's result into discoversearch result.
-        JsonNode groupResult = node.get("group_result");
+        JsonNode groupResult = node.get(GROUP_RESULT);
         if (groupResult != null && groupResult instanceof ArrayNode) {
             List<ProductType> productTypes = result.getProductTypes();
             List<ObjectSearchResult> objects = Lists.newArrayList();
@@ -226,6 +233,10 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setObjects(objects);
             result.setObjectTypesList(result.getProductTypesList());
         }
+
+        // added grouped response for group_by field
+
+
         result.setRawJson(node.toString());
         result.setHeaders(headers);
         return result;

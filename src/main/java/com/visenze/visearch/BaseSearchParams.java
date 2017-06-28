@@ -45,7 +45,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<Boolean> dedup = Optional.absent();
     protected Optional<Float> dedupThreshold = Optional.absent();
 
-    protected Optional<String> groupBy;
+    protected Optional<String> groupBy = Optional.absent();
     protected Optional<Integer>  groupLimit = Optional.absent();
 
     @SuppressWarnings("unchecked")

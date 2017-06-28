@@ -2,22 +2,26 @@ package com.visenze.visearch.internal;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.visenze.visearch.ImageResult;
-import com.visenze.visearch.ObjectSearchResult;
-import com.visenze.visearch.PagedSearchResult;
-import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class BaseViSearchOperations {
+
+    public static final String RESULT = "result";
+    public static final String OBJECTS = "objects";
+    public static final String METHOD = "method";
+    public static final String PAGE = "page";
+    public static final String LIMIT = "limit";
+    public static final String TOTAL = "total";
+    public static final String GROUP_LIMIT = "group_limit";
+    public static final String GROUP_RESULTS = "group_results";
 
     final ViSearchHttpClient viSearchHttpClient;
     final ObjectMapper objectMapper;
@@ -32,22 +36,63 @@ class BaseViSearchOperations {
             JsonNode node = objectMapper.readTree(json);
             List<ImageResult> result = new ArrayList<ImageResult>();
             List<ObjectSearchResult> objects = null;
-            if(node.has("result"))
-                result = deserializeListResult(rawResponse, node.get("result"), ImageResult.class);
-            else if (node.has("objects"))
-                objects = deserializeListResult(rawResponse, node.get("objects"), ObjectSearchResult.class);
-            JsonNode methodNode = node.get("method");
+            List<GroupSearchResult> groupResults = null;
+
+            if(node.has(RESULT))
+                result = deserializeListResult(rawResponse, node.get(RESULT), ImageResult.class);
+            else if (node.has(OBJECTS))
+                objects = deserializeListResult(rawResponse, node.get(OBJECTS), ObjectSearchResult.class);
+            else if (node.has(GROUP_RESULTS)) {
+                JsonNode groupResultsNode = node.get(GROUP_RESULTS) ;
+                if (groupResultsNode instanceof ArrayNode){
+                    ArrayNode arrayNode = (ArrayNode) groupResultsNode;
+                    groupResults = new ArrayList<GroupSearchResult>(arrayNode.size());
+                    for (int i = 0, len = arrayNode.size() ; i < len ; i++) {
+                        JsonNode groupNode = arrayNode.get(i);
+
+                        GroupSearchResult groupSearchResult = new GroupSearchResult();
+
+                        // extract group value
+                        Iterator<String> it = groupNode.fieldNames();
+                        while (it.hasNext())
+                        {
+                            String key = it.next();
+                            if (key.equals(RESULT))
+                            {
+                                groupSearchResult.setResult(deserializeListResult(rawResponse, groupNode.get(RESULT), ImageResult.class));
+                            }
+                            else {
+                                groupSearchResult.setGroupValue(groupNode.get(key).textValue());
+                            }
+                        }
+
+
+                        groupResults.add(groupSearchResult);
+
+                    }
+                }
+
+            }
+
+
+            JsonNode methodNode = node.get(METHOD);
             if (methodNode == null) {
                 throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, rawResponse);
             }
-            JsonNode pageNode = node.get("page");
-            JsonNode limitNode = node.get("limit");
-            JsonNode totalNode = node.get("total");
+            JsonNode pageNode = node.get(PAGE);
+            JsonNode limitNode = node.get(LIMIT);
+            JsonNode totalNode = node.get(TOTAL);
+            JsonNode groupLimitNode = node.get(GROUP_LIMIT) ;
+
             PagedSearchResult pagedResult = new PagedSearchResult(result);
             if(pageNode!=null) pagedResult.setPage(pageNode.asInt());
             if(limitNode!=null) pagedResult.setLimit(limitNode.asInt());
             if(totalNode!=null) pagedResult.setTotal(totalNode.asInt());
+            if(groupLimitNode!=null) pagedResult.setGroupLimit(groupLimitNode.asInt());
+
             pagedResult.setObjects(objects);
+
+
             return pagedResult;
         } catch (IOException e) {
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);

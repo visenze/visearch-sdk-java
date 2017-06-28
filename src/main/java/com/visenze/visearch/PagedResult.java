@@ -14,6 +14,8 @@ public class PagedResult<T> extends ResponseBase {
 
     protected List<T> result;
 
+    protected Integer groupLimit;
+
     public PagedResult() {}
 
     public Integer getPage() {
@@ -32,6 +34,8 @@ public class PagedResult<T> extends ResponseBase {
         return result;
     }
 
+    public Integer getGroupLimit() { return groupLimit; }
+
     public void setPage(Integer page) {
         this.page = page;
     }
@@ -43,4 +47,6 @@ public class PagedResult<T> extends ResponseBase {
     public void setTotal(Integer total) {
         this.total = total;
     }
+
+    public void setGroupLimit(Integer groupLimit) { this.groupLimit = groupLimit; }
 }
