@@ -6,11 +6,6 @@ public class FacetItem {
 
     private Integer count;
 
-    public FacetItem(String value, Integer count) {
-        this.value = value;
-        this.count = count;
-    }
-
     public String getValue() {
         return value;
     }
@@ -19,4 +14,11 @@ public class FacetItem {
         return count;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 }
