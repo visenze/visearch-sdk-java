@@ -137,6 +137,7 @@
                         <excludes>
                             <exclude>com/visenze/visearch/internal/json/*</exclude>
                             <exclude>com/visenze/visearch/Box</exclude>
+                            <exclude>com/visenze/visearch/ObjectSearchResult</exclude>
                         </excludes>
                     </instrumentation>
                     <aggregate>true</aggregate>

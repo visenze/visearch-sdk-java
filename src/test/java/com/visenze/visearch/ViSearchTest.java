@@ -192,4 +192,20 @@ public class ViSearchTest {
         visearch.discoverSearch(uploadSearchParams);
         verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
     }
+
+    @Test
+    public void testSimilarSearchWithoutAutoSolutionAction() throws InterruptedException {
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(new File("/tmp/test_image.jpg"));
+        when(searchOperations.similarProductsSearch(any(UploadSearchParams.class))).then(new Answer<PagedSearchResult>() {
+            @Override
+            public PagedSearchResult answer(InvocationOnMock invocationOnMock) throws Throwable {
+                PagedSearchResult result = new PagedSearchResult(null);
+                result.setHeaders(ImmutableMap.of("X-Log-ID","11111"));
+                return result;
+            }
+        });
+        // with auto solution action
+        visearch.similarProductsSearch(uploadSearchParams);
+        verify(searchOperations, new Times(1)).similarProductsSearch(any(UploadSearchParams.class));
+    }
 }
