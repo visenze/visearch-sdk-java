@@ -567,6 +567,10 @@ public class ViSearchSearchOperationsTest {
         assertEquals("321642abb52c014a0861c3264ebd3a04", firstItem.getGroupValue());
         assertEquals(1, firstItem.getResult().size());
         assertEquals("a46453f90a3a14bb574e43c7c51cb828", firstItem.getResult().get(0).getImName());
+        assertEquals("2017062864e69285a9eb6940bc5089b7d39db6a52561269e.jpg", pagedResult.getImId());
+        assertEquals(1, pagedResult.getProductTypes().size());
+        assertEquals("shoe", pagedResult.getProductTypes().get(0).getType());
+
 
     }
 }

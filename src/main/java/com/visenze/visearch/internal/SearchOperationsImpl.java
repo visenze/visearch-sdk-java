@@ -33,6 +33,9 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     public static final String QINFO = "qinfo";
     public static final String OBJECT_TYPES_LIST = "object_types_list";
     public static final String GROUP_RESULT = "group_result";
+    public static final String STATUS = "status";
+    public static final String OK = "OK";
+    public static final String ERROR = "error";
 
     public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
         super(viSearchHttpClient, objectMapper);
@@ -244,14 +247,14 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
     private static void checkResponseStatus(JsonNode node) {
         String json = node.toString();
-        JsonNode statusNode = node.get("status");
+        JsonNode statusNode = node.get(STATUS);
         if (statusNode == null) {
             throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, json);
             // throw new ViSearchException("There was a malformed ViSearch response: " + json, json);
         } else {
             String status = statusNode.asText();
-            if (!"OK".equals(status)) {
-                JsonNode errorNode = node.get("error");
+            if (!OK.equals(status)) {
+                JsonNode errorNode = node.get(ERROR);
                 if (errorNode == null) {
                     throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, json);
                     // throw new ViSearchException("An unknown error occurred in ViSearch: " + json, json);

@@ -47,7 +47,8 @@ class BaseViSearchOperations {
                 if (groupResultsNode instanceof ArrayNode){
                     ArrayNode arrayNode = (ArrayNode) groupResultsNode;
                     groupResults = new ArrayList<GroupSearchResult>(arrayNode.size());
-                    for (int i = 0, len = arrayNode.size() ; i < len ; i++) {
+                    int len = arrayNode.size();
+                    for (int i = 0 ; i < len ; i++) {
                         JsonNode groupNode = arrayNode.get(i);
 
                         GroupSearchResult groupSearchResult = new GroupSearchResult();

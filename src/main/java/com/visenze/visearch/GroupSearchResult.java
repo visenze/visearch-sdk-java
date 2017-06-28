@@ -15,6 +15,11 @@ public class GroupSearchResult {
 
     public GroupSearchResult() {}
 
+    public GroupSearchResult(String groupValue, List<ImageResult> result) {
+        this.result = result;
+        this.groupValue = groupValue;
+    }
+
     public List<ImageResult> getResult() {
         return result;
     }
