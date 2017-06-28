@@ -522,7 +522,8 @@ public class ViSearchSearchOperationsTest {
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         InputStream inputStream = null;
         UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
-        searchOperations.discoverSearch(uploadSearchParams);
+        PagedSearchResult response = searchOperations.similarProductsSearch(uploadSearchParams);
+        assertEquals(ResponseMessages.INVALID_IMAGE_OR_URL.getMessage(), response.getErrorMessage());
     }
 
     // should not throw anything

@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.visenze.visearch.*;
+import com.visenze.visearch.ImageResult;
+import com.visenze.visearch.ObjectSearchResult;
+import com.visenze.visearch.PagedSearchResult;
+import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 
 import java.io.IOException;

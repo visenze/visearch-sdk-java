@@ -1,14 +1,19 @@
 package com.visenze.visearch.internal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +106,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     @Override
     public PagedSearchResult discoverSearch(UploadSearchParams uploadSearchParams) {
         try {
-            return discoverSearchInternal(uploadSearchParams);
+            return postImageSearch(uploadSearchParams, ENDPOINT_DISCOVER_SEARCH);
         } catch (InternalViSearchException e) {
             return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
         }
@@ -112,7 +117,21 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
      * @param uploadSearchParams
      * @return
      */
-    private PagedSearchResult discoverSearchInternal(UploadSearchParams uploadSearchParams) {
+    @Override
+    public PagedSearchResult similarProductsSearch(UploadSearchParams uploadSearchParams) {
+        try {
+            return postImageSearch(uploadSearchParams, ENDPOINT_SIMILAR_PRODUCTS_SEARCH);
+        } catch (InternalViSearchException e) {
+            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
+
+    /**
+     * Perform real disover search
+     * @param uploadSearchParams
+     * @return
+     */
+    private PagedSearchResult postImageSearch(UploadSearchParams uploadSearchParams, String endpointMethod) {
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
@@ -120,22 +139,22 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
         // if im_id is available no need to check for image
         if (!Strings.isNullOrEmpty(uploadSearchParams.getImId())){
-            response = viSearchHttpClient.post(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap());
+            response = viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
         }
         else if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
             throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_SOURCE);
             // throw new IllegalArgumentException("Must provide either an image File, InputStream of the image, or a valid image url to perform upload search");
         } else if (imageFile != null) {
             try {
-                response = viSearchHttpClient.postImage(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap(), new FileInputStream(imageFile), imageFile.getName());
+                response = viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), new FileInputStream(imageFile), imageFile.getName());
             } catch (FileNotFoundException e) {
                 throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
                 // throw new IllegalArgumentException("Could not open the image file.", e);
             }
         } else if (imageStream != null) {
-            response = viSearchHttpClient.postImage(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap(), imageStream, "image-stream");
+            response = viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), imageStream, "image-stream");
         } else {
-            response = viSearchHttpClient.post(ENDPOINT_DISCOVER_SEARCH, uploadSearchParams.toMap());
+            response = viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
         }
         return getPagedResult(response);
     }
@@ -185,6 +204,27 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         if (qinfoNode != null) {
             Map<String, String> qinfo = deserializeMapResult(response, qinfoNode, String.class, String.class);
             result.setQueryInfo(qinfo);
+        }
+        // For similarproducts search, try to cover it's result into discoversearch result.
+        JsonNode groupResult = node.get("group_result");
+        if (groupResult != null && groupResult instanceof ArrayNode) {
+            List<ProductType> productTypes = result.getProductTypes();
+            List<ObjectSearchResult> objects = Lists.newArrayList();
+            ArrayNode arrayNode = (ArrayNode) groupResult;
+            for (int i = 0; i < arrayNode.size(); i++) {
+                JsonNode oneGroup = arrayNode.get(i);
+                ProductType productType = productTypes.get(i);
+                ObjectSearchResult objectSearchResult = new ObjectSearchResult();
+                objectSearchResult.setResult(deserializeListResult(response, oneGroup, ImageResult.class));
+                objectSearchResult.setScore(productType.getScore());
+                objectSearchResult.setAttributes(productType.getAttributes());
+                objectSearchResult.setAttributesList(productType.getAttributesList());
+                objectSearchResult.setBox(productType.getBox());
+                objectSearchResult.setType(productType.getType());
+                objects.add(objectSearchResult);
+            }
+            result.setObjects(objects);
+            result.setObjectTypesList(result.getProductTypesList());
         }
         result.setRawJson(node.toString());
         result.setHeaders(headers);
