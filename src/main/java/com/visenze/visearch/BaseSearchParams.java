@@ -45,6 +45,9 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<Boolean> dedup = Optional.absent();
     protected Optional<Float> dedupThreshold = Optional.absent();
 
+    protected Optional<String> groupBy = Optional.absent();
+    protected Optional<Integer>  groupLimit = Optional.absent();
+
     @SuppressWarnings("unchecked")
     public P setPage(Integer page) {
         this.page = Optional.fromNullable(page);
@@ -151,6 +154,18 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return (P) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public P setGroupBy(String groupBy) {
+        this.groupBy = Optional.fromNullable(groupBy);
+        return (P) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public P setGroupLimit(Integer groupLimit) {
+        this.groupLimit = Optional.fromNullable(groupLimit);
+        return (P) this;
+    }
+
     public Integer getPage() {
         return page.orNull();
     }
@@ -212,6 +227,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return facetsShowCount.orNull();
     }
 
+    public String getGroupBy() { return groupBy.orNull(); }
+
+    public Integer getGroupLimit() { return groupLimit.orNull(); }
+
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = HashMultimap.create();
 
@@ -220,6 +239,14 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         }
         if (getLimit() != null) {
             map.put("limit", getLimit().toString());
+        }
+
+        if (groupBy.isPresent()){
+            map.put("group_by", getGroupBy() );
+        }
+
+        if (groupLimit.isPresent()){
+            map.put("group_limit", getGroupLimit().toString() );
         }
 
         if (!getFacets().isEmpty()) {
