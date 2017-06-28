@@ -91,6 +91,7 @@ class BaseViSearchOperations {
             if(groupLimitNode!=null) pagedResult.setGroupLimit(groupLimitNode.asInt());
 
             pagedResult.setObjects(objects);
+            pagedResult.setGroupSearchResults(groupResults);
 
 
             return pagedResult;
