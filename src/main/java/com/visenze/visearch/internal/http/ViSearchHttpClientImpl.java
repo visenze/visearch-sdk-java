@@ -1,10 +1,12 @@
 package com.visenze.visearch.internal.http;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
+import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
 import org.apache.http.*;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -35,10 +37,13 @@ import java.util.Map;
 
 public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
+    public static final Charset UTF8_CHARSET = Charset.forName("utf-8") ;
+
     private final String endpoint;
     CloseableHttpClient httpClient;
     private final ClientConfig clientConfig;
     private final UsernamePasswordCredentials credentials;
+
 
     public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey, CloseableHttpClient httpClient) {
         this.endpoint = endpoint;
@@ -97,6 +102,15 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return getResponse(request);
     }
 
+    @Override
+    public ViSearchHttpResponse postImFeature(String path, Multimap<String, String> params, String imFeature, String transId) {
+        HttpUriRequest request = buildPostRequestForImFeature(endpoint + path, params, imFeature);
+        if (!Strings.isNullOrEmpty(transId)) {
+            request.addHeader(ViSearchHttpConstants.TRANS_ID, transId);
+        }
+        return getResponse(request);
+    }
+
     private HttpUriRequest buildGetRequest(String url, Multimap<String, String> params) {
         return RequestBuilder
                 .get()
@@ -141,23 +155,34 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setCharset(Charset.forName("utf-8"));
+        builder.setCharset(UTF8_CHARSET);
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
         }
-        builder.addBinaryBody("image", file);
+        builder.addBinaryBody(ViSearchHttpConstants.IMAGE, file);
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }
 
     private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        Charset utf8 = Charset.forName("utf-8");
-        ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), utf8);
+        ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), UTF8_CHARSET);
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), contentType);
         }
-        builder.addPart("image", new InputStreamBody(inputStream, filename));
+        builder.addPart(ViSearchHttpConstants.IMAGE, new InputStreamBody(inputStream, filename));
+        HttpEntity entity = builder.build();
+        return buildMultipartPostRequest(url, entity);
+    }
+
+    private HttpUriRequest buildPostRequestForImFeature(String url, Multimap<String, String> params, String imFeature) {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), UTF8_CHARSET);
+        for (Map.Entry<String, String> entry : params.entries()) {
+            builder.addTextBody(entry.getKey(), entry.getValue(), contentType);
+        }
+        builder.addBinaryBody(ViSearchHttpConstants.IM_FEATURE, imFeature.getBytes(), contentType, ViSearchHttpConstants.IM_FEATURE);
+
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }
@@ -203,7 +228,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         request.addHeader(HttpHeaders.USER_AGENT, userAgent);
 
         // add x-request-with header
-        request.addHeader("X-Requested-With", clientConfig.DEFAULT_XREQUEST_WITH);
+        request.addHeader(ViSearchHttpConstants.X_REQUESTED_WITH, clientConfig.DEFAULT_XREQUEST_WITH);
     }
 
     private CloseableHttpResponse executeRequest(HttpUriRequest request) {
