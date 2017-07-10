@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.visenze.visearch.*;
+import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
@@ -26,18 +27,6 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
     private static final String ENDPOINT_SIMILAR_PRODUCTS_SEARCH = "/similarproducts";
     private static final String ENDPOINT_EXTRACT_FEATURE= "/extractfeature";
-
-    private static final String DETECTION_ALL = "all";
-    public static final String PRODUCT_TYPES = "product_types";
-    public static final String PRODUCT_TYPES_LIST = "product_types_list";
-    public static final String IM_ID = "im_id";
-    public static final String FACETS = "facets";
-    public static final String QINFO = "qinfo";
-    public static final String OBJECT_TYPES_LIST = "object_types_list";
-    public static final String GROUP_RESULT = "group_result";
-    public static final String STATUS = "status";
-    public static final String OK = "OK";
-    public static final String ERROR = "error";
 
     public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
         super(viSearchHttpClient, objectMapper);
@@ -82,6 +71,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
     }
 
+
     /**
      * Perform real disover search
      * @param uploadSearchParams
@@ -111,11 +101,32 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     }
 
     /**
-     * Perform real disover search
+     * Extract feature string (encoded in base 64) given an image file or url.
+     *
+     * @param uploadSearchParams the upload search parameters, must contain a image file or a url
+     * @return the feature response string result
+     */
+    @Override
+    public FeatureResponseResult extractFeature(UploadSearchParams uploadSearchParams) {
+        try {
+            ViSearchHttpResponse response = getPostImageSearchHttpResponse(uploadSearchParams, ENDPOINT_EXTRACT_FEATURE);
+            return getFeatureResponseResult(response);
+        } catch (InternalViSearchException e) {
+            return new FeatureResponseResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
+
+    /**
+     * Perform upload search by image
      * @param uploadSearchParams
      * @return
      */
     private PagedSearchResult postImageSearch(UploadSearchParams uploadSearchParams, String endpointMethod) {
+        ViSearchHttpResponse response = getPostImageSearchHttpResponse(uploadSearchParams, endpointMethod);
+        return getPagedResult(response);
+    }
+
+    private ViSearchHttpResponse getPostImageSearchHttpResponse(UploadSearchParams uploadSearchParams, String endpointMethod) {
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
@@ -136,11 +147,36 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
                 // throw new IllegalArgumentException("Could not open the image file.", e);
             }
         } else if (imageStream != null) {
-            response = viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), imageStream, "image-stream");
+            response = viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), imageStream, ViSearchHttpConstants.IMAGE_STREAM);
         } else {
             response = viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
         }
-        return getPagedResult(response);
+        return response;
+    }
+
+    private FeatureResponseResult getFeatureResponseResult(ViSearchHttpResponse httpResponse){
+        String response = httpResponse.getBody();
+        Map<String, String> headers = httpResponse.getHeaders();
+        JsonNode node;
+        try {
+            node = objectMapper.readTree(response);
+        } catch (JsonProcessingException e) {
+            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, response);
+            // throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
+        } catch (IOException e) {
+            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, response);
+            // throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
+        }
+        checkResponseStatus(node);
+
+        FeatureResponseResult result = deserializeFeatureResponseResult(response, node);
+        JsonNode imIdNode = node.get(ViSearchHttpConstants.IM_ID);
+        if (imIdNode != null) {
+            result.setImId(imIdNode.asText());
+        }
+        result.setRawJson(node.toString());
+        result.setHeaders(headers);
+        return result;
     }
 
     private PagedSearchResult getPagedResult(ViSearchHttpResponse httpResponse) {
@@ -158,39 +194,39 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
         checkResponseStatus(node);
 
-        PagedSearchResult result = pagify(response, response);
+        PagedSearchResult result = pagify(response, node);
 
-        JsonNode productTypesNode = node.get(PRODUCT_TYPES);
+        JsonNode productTypesNode = node.get(ViSearchHttpConstants.PRODUCT_TYPES);
         if (productTypesNode != null) {
             List<ProductType> productTypes = deserializeListResult(response, productTypesNode, ProductType.class);
             result.setProductTypes(productTypes);
         }
-        JsonNode productTypesListNode = node.get(PRODUCT_TYPES_LIST);
+        JsonNode productTypesListNode = node.get(ViSearchHttpConstants.PRODUCT_TYPES_LIST);
         if (productTypesListNode != null) {
             List<ProductType> productTypesList = deserializeListResult(response, productTypesListNode, ProductType.class);
             result.setProductTypesList(productTypesList);
         }
-        JsonNode objectTypesListNode = node.get(OBJECT_TYPES_LIST);
+        JsonNode objectTypesListNode = node.get(ViSearchHttpConstants.OBJECT_TYPES_LIST);
         if (objectTypesListNode != null) {
             List<ProductType> objectTypesList = deserializeListResult(response, objectTypesListNode, ProductType.class);
             result.setObjectTypesList(objectTypesList);
         }
-        JsonNode imIdNode = node.get(IM_ID);
+        JsonNode imIdNode = node.get(ViSearchHttpConstants.IM_ID);
         if (imIdNode != null) {
             result.setImId(imIdNode.asText());
         }
-        JsonNode facetsNode = node.get(FACETS);
+        JsonNode facetsNode = node.get(ViSearchHttpConstants.FACETS);
         if (facetsNode != null) {
             List<Facet> facets = deserializeListResult(response, facetsNode, Facet.class);
             result.setFacets(facets);
         }
-        JsonNode qinfoNode = node.get(QINFO);
+        JsonNode qinfoNode = node.get(ViSearchHttpConstants.QINFO);
         if (qinfoNode != null) {
             Map<String, String> qinfo = deserializeMapResult(response, qinfoNode, String.class, String.class);
             result.setQueryInfo(qinfo);
         }
         // For similarproducts search, try to cover it's result into discoversearch result.
-        JsonNode groupResult = node.get(GROUP_RESULT);
+        JsonNode groupResult = node.get(ViSearchHttpConstants.GROUP_RESULT);
         if (groupResult != null && groupResult instanceof ArrayNode) {
             List<ProductType> productTypes = result.getProductTypes();
             List<ObjectSearchResult> objects = Lists.newArrayList();
@@ -218,14 +254,14 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
     private static void checkResponseStatus(JsonNode node) {
         String json = node.toString();
-        JsonNode statusNode = node.get(STATUS);
+        JsonNode statusNode = node.get(ViSearchHttpConstants.STATUS);
         if (statusNode == null) {
             throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, json);
             // throw new ViSearchException("There was a malformed ViSearch response: " + json, json);
         } else {
             String status = statusNode.asText();
-            if (!OK.equals(status)) {
-                JsonNode errorNode = node.get(ERROR);
+            if (!ViSearchHttpConstants.OK.equals(status)) {
+                JsonNode errorNode = node.get(ViSearchHttpConstants.ERROR);
                 if (errorNode == null) {
                     throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, json);
                     // throw new ViSearchException("An unknown error occurred in ViSearch: " + json, json);

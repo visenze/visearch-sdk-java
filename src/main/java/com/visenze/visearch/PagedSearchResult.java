@@ -1,13 +1,11 @@
 package com.visenze.visearch;
 
+import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
+
 import java.util.List;
 import java.util.Map;
 
 public class PagedSearchResult extends PagedResult<ImageResult> {
-
-    private static final String X_LOG_ID = "X-Log-ID";
-    
-    private static final String X_LOG_ID_EMPTY = "";
 
     private List<ProductType> productTypes;
 
@@ -89,10 +87,10 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
      * Get the request id to identify this request.
      */
     public String getReqId(){
-        if(this.headers!=null && this.headers.containsKey(X_LOG_ID)){
-            return headers.get(X_LOG_ID);
+        if(this.headers!=null && this.headers.containsKey(ViSearchHttpConstants.X_LOG_ID)){
+            return headers.get(ViSearchHttpConstants.X_LOG_ID);
         }
-        return X_LOG_ID_EMPTY;
+        return ViSearchHttpConstants.X_LOG_ID_EMPTY;
     }
 
     /**

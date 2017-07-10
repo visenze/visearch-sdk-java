@@ -284,6 +284,18 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     }
 
     /**
+     * Extract feature string (encoded in base 64) given an image file or url.
+     *
+     * @param uploadSearchParams the upload search parameters, must contain a image file or a url
+     * @return the feature response string result
+     */
+    @Override
+    public FeatureResponseResult extractFeature(UploadSearchParams uploadSearchParams) {
+        FeatureResponseResult result = searchOperations.extractFeature(uploadSearchParams);
+        return result;
+    }
+
+    /**
      * send search actions after finishing search
      * @param action
      * @param reqId

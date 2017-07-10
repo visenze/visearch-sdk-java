@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
+import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
 import org.apache.http.*;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -35,10 +36,13 @@ import java.util.Map;
 
 public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
+    public static final Charset UTF8_CHARSET = Charset.forName("utf-8") ;
+
     private final String endpoint;
     CloseableHttpClient httpClient;
     private final ClientConfig clientConfig;
     private final UsernamePasswordCredentials credentials;
+
 
     public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey, CloseableHttpClient httpClient) {
         this.endpoint = endpoint;
@@ -141,23 +145,22 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setCharset(Charset.forName("utf-8"));
+        builder.setCharset(UTF8_CHARSET);
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), ContentType.TEXT_PLAIN);
         }
-        builder.addBinaryBody("image", file);
+        builder.addBinaryBody(ViSearchHttpConstants.IMAGE, file);
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }
 
     private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        Charset utf8 = Charset.forName("utf-8");
-        ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), utf8);
+        ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), UTF8_CHARSET);
         for (Map.Entry<String, String> entry : params.entries()) {
             builder.addTextBody(entry.getKey(), entry.getValue(), contentType);
         }
-        builder.addPart("image", new InputStreamBody(inputStream, filename));
+        builder.addPart(ViSearchHttpConstants.IMAGE, new InputStreamBody(inputStream, filename));
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }
@@ -203,7 +206,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         request.addHeader(HttpHeaders.USER_AGENT, userAgent);
 
         // add x-request-with header
-        request.addHeader("X-Requested-With", clientConfig.DEFAULT_XREQUEST_WITH);
+        request.addHeader(ViSearchHttpConstants.X_REQUESTED_WITH, clientConfig.DEFAULT_XREQUEST_WITH);
     }
 
     private CloseableHttpResponse executeRequest(HttpUriRequest request) {
