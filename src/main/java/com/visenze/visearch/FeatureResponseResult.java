@@ -51,4 +51,10 @@ public class FeatureResponseResult extends ResponseBase {
         return ViSearchHttpConstants.X_LOG_ID_EMPTY;
     }
 
+    public void setResult(List<String> result) {
+        this.result = result;
+    }
+
+    public List<String> getResult() { return result; }
+
 }

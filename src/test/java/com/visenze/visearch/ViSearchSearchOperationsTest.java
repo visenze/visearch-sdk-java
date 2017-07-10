@@ -572,6 +572,43 @@ public class ViSearchSearchOperationsTest {
         assertEquals("shoe", pagedResult.getProductTypes().get(0).getType());
         assertEquals("mpid", pagedResult.getGroupByKey());
 
+    }
+
+    @Test
+    public void testExtractFeaturesImId() {
+        String responseBody = "{\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"extractfeature\",\n" +
+                "    \"error\": [],\n" +
+                "    \"result\": [\n" +
+                "    \t\"aaab\"\n" +
+                "    ],\n" +
+                "    \"reqid\": \"651567729928636598\",\n" +
+                "    \"im_id\": \"20170710b9b9146bda166aa38aebfb43548666b3011fe38f.jpg\"\n" +
+                "}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        Map<String, String> responseHeaders = Maps.newHashMap();
+        responseHeaders.put("X-Log-ID", "651567729928636598");
+        when(response.getHeaders()).thenReturn(responseHeaders);
+
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams();
+        uploadSearchParams.setImId("abc");
+        FeatureResponseResult fr = searchOperations.extractFeature(uploadSearchParams);
+
+        assertEquals(null, fr.getErrorMessage());
+        assertEquals(fr.getImId() , "20170710b9b9146bda166aa38aebfb43548666b3011fe38f.jpg");
+        assertEquals(fr.getReqId(), "651567729928636598");
+
+        List<String> result = fr.getResult();
+        assertEquals(result.size(), 1);
+        assertEquals(result.get(0), "aaab");
+
 
     }
+
+
 }
