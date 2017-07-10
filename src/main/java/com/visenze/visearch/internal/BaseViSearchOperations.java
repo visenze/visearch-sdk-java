@@ -22,7 +22,7 @@ class BaseViSearchOperations {
         this.objectMapper = objectMapper;
     }
 
-    FeatureResponseResult deserializeFeatureResponseResult(String rawResponse, JsonNode node) {
+    protected FeatureResponseResult deserializeFeatureResponseResult(String rawResponse, JsonNode node) {
         List<String> result = new ArrayList<String>();
 
         if(node.has(ViSearchHttpConstants.RESULT))
@@ -39,7 +39,7 @@ class BaseViSearchOperations {
         return featureResult;
     }
 
-    PagedSearchResult pagify(String rawResponse, JsonNode node) {
+    protected PagedSearchResult pagify(String rawResponse, JsonNode node) {
 
         List<ImageResult> result = new ArrayList<ImageResult>();
         List<ObjectSearchResult> objects = null;

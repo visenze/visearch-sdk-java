@@ -15,7 +15,6 @@ public abstract class ViSearchHttpConstants {
     public static final String GROUP_LIMIT = "group_limit";
     public static final String GROUP_RESULTS = "group_results";
     public static final String GROUP_BY_KEY = "group_by_key";
-    private static final String DETECTION_ALL = "all";
     public static final String PRODUCT_TYPES = "product_types";
     public static final String PRODUCT_TYPES_LIST = "product_types_list";
     public static final String IM_ID = "im_id";
