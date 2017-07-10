@@ -25,6 +25,8 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     private static final String ENDPOINT_RECOMMENDATION = "/recommendation";
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
     private static final String ENDPOINT_SIMILAR_PRODUCTS_SEARCH = "/similarproducts";
+    private static final String ENDPOINT_EXTRACT_FEATURE= "/extractfeature";
+
     private static final String DETECTION_ALL = "all";
     public static final String PRODUCT_TYPES = "product_types";
     public static final String PRODUCT_TYPES_LIST = "product_types_list";
@@ -74,38 +76,10 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams) {
         try {
-            return uploadSearchInternal(uploadSearchParams);
+            return postImageSearch(uploadSearchParams, ENDPOINT_UPLOAD_SEARCH);
         } catch (InternalViSearchException e) {
             return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
         }
-    }
-
-    private PagedSearchResult uploadSearchInternal(UploadSearchParams uploadSearchParams) {
-        File imageFile = uploadSearchParams.getImageFile();
-        InputStream imageStream = uploadSearchParams.getImageStream();
-        String imageUrl = uploadSearchParams.getImageUrl();
-        ViSearchHttpResponse response;
-
-        // if im_id is available no need to check for image
-        if (!Strings.isNullOrEmpty(uploadSearchParams.getImId())){
-            response = viSearchHttpClient.post(ENDPOINT_UPLOAD_SEARCH, uploadSearchParams.toMap());
-        }
-        else if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
-            throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_SOURCE);
-            // throw new IllegalArgumentException("Must provide either an image File, InputStream of the image, or a valid image url to perform upload search");
-        } else if (imageFile != null) {
-            try {
-                response = viSearchHttpClient.postImage(ENDPOINT_UPLOAD_SEARCH, uploadSearchParams.toMap(), new FileInputStream(imageFile), imageFile.getName());
-            } catch (FileNotFoundException e) {
-                throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
-                // throw new IllegalArgumentException("Could not open the image file.", e);
-            }
-        } else if (imageStream != null) {
-            response = viSearchHttpClient.postImage(ENDPOINT_UPLOAD_SEARCH, uploadSearchParams.toMap(), imageStream, "image-stream");
-        } else {
-            response = viSearchHttpClient.post(ENDPOINT_UPLOAD_SEARCH, uploadSearchParams.toMap());
-        }
-        return getPagedResult(response);
     }
 
     /**
@@ -236,9 +210,6 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setObjects(objects);
             result.setObjectTypesList(result.getProductTypesList());
         }
-
-        // added grouped response for group_by field
-
 
         result.setRawJson(node.toString());
         result.setHeaders(headers);
