@@ -133,10 +133,11 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         ViSearchHttpResponse response;
 
         // if im_id is available no need to check for image
-        if (!Strings.isNullOrEmpty(uploadSearchParams.getImId())){
+        if(!Strings.isNullOrEmpty(uploadSearchParams.getImFeature())){
+            response = viSearchHttpClient.postImFeature(endpointMethod, uploadSearchParams.toMap(), uploadSearchParams.getImFeature() , uploadSearchParams.getTransId() );
+        } else if (!Strings.isNullOrEmpty(uploadSearchParams.getImId())){
             response = viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
-        }
-        else if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
+        } else if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
             throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_SOURCE);
             // throw new IllegalArgumentException("Must provide either an image File, InputStream of the image, or a valid image url to perform upload search");
         } else if (imageFile != null) {

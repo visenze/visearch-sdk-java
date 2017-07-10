@@ -529,7 +529,7 @@ public class ViSearchSearchOperationsTest {
     // should not throw anything
     @Test
     public void testUploadSearchParamsImId() {
-        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_0\"},{\"im_name\":\"test_im_1\"},{\"im_name\":\"test_im_2\"},{\"im_name\":\"test_im_3\"},{\"im_name\":\"test_im_4\"},{\"im_name\":\"test_im_5\"},{\"im_name\":\"test_im_6\"},{\"im_name\":\"test_im_7\"},{\"im_name\":\"test_im_8\"},{\"im_name\":\"test_im_9\"}]}";
+        String responseBody = "{\"status\":\"OK\",\"method\":\"uploadsearch\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_0\"},{\"im_name\":\"test_im_1\"},{\"im_name\":\"test_im_2\"},{\"im_name\":\"test_im_3\"},{\"im_name\":\"test_im_4\"},{\"im_name\":\"test_im_5\"},{\"im_name\":\"test_im_6\"},{\"im_name\":\"test_im_7\"},{\"im_name\":\"test_im_8\"},{\"im_name\":\"test_im_9\"}]}";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
         when(response.getBody()).thenReturn(responseBody);
         when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
@@ -541,6 +541,23 @@ public class ViSearchSearchOperationsTest {
 
         assertEquals(null, sr.getErrorMessage());
 
+    }
+
+    @Test
+    public void testUploadSearchImFeature() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"uploadsearch\",\"error\":[],\"page\":1,\"limit\":10,\"total\":10,\"result\":[{\"im_name\":\"test_im_0\"},{\"im_name\":\"test_im_1\"},{\"im_name\":\"test_im_2\"},{\"im_name\":\"test_im_3\"},{\"im_name\":\"test_im_4\"},{\"im_name\":\"test_im_5\"},{\"im_name\":\"test_im_6\"},{\"im_name\":\"test_im_7\"},{\"im_name\":\"test_im_8\"},{\"im_name\":\"test_im_9\"}]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+
+        // verify postImFeature is called when imfeature is set
+        when(mockClient.postImFeature(anyString(), Matchers.<Multimap<String, String>>any(), anyString() , anyString() )).thenReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams();
+        uploadSearchParams.setImId("abc").setTransId("trans123").setImFeature("feature123");
+        PagedSearchResult sr = searchOperations.uploadSearch(uploadSearchParams);
+
+        assertEquals(null, sr.getErrorMessage());
     }
 
     @Test
@@ -606,8 +623,35 @@ public class ViSearchSearchOperationsTest {
         List<String> result = fr.getResult();
         assertEquals(result.size(), 1);
         assertEquals(result.get(0), "aaab");
+    }
 
+    @Test
+    public void testExtractFeatureNullFile() {
+        expectedException.expect(NullPointerException.class);
+        expectedException.expectMessage("The image file must not be null");
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        File nullFile = null;
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(nullFile);
+        searchOperations.extractFeature(uploadSearchParams);
+    }
 
+    @Test
+    public void testExtractFeatureNonFile() {
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        File nonFile = new File("nonFile");
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(nonFile);
+        FeatureResponseResult response = searchOperations.extractFeature(uploadSearchParams);
+        assertEquals(ResponseMessages.INVALID_IMAGE_OR_URL.getMessage(), response.getErrorMessage());
+    }
+
+    @Test
+    public void testExtractFeatureNullStream() {
+        expectedException.expect(NullPointerException.class);
+        expectedException.expectMessage("The image input stream must not be null");
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        InputStream inputStream = null;
+        UploadSearchParams uploadSearchParams = new UploadSearchParams(inputStream);
+        searchOperations.extractFeature(uploadSearchParams);
     }
 
 

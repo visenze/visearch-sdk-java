@@ -18,4 +18,7 @@ public interface ViSearchHttpClient {
 
     ViSearchHttpResponse postImage(String url, Multimap<String, String> params, InputStream inputStream, String filename);
 
+    ViSearchHttpResponse postImFeature(String url, Multimap<String, String> params, String imFeature , String transId);
+
+
 }

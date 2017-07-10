@@ -1,5 +1,6 @@
 package com.visenze.visearch.internal.http;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.visenze.visearch.ClientConfig;
@@ -101,6 +102,15 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return getResponse(request);
     }
 
+    @Override
+    public ViSearchHttpResponse postImFeature(String path, Multimap<String, String> params, String imFeature, String transId) {
+        HttpUriRequest request = buildPostRequestForImFeature(endpoint + path, params, imFeature);
+        if (!Strings.isNullOrEmpty(transId)) {
+            request.addHeader(ViSearchHttpConstants.TRANS_ID, transId);
+        }
+        return getResponse(request);
+    }
+
     private HttpUriRequest buildGetRequest(String url, Multimap<String, String> params) {
         return RequestBuilder
                 .get()
@@ -161,6 +171,18 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
             builder.addTextBody(entry.getKey(), entry.getValue(), contentType);
         }
         builder.addPart(ViSearchHttpConstants.IMAGE, new InputStreamBody(inputStream, filename));
+        HttpEntity entity = builder.build();
+        return buildMultipartPostRequest(url, entity);
+    }
+
+    private HttpUriRequest buildPostRequestForImFeature(String url, Multimap<String, String> params, String imFeature) {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), UTF8_CHARSET);
+        for (Map.Entry<String, String> entry : params.entries()) {
+            builder.addTextBody(entry.getKey(), entry.getValue(), contentType);
+        }
+        builder.addBinaryBody(ViSearchHttpConstants.IM_FEATURE, imFeature.getBytes(), contentType, ViSearchHttpConstants.IM_FEATURE);
+
         HttpEntity entity = builder.build();
         return buildMultipartPostRequest(url, entity);
     }

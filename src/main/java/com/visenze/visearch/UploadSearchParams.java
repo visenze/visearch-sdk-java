@@ -15,6 +15,10 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
     private String imageUrl;
     private String imId;
     private String detection;
+    private String imFeature;
+
+    // required for search with imFeature for image to appear in Upload History
+    private String transId;
 
     public UploadSearchParams(File imageFile) {
         super();
@@ -61,6 +65,16 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         return this;
     }
 
+    public UploadSearchParams setImFeature(String imFeature){
+        this.imFeature = imFeature;
+        return this;
+    }
+
+    public UploadSearchParams setTransId(String transId) {
+        this.transId = transId;
+        return this;
+    }
+
     public String getImId() {
         return imId;
     }
@@ -75,6 +89,14 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public String getImFeature() {
+        return imFeature;
+    }
+
+    public String getTransId() {
+        return transId;
     }
 
     @Override
