@@ -23,18 +23,28 @@ class BaseViSearchOperations {
     }
 
     protected FeatureResponseResult deserializeFeatureResponseResult(String rawResponse, JsonNode node) {
-        List<String> result = new ArrayList<String>();
-
-        if(node.has(ViSearchHttpConstants.RESULT))
-            result = deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.RESULT), String.class);
-
         JsonNode methodNode = node.get(ViSearchHttpConstants.METHOD);
         if (methodNode == null) {
             throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, rawResponse);
         }
 
+        List<String> result = new ArrayList<String>();
+
+        if(node.has(ViSearchHttpConstants.RESULT)) {
+            result = deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.RESULT), String.class);
+        }
+
         FeatureResponseResult featureResult = new FeatureResponseResult(result);
 
+        if(node.has(ViSearchHttpConstants.PRODUCT_TYPES)) {
+            List<ProductType> productTypes = deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.PRODUCT_TYPES), ProductType.class);
+            featureResult.setProductTypes(productTypes);
+        }
+
+        if(node.has(ViSearchHttpConstants.PRODUCT_TYPES_LIST)) {
+            List<ProductType> productTypesList = deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.PRODUCT_TYPES_LIST), ProductType.class);
+            featureResult.setProductTypesList(productTypesList);
+        }
 
         return featureResult;
     }
