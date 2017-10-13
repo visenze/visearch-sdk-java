@@ -15,6 +15,10 @@ public class FeatureResponseResult extends ResponseBase {
 
     private List<String> result;
 
+    private List<ProductType> productTypesList;
+
+    private List<ProductType> productTypes;
+
     public FeatureResponseResult(List<String> result) {
         this.result = result;
     }
@@ -56,5 +60,21 @@ public class FeatureResponseResult extends ResponseBase {
     }
 
     public List<String> getResult() { return result; }
+
+    public void setProductTypes(List<ProductType> productTypes) {
+        this.productTypes = productTypes;
+    }
+
+    public List<ProductType> getProductTypes() {
+        return productTypes;
+    }
+
+    public void setProductTypesList(List<ProductType> productTypesList) {
+        this.productTypesList = productTypesList;
+    }
+
+    public List<ProductType> getProductTypesList() {
+        return productTypesList;
+    }
 
 }

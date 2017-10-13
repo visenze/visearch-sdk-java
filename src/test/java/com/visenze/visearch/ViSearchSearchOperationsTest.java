@@ -1,6 +1,7 @@
 package com.visenze.visearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -623,6 +624,133 @@ public class ViSearchSearchOperationsTest {
         List<String> result = fr.getResult();
         assertEquals(result.size(), 1);
         assertEquals(result.get(0), "aaab");
+    }
+
+    @Test
+    public void testExtractFeatureProductTypes(){
+        String responseBody = "{\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"extractfeature\",\n" +
+                "    \"error\": [],\n" +
+                "    \"product_types\": [\n" +
+                "        {\n" +
+                "            \"type\": \"pant\",\n" +
+                "            \"attributes\": {},\n" +
+                "            \"score\": 0,\n" +
+                "            \"box\": [\n" +
+                "                49,\n" +
+                "                0,\n" +
+                "                1095,\n" +
+                "                1187\n" +
+                "            ]\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"shoe\",\n" +
+                "            \"attributes\": {},\n" +
+                "            \"score\": 0,\n" +
+                "            \"box\": [\n" +
+                "                563,\n" +
+                "                53,\n" +
+                "                842,\n" +
+                "                955\n" +
+                "            ]\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"other\",\n" +
+                "            \"attributes\": {},\n" +
+                "            \"score\": 0,\n" +
+                "            \"box\": [\n" +
+                "                805,\n" +
+                "                31,\n" +
+                "                1198,\n" +
+                "                1125\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"product_types_list\": [\n" +
+                "        {\n" +
+                "            \"type\": \"bag\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"bottom\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"dress\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"eyewear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"jewelry\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"outerwear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"shoe\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"skirt\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"top\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"watch\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"other\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"result\": [\n" +
+                "        \"EIAAAAAAA\"\n" +
+                "    ],\n" +
+                "    \"reqid\": \"685767049926007407\",\n" +
+                "    \"im_id\": \"20171012b9b9146bda166aa38aebfb43548666b3011fe38f.jpg\"\n" +
+                "}";
+
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        Map<String, String> responseHeaders = Maps.newHashMap();
+        responseHeaders.put("X-Log-ID", "685767049926007407");
+        when(response.getHeaders()).thenReturn(responseHeaders);
+
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams();
+        uploadSearchParams.setImId("abc");
+        FeatureResponseResult fr = searchOperations.extractFeature(uploadSearchParams);
+
+        assertEquals(null, fr.getErrorMessage());
+        assertEquals(fr.getImId() , "20171012b9b9146bda166aa38aebfb43548666b3011fe38f.jpg");
+        assertEquals(fr.getReqId(), "685767049926007407");
+
+        List<String> result = fr.getResult();
+        assertEquals(result.size(), 1);
+        assertEquals(result.get(0), "EIAAAAAAA");
+
+        List<ProductType> productTypes = fr.getProductTypes();
+        assertEquals(productTypes.size(), 3);
+        assertEquals(productTypes.get(0).getType(), "pant");
+        assertEquals(Joiner.on(",").join(productTypes.get(0).getBox())  , "49,0,1095,1187"  );
+
+        assertEquals(productTypes.get(1).getType(), "shoe");
+        assertEquals(productTypes.get(2).getType(), "other");
+
+        assertEquals(fr.getProductTypesList().size(), 11);
+
     }
 
     @Test
