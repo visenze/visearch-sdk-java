@@ -19,7 +19,8 @@
 	  - 5.1 [Visually Similar Recommendations](#51-visually-similar-recommendations)
 	  - 5.2 [Search by Image](#52-search-by-image)
 	    - 5.2.1 [Selection Box](#521-selection-box)
-	  - 5.3 [Search by Color](#53-search-by-color)
+      - 5.3 [Multiple Product Search](#53-multiple-product-search)
+	  - 5.4 [Search by Color](#54-search-by-color)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
@@ -290,7 +291,27 @@ params.setBox(box);
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
-### 5.3 Search by Color 
+### 5.3 Multiple Product Search
+
+POST /discoversearch 
+
+**Multiple Product Search** solution is to search similar images by uploading an image or providing an image url, similar to Search by Image. Multiple Product Search is able to detect all objects in the image and return similar images for each at one time.
+ 
+ - Using an image from a local file path:
+```java
+File imageFile = new File("/path/to/your/image");
+UploadSearchParams params = new UploadSearchParams(imageFile);
+PagedSearchResult searchResult = client.discoverSearch(params);
+```
+
+ - Using image url:
+```java
+String url = "http://mydomain.com/sample_image.jpg";
+UploadSearchParams params = new UploadSearchParams(url);
+PagedSearchResult searchResult = client.discoverSearch(params);
+```
+
+### 5.4 Search by Color 
 
 GET /colorsearch
 
@@ -300,6 +321,7 @@ GET /colorsearch
 ColorSearchParams params = new ColorSearchParams("9b351b");
 PagedSearchResult searchResult = client.colorSearch(params);
 ```
+
 
 ## 6. Search Results
 
