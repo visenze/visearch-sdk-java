@@ -60,6 +60,7 @@ public class ViSearchSearchOperationsTest {
         assertEquals(null, pagedSearchResult.getRawResponseMessage());
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "test_im");
+        expectedParams.put("score", "false");
         verify(mockClient).get("/search", expectedParams);
     }
 
@@ -80,6 +81,7 @@ public class ViSearchSearchOperationsTest {
         expectedParams.put("facets", "brand");
         expectedParams.put("facets_limit", "10");
         expectedParams.put("facets_show_count", "true");
+        expectedParams.put("score", "false");
         verify(mockClient).get("/search", expectedParams);
     }
 
@@ -100,6 +102,7 @@ public class ViSearchSearchOperationsTest {
         expectedParams.put("facets", "brand");
         expectedParams.put("facets_limit", "10");
         expectedParams.put("facets_show_count", "true");
+        expectedParams.put("score", "false");
         verify(mockClient).get("/search", expectedParams);
         List<Facet> facets = searchResult.getFacets();
         assertEquals(1, facets.size());
@@ -345,6 +348,7 @@ public class ViSearchSearchOperationsTest {
         searchOperations.colorSearch(colorSearchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("color", "123ABC");
+        expectedParams.put("score", "false");
         verify(mockClient).get("/colorsearch", expectedParams);
     }
 
@@ -383,6 +387,7 @@ public class ViSearchSearchOperationsTest {
         searchOperations.uploadSearch(uploadSearchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
+        expectedParams.put("score", "false");
         verify(mockClient).post("/uploadsearch", expectedParams);
     }
 
@@ -400,6 +405,7 @@ public class ViSearchSearchOperationsTest {
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
         expectedParams.put("detection", "dress");
+        expectedParams.put("score", "false");
         verify(mockClient).post("/uploadsearch", expectedParams);
         assertEquals(3, uploadSearchResult.getProductTypes().size());
         assertEquals(6, uploadSearchResult.getProductTypesList().size());
@@ -459,6 +465,7 @@ public class ViSearchSearchOperationsTest {
         PagedSearchResult uploadSearchResult = searchOperations.discoverSearch(uploadSearchParams);
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
+        expectedParams.put("score", "false");
         verify(mockClient).post("/discoversearch", expectedParams);
         assertEquals(3, uploadSearchResult.getObjects().size());
         assertEquals(6, uploadSearchResult.getObjectTypesList().size());
