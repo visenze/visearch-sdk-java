@@ -260,6 +260,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         }
         if (isScore()) {
             map.put("score", "true");
+        } else {
+            map.put("score", "false");
         }
 
         if (getScoreMin() != null) {
