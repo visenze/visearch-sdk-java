@@ -1,5 +1,6 @@
 package com.visenze.visearch;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
@@ -19,6 +20,11 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     // required for search with imFeature for image to appear in Upload History
     private String transId;
+
+    // discover search
+    private Integer detectionLimit ;
+    private Integer resultLimit ;
+    private String detectionSensitivity ;
 
     public UploadSearchParams(File imageFile) {
         super();
@@ -56,10 +62,6 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         return this;
     }
 
-    public String getDetection(String detection) {
-        return detection;
-    }
-
     public UploadSearchParams setImId(String imId) {
         this.imId = imId;
         return this;
@@ -72,6 +74,21 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     public UploadSearchParams setTransId(String transId) {
         this.transId = transId;
+        return this;
+    }
+
+    public UploadSearchParams setDetectionLimit(Integer detectionLimit) {
+        this.detectionLimit = detectionLimit;
+        return this;
+    }
+
+    public UploadSearchParams setResultLimit(Integer resultLimit) {
+        this.resultLimit = resultLimit;
+        return this;
+    }
+
+    public UploadSearchParams setDetectionSensitivity(String detectionSensitivity) {
+        this.detectionSensitivity = detectionSensitivity;
         return this;
     }
 
@@ -99,6 +116,22 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         return transId;
     }
 
+    public String getDetection() {
+        return detection;
+    }
+
+    public Integer getDetectionLimit() {
+        return detectionLimit;
+    }
+
+    public Integer getResultLimit() {
+        return resultLimit;
+    }
+
+    public String getDetectionSensitivity() {
+        return detectionSensitivity;
+    }
+
     @Override
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
@@ -114,6 +147,17 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         if (detection != null) {
             map.put("detection", detection);
         }
+        if (detectionLimit != null) {
+            map.put("detection_limit" , detectionLimit.toString());
+        }
+        if (resultLimit != null) {
+            map.put("result_limit", resultLimit.toString());
+        }
+        if (detectionSensitivity != null) {
+            map.put("detection_sensitivity", detectionSensitivity.toString());
+        }
+
+
         return map;
     }
 

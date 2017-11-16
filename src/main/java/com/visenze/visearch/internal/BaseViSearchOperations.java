@@ -57,9 +57,12 @@ class BaseViSearchOperations {
 
         if(node.has(ViSearchHttpConstants.RESULT))
             result = deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.RESULT), ImageResult.class);
-        else if (node.has(ViSearchHttpConstants.OBJECTS))
+
+        // for merged results, it is possible to have both objects and results
+        if (node.has(ViSearchHttpConstants.OBJECTS))
             objects = deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.OBJECTS), ObjectSearchResult.class);
-        else if (node.has(ViSearchHttpConstants.GROUP_RESULTS))
+
+        if (node.has(ViSearchHttpConstants.GROUP_RESULTS))
             groupResults =  deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.GROUP_RESULTS), GroupSearchResult.class);
 
         JsonNode methodNode = node.get(ViSearchHttpConstants.METHOD);
