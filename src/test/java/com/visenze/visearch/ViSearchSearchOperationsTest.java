@@ -789,5 +789,113 @@ public class ViSearchSearchOperationsTest {
         searchOperations.extractFeature(uploadSearchParams);
     }
 
+    @Test
+    public void testDiscoverSearchMerged() {
+        String responseBody = "{\n" +
+                "    \"status\":\"OK\",\n" +
+                "    \"method\":\"discoversearch\",\n" +
+                "    \"error\":[\n" +
+                "        \n" +
+                "    ],\n" +
+                "    \"result_limit\":1,\n" +
+                "    \"detection_limit\":10,\n" +
+                "    \"page\":1,\n" +
+                "    \"objects\":[\n" +
+                "        {\n" +
+                "            \"type\":\"A\",\n" +
+                "            \"attributes\":{\n" +
+                "                \n" +
+                "            },\n" +
+                "            \"score\":1,\n" +
+                "            \"box\":[\n" +
+                "                235,\n" +
+                "                68,\n" +
+                "                766,\n" +
+                "                205\n" +
+                "            ],\n" +
+                "            \"total\":100,\n" +
+                "            \"result\":[\n" +
+                "                \n" +
+                "            ],\n" +
+                "            \"facets\":[\n" +
+                "                \n" +
+                "            ]\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\":\"B\",\n" +
+                "            \"attributes\":{\n" +
+                "                \n" +
+                "            },\n" +
+                "            \"score\":1,\n" +
+                "            \"box\":[\n" +
+                "                0,\n" +
+                "                0,\n" +
+                "                778,\n" +
+                "                215\n" +
+                "            ],\n" +
+                "            \"total\":100,\n" +
+                "            \"result\":[\n" +
+                "                \n" +
+                "            ],\n" +
+                "            \"facets\":[\n" +
+                "                \n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"object_types_list\":[\n" +
+                "        {\n" +
+                "            \"type\":\"ABC\",\n" +
+                "            \"attributes_list\":{\n" +
+                "                \n" +
+                "            }\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"im_id\":\"201711167965720e6c058f0cb57eb3316908471324503b7a.jpg\",\n" +
+                "    \"reqid\":\"698371275147490045\",\n" +
+                "    \"result\":[\n" +
+                "        {\n" +
+                "            \"im_name\":\"test_im_0\",\n" +
+                "            \"score\":0.43719249963760376,\n" +
+                "            \"value_map\":{\n" +
+                "                \"im_url\":\"http://test.JPG\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/test_im.jpeg");
+        assertEquals("http://www.example.com/test_im.jpeg", uploadSearchParams.getImageUrl());
+
+        PagedSearchResult uploadSearchResult = searchOperations.discoverSearch(uploadSearchParams);
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
+        expectedParams.put("score", "false");
+
+        verify(mockClient).post("/discoversearch", expectedParams);
+
+        assertEquals(new Integer(1), uploadSearchResult.getPage());
+        assertEquals(1, uploadSearchResult.getResult().size());
+
+        ImageResult image = uploadSearchResult.getResult().get(0) ;
+        assertEquals("test_im_0", image.getImName());
+        assertEquals(new Float(0.43719249963760376), image.getScore());
+        Map<String, String> metadata = Maps.newHashMap();
+        metadata.put("im_url", "http://test.JPG");
+        assertEquals(metadata, image.getMetadata());
+
+        assertEquals(1, uploadSearchResult.getObjectTypesList().size());
+        assertEquals(uploadSearchResult.getObjectTypesList().get(0).getType() , "ABC");
+
+        assertEquals(2, uploadSearchResult.getObjects().size());
+
+        ObjectSearchResult object = uploadSearchResult.getObjects().get(0);
+        assertEquals(object.getType(), "A");
+        assertEquals(object.getScore().toString(), "1.0");
+        assertEquals(object.getTotal(), 100);
+    }
+
 
 }
