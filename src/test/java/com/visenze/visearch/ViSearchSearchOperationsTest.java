@@ -826,7 +826,7 @@ public class ViSearchSearchOperationsTest {
                 "            \"attributes\":{\n" +
                 "                \n" +
                 "            },\n" +
-                "            \"score\":1,\n" +
+                "            \"score\":0.88,\n" +
                 "            \"box\":[\n" +
                 "                0,\n" +
                 "                0,\n" +
@@ -888,6 +888,7 @@ public class ViSearchSearchOperationsTest {
 
         assertEquals(1, uploadSearchResult.getObjectTypesList().size());
         assertEquals(uploadSearchResult.getObjectTypesList().get(0).getType() , "ABC");
+        assertEquals(0, uploadSearchResult.getObjectTypesList().get(0).getAttributesList().size() );
 
         assertEquals(2, uploadSearchResult.getObjects().size());
 
@@ -895,7 +896,90 @@ public class ViSearchSearchOperationsTest {
         assertEquals(object.getType(), "A");
         assertEquals(object.getScore().toString(), "1.0");
         assertEquals(object.getTotal(), 100);
+        assertEquals(0, object.getResult().size());
+        assertEquals("235,68,766,205", Joiner.on(",").join(object.getBox()) );
+
+        ObjectSearchResult object2 = uploadSearchResult.getObjects().get(1);
+        assertEquals(object2.getType(), "B");
+        assertEquals(object2.getScore().toString(), "0.88");
+        assertEquals(object2.getTotal(), 100);
+        assertEquals(0, object2.getResult().size());
+        assertEquals("0,0,778,215", Joiner.on(",").join(object2.getBox()) );
+
+
+    }
+
+    @Test
+    public void testUploadSearchParamsURLUploadSearch() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\", \"score\":0.43719249963760376,\"value_map\":{\"price\":\"67.500000\",\"title\":\"sdk test\"} }, {\"im_name\":\"test_im_2\", \"score\":0.56,\"value_map\":{\"price\":\"88.500000\",\"title\":\"sdk test 2\"} } ]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/test_im.jpeg");
+        uploadSearchParams.setSortBy("price:asc");
+        assertEquals("http://www.example.com/test_im.jpeg", uploadSearchParams.getImageUrl());
+
+        PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
+        expectedParams.put("score", "false");
+        expectedParams.put("sort_by", "price:asc");
+
+        verify(mockClient).post("/uploadsearch", expectedParams);
+
+        assertEquals(2, result.getResult().size());
+        ImageResult r1 = result.getResult().get(0);
+        assertEquals("test_im_1", r1.getImName());
+        assertEquals(0.43719249963760376, r1.getScore(), 0.0001);
+        assertEquals("67.500000", r1.getMetadata().get("price"));
+
+        ImageResult r2 = result.getResult().get(1);
+        assertEquals("test_im_2", r2.getImName());
+        assertEquals(0.56, r2.getScore(), 0.0001);
+        assertEquals("88.500000", r2.getMetadata().get("price"));
     }
 
 
+    @Test
+    public void testSearchGroupedResponseSortBy() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"group_by_key\":\"mpid\",\"group_limit\":2,\"total\":1000,\"product_types\":[{\"type\":\"shoe\",\"attributes\":{},\"score\":0.9999181032180786,\"box\":[41,256,577,489]}],\"product_types_list\":[{\"type\":\"bag\",\"attributes_list\":{\"gender\":[\"men\",\"women\"]}},{\"type\":\"bottom\",\"attributes_list\":{\"gender\":[\"men\",\"women\"]}},{\"type\":\"dress\",\"attributes_list\":{\"gender\":[\"women\"]}},{\"type\":\"eyewear\",\"attributes_list\":{\"subcategory\":[\"sunglasses\",\"eyeglasses\"]}},{\"type\":\"jewelry\",\"attributes_list\":{}},{\"type\":\"outerwear\",\"attributes_list\":{}},{\"type\":\"shoe\",\"attributes_list\":{\"gender\":[\"men\",\"women\"]}},{\"type\":\"skirt\",\"attributes_list\":{\"gender\":[\"women\"]}},{\"type\":\"top\",\"attributes_list\":{\"gender\":[\"men\",\"women\"],\"subcategory\":[\"sweater\",\"top&tshirt\",\"shirt\"]}},{\"type\":\"watch\",\"attributes_list\":{}},{\"type\":\"other\",\"attributes_list\":{}}],\"group_results\":[{\"group_by_value\":\"321642abb52c014a0861c3264ebd3a04\",\"result\":[{\"im_name\":\"a46453f90a3a14bb574e43c7c51cb828\"}]},{\"group_by_value\":\"053028d324e736d02e1c9aa97d53dcf9\",\"result\":[{\"im_name\":\"053028d324e736d02e1c9aa97d53dcf9\"}]}],\"im_id\":\"2017062864e69285a9eb6940bc5089b7d39db6a52561269e.jpg\",\"reqid\":\"647331357030156285\"}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im");
+        searchParams.setSortGroupBy("price:asc");
+        searchParams.setSortGroupStrategy("first");
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "test_im");
+        expectedParams.put("score", "false");
+        expectedParams.put("sort_group_by", "price:asc");
+        expectedParams.put("sort_group_strategy", "first");
+
+        PagedSearchResult pagedResult = searchOperations.search(searchParams);
+        verify(mockClient).get("/search", expectedParams);
+
+        assertEquals(new Integer(1), pagedResult.getPage());
+        assertEquals(new Integer(2), pagedResult.getGroupLimit());
+        assertEquals(new Integer(1000), pagedResult.getTotal());
+        List<ImageResult> results = pagedResult.getResult();
+
+        assertEquals(0, results.size());
+
+        List<GroupSearchResult> groups = pagedResult.getGroupSearchResults();
+        assertEquals(2, groups.size());
+
+        GroupSearchResult firstItem = groups.get(0);
+        assertEquals("321642abb52c014a0861c3264ebd3a04", firstItem.getGroupByValue());
+        assertEquals(1, firstItem.getResult().size());
+        assertEquals("a46453f90a3a14bb574e43c7c51cb828", firstItem.getResult().get(0).getImName());
+        assertEquals("2017062864e69285a9eb6940bc5089b7d39db6a52561269e.jpg", pagedResult.getImId());
+        assertEquals(1, pagedResult.getProductTypes().size());
+        assertEquals("shoe", pagedResult.getProductTypes().get(0).getType());
+        assertEquals("mpid", pagedResult.getGroupByKey());
+
+    }
 }

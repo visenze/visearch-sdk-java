@@ -48,6 +48,11 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<String> groupBy = Optional.absent();
     protected Optional<Integer>  groupLimit = Optional.absent();
 
+    protected Optional<String> sortBy = Optional.absent();
+    protected Optional<String> sortGroupBy = Optional.absent();
+    protected Optional<String> sortGroupStrategy = Optional.absent();
+
+
     @SuppressWarnings("unchecked")
     public P setPage(Integer page) {
         this.page = Optional.fromNullable(page);
@@ -166,6 +171,24 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return (P) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public P setSortBy(String sortBy) {
+        this.sortBy = Optional.fromNullable(sortBy);
+        return (P) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public P setSortGroupBy(String sortGroupBy) {
+        this.sortGroupBy = Optional.fromNullable(sortGroupBy);
+        return (P) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public P setSortGroupStrategy(String sortGroupStrategy) {
+        this.sortGroupStrategy = Optional.fromNullable(sortGroupStrategy);
+        return (P) this;
+    }
+
     public Integer getPage() {
         return page.orNull();
     }
@@ -231,6 +254,18 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
     public Integer getGroupLimit() { return groupLimit.orNull(); }
 
+    public String getSortBy() {
+        return sortBy.orNull();
+    }
+
+    public String getSortGroupBy() {
+        return sortGroupBy.orNull();
+    }
+
+    public String getSortGroupStrategy() {
+        return sortGroupStrategy.orNull();
+    }
+
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = HashMultimap.create();
 
@@ -269,6 +304,18 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         }
         if (getScoreMax() != null) {
             map.put("score_max", getScoreMax().toString());
+        }
+
+        if (sortBy.isPresent()) {
+            map.put("sort_by", getSortBy() );
+        }
+
+        if (sortGroupBy.isPresent()) {
+            map.put("sort_group_by" , getSortGroupBy());
+        }
+
+        if (sortGroupStrategy.isPresent()) {
+            map.put("sort_group_strategy", getSortGroupStrategy());
         }
 
         for (Map.Entry<String, String> entry : getFq().entrySet()) {
