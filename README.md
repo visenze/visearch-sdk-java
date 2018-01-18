@@ -2,6 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/visenze/visearch-sdk-java.svg?branch=master)](https://travis-ci.org/visenze/visearch-sdk-java)
 [![Coverage Status](https://coveralls.io/repos/visenze/visearch-sdk-java/badge.svg)](https://coveralls.io/r/visenze/visearch-sdk-java)
+[![CodeFactor](https://www.codefactor.io/repository/github/visenze/visearch-sdk-java/badge)](https://www.codefactor.io/repository/github/visenze/visearch-sdk-java)
 
 ---
 
