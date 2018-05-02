@@ -68,12 +68,15 @@ libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.8.6"
 To start using ViSearch API, initialize ViSearch client with your ViSearch API credentials. Your credentials can be found in [ViSearch Dashboard](https://dashboard.visenze.com):
 ```java
 
-// recommended way to init ViSearch client with access and secret key
+// Init ViSearch client with access and secret key
 ViSearch client = new ViSearch("access_key", "secret_key");
 
-// alternate way to init ViSearch client which connects to custom server endpoint
-ViSearch client = new ViSearch("http://custom-visearch.yourdomain.com" ,"access_key", "secret_key");
+```
 
+Please init ViSearch client in this way if you connect to another endpoint rather than default (https://visearch.visenze.com)
+```java
+// Init ViSearch client with custom endpoint, access and secret key
+ViSearch client = new ViSearch("https://custom-visearch.yourdomain.com" ,"access_key", "secret_key");
 ```
 
 ## 4. Indexing Images
