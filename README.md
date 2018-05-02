@@ -72,7 +72,6 @@ To start using ViSearch API, initialize ViSearch client with your ViSearch API c
 ViSearch client = new ViSearch("access_key", "secret_key");
 
 // alternate way to init ViSearch client which connects to custom server endpoint
-
 ViSearch client = new ViSearch("http://custom-visearch.yourdomain.com" ,"access_key", "secret_key");
 
 ```
