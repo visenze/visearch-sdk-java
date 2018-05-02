@@ -63,7 +63,7 @@ For SBT projects, add the following line to ```build.sbt```:
 libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.8.6"
 ```
 
-##3. Initialization
+## 3. Initialization
 
 To start using ViSearch API, initialize ViSearch client with your ViSearch API credentials. Your credentials can be found in [ViSearch Dashboard](https://dashboard.visenze.com):
 ```java
