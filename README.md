@@ -39,7 +39,7 @@ ViSearch is an API that provides accurate, reliable and scalable image search. V
 
 The ViSearch Java SDK is an open source software for easy integration with your Java back-end applications and services. For source code and references, visit the [Github Repository](https://github.com/visenze/visearch-sdk-java).
 
- * Current stable version: 1.8.2
+ * Current stable version: 1.8.6
  * Minimum JDK version: 1.6
 
 ## 2. Setup
@@ -49,25 +49,32 @@ For Maven projects, include the dependency in ```pom.xml```:
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.8.2</version>
+  <version>1.8.6</version>
 </dependency>
 ```
 
 For Gradle projects, include this line in your ```build.gradle``` dependencies block:
 ```
-compile 'com.visenze:visearch-java-sdk:1.8.2'
+compile 'com.visenze:visearch-java-sdk:1.8.6'
 ```
 
 For SBT projects, add the following line to ```build.sbt```:
 ```
-libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.8.2"
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.8.6"
 ```
 
 ##3. Initialization
 
 To start using ViSearch API, initialize ViSearch client with your ViSearch API credentials. Your credentials can be found in [ViSearch Dashboard](https://dashboard.visenze.com):
 ```java
+
+// recommended way to init ViSearch client with access and secret key
 ViSearch client = new ViSearch("access_key", "secret_key");
+
+// alternate way to init ViSearch client which connects to custom server endpoint
+
+ViSearch client = new ViSearch("http://custom-visearch.yourdomain.com" ,"access_key", "secret_key");
+
 ```
 
 ## 4. Indexing Images
