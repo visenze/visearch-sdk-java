@@ -1,16 +1,23 @@
 package com.visenze.visearch;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductType {
 
-    private final String type;
-    private final Float score;
-    private final List<Integer> box;
-    private final Map<String, List<String>> attributes;
-    private final Map<String, List<String>> attributesList;
+    private String type;
+    private Float score;
+    private List<Integer> box;
+    private Map<String, List<String>> attributes;
+    private Map<String, List<String>> attributesList;
+
+    public ProductType() {}
 
     public ProductType(String type, Float score, List<Integer> box,
                        Map<String, List<String>> attributes, Map<String, List<String>> attributesList) {
