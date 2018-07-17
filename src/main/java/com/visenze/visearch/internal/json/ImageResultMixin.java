@@ -12,12 +12,23 @@ abstract class ImageResultMixin {
     protected Map<String, Object> metadata;
     protected Float score;
 
+    @JsonProperty("s3_url")
+    protected String s3Url;
+
     public ImageResultMixin(@JsonProperty("im_name") String imName,
                             @JsonProperty("value_map") Map<String, Object> metadata,
-                            @JsonProperty("score") Float score) {
+                            @JsonProperty("score") Float score
+                            ) {
         this.imName = imName;
         this.metadata = metadata;
         this.score = score;
     }
 
+    public String getS3Url() {
+        return s3Url;
+    }
+
+    public void setS3Url(String s3Url) {
+        this.s3Url = s3Url;
+    }
 }

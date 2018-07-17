@@ -982,4 +982,29 @@ public class ViSearchSearchOperationsTest {
         assertEquals("mpid", pagedResult.getGroupByKey());
 
     }
+
+    @Test
+    public void testSearchParamsBasicS3Url() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":2,\"limit\":11,\"total\":200,\"result\":[{\"im_name\":\"test_im_1\",\"s3_url\":\"http://abc.d\"}]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        Map<String, String> responseHeaders = Maps.newHashMap();
+        responseHeaders.put("test-param1", "124");
+        when(response.getHeaders()).thenReturn(responseHeaders);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im1");
+        PagedSearchResult pagedSearchResult = searchOperations.search(searchParams);
+        List<ImageResult> results = pagedSearchResult.getResult();
+        assertEquals("http://abc.d" , results.get(0).getS3Url());
+        assertEquals(responseHeaders, pagedSearchResult.getHeaders());
+        assertEquals("test_im1", searchParams.getImName());
+        assertEquals(null, pagedSearchResult.getErrorMessage());
+        assertEquals(null, pagedSearchResult.getCause());
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "test_im1");
+        expectedParams.put("score", "false");
+        verify(mockClient).get("/search", expectedParams);
+
+    }
 }
