@@ -7,6 +7,7 @@ public class ImageResult {
     private final String imName;
     private final Map<String, String> metadata;
     private final Float score;
+    private String s3Url;
 
     public ImageResult(String imName, Map<String, String> metadata, Float score) {
         this.imName = imName;
@@ -26,4 +27,12 @@ public class ImageResult {
         return score;
     }
 
+
+    public String getS3Url() {
+        return s3Url;
+    }
+
+    public void setS3Url(String s3Url) {
+        this.s3Url = s3Url;
+    }
 }
