@@ -94,9 +94,23 @@ public class ViSearchTest {
     }
 
     @Test
+    public void testInsertStatusWithParams() {
+        Map<String, String> customParams = Maps.newHashMap();
+        visearch.insertStatus("transId", customParams);
+        verify(dataOperations).insertStatus("transId", customParams);
+    }
+
+    @Test
     public void testInsertStatus1() throws Exception {
         visearch.insertStatus("transId", 1, 10);
         verify(dataOperations).insertStatus("transId", 1, 10);
+    }
+
+    @Test
+    public void testInsertStatusGetErrorPageWithParams() {
+        Map<String, String> customParams = Maps.newHashMap();
+        visearch.insertStatus("transId", 1, 10, customParams);
+        verify(dataOperations).insertStatus("transId", 1, 10, customParams);
     }
 
     @Test
