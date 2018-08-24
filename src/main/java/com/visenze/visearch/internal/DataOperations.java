@@ -16,7 +16,11 @@ public interface DataOperations {
 
     InsertStatus insertStatus(String transId);
 
+    InsertStatus insertStatus(String transId, Map<String, String> customParams);
+
     InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit);
+
+    InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit, Map<String, String> customParams);
 
     RemoveStatus remove(List<String> imNameList);
 
