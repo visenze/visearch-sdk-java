@@ -284,6 +284,10 @@ params.setImId("some_im_id");
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
+For optimal results, we recommend images around `1024x1024` pixels. Low resolution images may result in unsatisfying search results.  
+If the image is larger, we recommended to resize the image to `1024x1024` pixels before sending to API. Too high resolution images may result in timeout.  
+The maximum file size of an image is 10MB. 
+
 #### 5.2.1 Selection Box
 
 If the object you wish to search for takes up only a small portion of your image, or if other irrelevant objects exists in the same image, chances are the search result could become inaccurate. Use the Box parameter to refine the search area of the image to improve accuracy. The box coordinates are set with respect to the original size of the uploading image:
