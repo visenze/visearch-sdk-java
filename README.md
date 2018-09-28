@@ -284,9 +284,9 @@ params.setImId("some_im_id");
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
-For optimal results, we recommend images around `1024x1024` pixels. Low resolution images may result in unsatisfying search results.  
-If the image is larger, we recommended to resize the image to `1024x1024` pixels before sending to API. Too high resolution images may result in timeout.  
-The maximum file size of an image is 10MB. 
+> For optimal results, we recommend images around `1024x1024` pixels. Low resolution images may result in unsatisfying search results.  
+> If the image is larger, we recommended to resize the image to `1024x1024` pixels before sending to API. Too high resolution images may result in timeout.  
+> The maximum file size of an image is 10MB. 
 
 #### 5.2.1 Selection Box
 
