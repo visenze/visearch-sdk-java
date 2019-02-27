@@ -59,7 +59,7 @@ public abstract class ViSearchHttpConstants {
     public static final String DETECTION_LIMIT = "detection_limit";
     public static final String RESULT_LIMIT = "result_limit";
     public static final String DETECTION_SENSITIVITY = "detection_sensitivity";
-
+    public static final String VS_CONFIG = "vs_config";
 
 
 }

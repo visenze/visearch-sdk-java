@@ -19,6 +19,7 @@ import org.mockito.Matchers;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1115,6 +1116,9 @@ public class ViSearchSearchOperationsTest {
         SearchParams searchParams = new SearchParams(testImName);
         String sysField = "vs_test";
         searchParams.setVsfl(Lists.<String>newArrayList(sysField));
+        Map<String, String> vsConfig = new HashMap<String, String>();
+        vsConfig.put("a" , "b");
+        searchParams.setVsConfig(vsConfig);
 
         PagedSearchResult pagedSearchResult = searchOperations.search(searchParams);
         List<ImageResult> results = pagedSearchResult.getResult();
@@ -1140,7 +1144,7 @@ public class ViSearchSearchOperationsTest {
         expectedParams.put("im_name", testImName);
         expectedParams.put("score", "false");
         expectedParams.put("vs_fl", sysField);
-
+        expectedParams.put("vs_config", "a:b");
 
         verify(mockClient).get("/search", expectedParams);
     }

@@ -27,6 +27,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     private static final Map<String, String> DEFAULT_CUSTOM = new HashMap<String, String>();
     private static final Boolean DEFAULT_GET_ALL_FL = false;
     private static final Boolean DEFAULT_DEDUP = false;
+    private static final Map<String, String> DEFAULT_VS_CONFIG = new HashMap<String, String>();
+
 
 
     protected Optional<Integer> page = Optional.absent();
@@ -43,6 +45,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<List<String>> vsfl = Optional.absent();
     protected Optional<Boolean> getAllFl = Optional.absent();
     protected Optional<Boolean> qInfo = Optional.absent();
+
+    //VS-1693 support for vsconfig
+    protected Optional<Map<String, String>> vsConfig = Optional.absent();
+
     protected Optional<Map<String, String>> custom = Optional.absent();
 
     protected Optional<Boolean> dedup = Optional.absent();
@@ -96,6 +102,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     public P setFq(Map<String, String> fq) {
         this.fq = Optional.fromNullable(fq);
         return (P) this;
+    }
+
+    public void setVsConfig(Map<String, String> map) {
+        this.vsConfig = Optional.fromNullable(map);
     }
 
     public Optional<Map<String, String>> getVsfq() {
@@ -269,6 +279,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return sortGroupStrategy.orNull();
     }
 
+    public Map<String, String> getVsConfig() {
+        return vsConfig.or(DEFAULT_VS_CONFIG);
+    }
+
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = HashMultimap.create();
 
@@ -324,11 +338,19 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         for (Map.Entry<String, String> entry : getFq().entrySet()) {
             map.put(FQ, entry.getKey() + COLON + entry.getValue());
         }
+
         if (vsfq.isPresent()) {
             for (Map.Entry<String, String> entry : vsfq.get().entrySet()) {
                 map.put(VS_FQ, entry.getKey() + COLON + entry.getValue());
             }
         }
+
+        if (vsConfig.isPresent()) {
+            for (Map.Entry<String, String> entry : vsConfig.get().entrySet()) {
+                map.put(VS_CONFIG, entry.getKey() + COLON + entry.getValue());
+            }
+        }
+
         if (vsfl.isPresent()) {
             for (String filter : vsfl.get()) {
                 map.put(VS_FL, filter);
