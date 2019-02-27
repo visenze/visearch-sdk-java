@@ -1007,4 +1007,142 @@ public class ViSearchSearchOperationsTest {
         verify(mockClient).get("/search", expectedParams);
 
     }
+
+    @Test
+    public void testSearchParamsVsFl() {
+        String responseBody = "{\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"uploadsearch\",\n" +
+                "    \"error\": [],\n" +
+                "    \"page\": 1,\n" +
+                "    \"limit\": 1,\n" +
+                "    \"total\": 1000,\n" +
+                "    \"product_types\": [\n" +
+                "        {\n" +
+                "            \"type\": \"package\",\n" +
+                "            \"attributes\": {},\n" +
+                "            \"score\": 0.9430378079414368,\n" +
+                "            \"box\": [\n" +
+                "                195,\n" +
+                "                38,\n" +
+                "                664,\n" +
+                "                770\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"product_types_list\": [\n" +
+                "        {\n" +
+                "            \"type\": \"bag\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"bottom\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"dress\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"ethnic_wear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"eyewear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"furniture\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"jewelry\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"outerwear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"package\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"shoe\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"skirt\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"top\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"watch\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"other\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"result\": [\n" +
+                "        {\n" +
+                "            \"im_name\": \"MVIDEO-RU_30025140\",\n" +
+                "            \"value_map\": {\n" +
+                "                \"brand\": \"Samsung\"\n" +
+                "            },\n" +
+                "            \"vs_value_map\": {\n" +
+                "                \"vs_test\": \"package\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"im_id\": \"20190227365624323b915e6f8eb7e0ea2b047acc3cde1916a8a.jpg\",\n" +
+                "    \"reqid\": \"867912053329882207\"\n" +
+                "}";
+
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+
+        Map<String, String> responseHeaders = Maps.newHashMap();
+        when(response.getHeaders()).thenReturn(responseHeaders);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        String testImName = "test_im2";
+        SearchParams searchParams = new SearchParams(testImName);
+        String sysField = "vs_test";
+        searchParams.setVsfl(Lists.<String>newArrayList(sysField));
+
+        PagedSearchResult pagedSearchResult = searchOperations.search(searchParams);
+        List<ImageResult> results = pagedSearchResult.getResult();
+        assertEquals(1, results.size());
+
+        ImageResult firstResult = results.get(0);
+
+        assertEquals("MVIDEO-RU_30025140" , firstResult.getImName() );
+
+        Map<String, String> vsMeta = firstResult.getVsMetadata();
+        assertEquals(1, vsMeta.size());
+        assertEquals("package", vsMeta.get(sysField));
+
+        Map<String, String> meta = firstResult.getMetadata();
+        assertEquals(1, meta.size());
+        assertEquals("Samsung", meta.get("brand"));
+
+        assertEquals(testImName, searchParams.getImName());
+
+        assertEquals(null, pagedSearchResult.getErrorMessage());
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", testImName);
+        expectedParams.put("score", "false");
+        expectedParams.put("vs_fl", sysField);
+
+
+        verify(mockClient).get("/search", expectedParams);
+    }
+
 }

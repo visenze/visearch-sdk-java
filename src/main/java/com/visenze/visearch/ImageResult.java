@@ -8,7 +8,7 @@ public class ImageResult {
     private final Map<String, String> metadata;
     private final Float score;
     private String s3Url;
-    private Map<String, Object> vsMetadata;
+    private Map<String, String> vsMetadata;
 
     public ImageResult(String imName, Map<String, String> metadata, Float score) {
         this.imName = imName;
@@ -37,11 +37,11 @@ public class ImageResult {
         this.s3Url = s3Url;
     }
 
-    public Map<String, Object> getVsMetadata() {
+    public Map<String, String> getVsMetadata() {
         return vsMetadata;
     }
 
-    public void setVsMetadata(Map<String, Object> vsMetadata) {
+    public void setVsMetadata(Map<String, String> vsMetadata) {
         this.vsMetadata = vsMetadata;
     }
 }
