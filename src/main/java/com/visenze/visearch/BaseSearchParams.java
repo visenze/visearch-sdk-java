@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
+
 /**
  * Common parameters for /search, /colorsearch, and /uploadsearch.
  * Provide setters to override default values.
@@ -25,6 +27,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     private static final Map<String, String> DEFAULT_CUSTOM = new HashMap<String, String>();
     private static final Boolean DEFAULT_GET_ALL_FL = false;
     private static final Boolean DEFAULT_DEDUP = false;
+
 
     protected Optional<Integer> page = Optional.absent();
     protected Optional<Integer> limit = Optional.absent();
@@ -270,86 +273,86 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         Multimap<String, String> map = HashMultimap.create();
 
         if (getPage() != null) {
-            map.put("page", getPage().toString());
+            map.put(PAGE, getPage().toString());
         }
         if (getLimit() != null) {
-            map.put("limit", getLimit().toString());
+            map.put(LIMIT, getLimit().toString());
         }
 
         if (groupBy.isPresent()){
-            map.put("group_by", getGroupBy() );
+            map.put(GROUP_BY, getGroupBy() );
         }
 
         if (groupLimit.isPresent()){
-            map.put("group_limit", getGroupLimit().toString() );
+            map.put(GROUP_LIMIT, getGroupLimit().toString() );
         }
 
         if (!getFacets().isEmpty()) {
-            map.put("facets", Joiner.on(",").join(getFacets()));
+            map.put(FACETS, Joiner.on(COMMA).join(getFacets()));
         }
         if (facetsLimit.isPresent()) {
-            map.put("facets_limit", facetsLimit.get().toString());
+            map.put(FACETS_LIMIT, facetsLimit.get().toString());
         }
         if (facetsShowCount.isPresent()) {
-            map.put("facets_show_count", facetsShowCount.get().toString());
+            map.put(FACETS_SHOW_COUNT, facetsShowCount.get().toString());
         }
         if (isScore()) {
-            map.put("score", "true");
+            map.put(SCORE, TRUE);
         } else {
-            map.put("score", "false");
+            map.put(SCORE, FALSE);
         }
 
         if (getScoreMin() != null) {
-            map.put("score_min", getScoreMin().toString());
+            map.put(SCORE_MIN, getScoreMin().toString());
         }
         if (getScoreMax() != null) {
-            map.put("score_max", getScoreMax().toString());
+            map.put(SCORE_MAX, getScoreMax().toString());
         }
 
         if (sortBy.isPresent()) {
-            map.put("sort_by", getSortBy() );
+            map.put(SORT_BY, getSortBy() );
         }
 
         if (sortGroupBy.isPresent()) {
-            map.put("sort_group_by" , getSortGroupBy());
+            map.put(SORT_GROUP_BY, getSortGroupBy());
         }
 
         if (sortGroupStrategy.isPresent()) {
-            map.put("sort_group_strategy", getSortGroupStrategy());
+            map.put(SORT_GROUP_STRATEGY, getSortGroupStrategy());
         }
 
         for (Map.Entry<String, String> entry : getFq().entrySet()) {
-            map.put("fq", entry.getKey() + ":" + entry.getValue());
+            map.put(FQ, entry.getKey() + COLON + entry.getValue());
         }
         if (vsfq.isPresent()) {
             for (Map.Entry<String, String> entry : vsfq.get().entrySet()) {
-                map.put("vs_fq", entry.getKey() + ":" + entry.getValue());
+                map.put(VS_FQ, entry.getKey() + COLON + entry.getValue());
             }
         }
         if (vsfl.isPresent()) {
             for (String filter : vsfl.get()) {
-                map.put("vs_fl", filter);
+                map.put(VS_FL, filter);
             }
         }
 
         for (String filter : getFl()) {
-            map.put("fl", filter);
+            map.put(FL, filter);
         }
 
         if (isGetAllFl()) {
-            map.put("get_all_fl", "true");
+            map.put(GET_ALL_FL, TRUE);
         }
 
         if (isQInfo()) {
-            map.put("qinfo", "true");
+            map.put(QINFO, TRUE);
         }
 
         if (isDedup()) {
-            map.put("dedup", "true");
+            map.put(DEDUP, TRUE);
         }
 
         if (getDedupThreshold() != null) {
-            map.put("dedup_score_threshold", getDedupThreshold().toString());
+            map.put(DEDUP_SCORE_THRESHOLD, getDedupThreshold().toString());
         }
 
         for (Map.Entry<String, String> entry : getCustom().entrySet()) {
