@@ -6,9 +6,11 @@ addons:
     packages:
       - openjdk-6-jdk
 jdk:
-  - openjdk6
   - openjdk7
   - oraclejdk8
+
+before_install:
+  - echo "MAVEN_OPTS='-Dlicense.skip=true'" > ~/.mavenrc
 
 install:
   - echo "Downloading Maven 3.0";

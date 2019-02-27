@@ -1115,7 +1115,7 @@ public class ViSearchSearchOperationsTest {
         String testImName = "test_im2";
         SearchParams searchParams = new SearchParams(testImName);
         String sysField = "vs_test";
-        searchParams.setVsfl(Lists.<String>newArrayList(sysField));
+        searchParams.setVsfl(Lists.newArrayList(sysField));
         Map<String, String> vsConfig = new HashMap<String, String>();
         vsConfig.put("a" , "b");
         searchParams.setVsConfig(vsConfig);
