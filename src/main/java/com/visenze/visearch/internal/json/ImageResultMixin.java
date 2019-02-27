@@ -15,6 +15,10 @@ abstract class ImageResultMixin {
     @JsonProperty("s3_url")
     protected String s3Url;
 
+    @JsonProperty("vs_value_map")
+    protected Map<String, Object> vsMetadata;
+
+
     public ImageResultMixin(@JsonProperty("im_name") String imName,
                             @JsonProperty("value_map") Map<String, Object> metadata,
                             @JsonProperty("score") Float score
@@ -30,5 +34,13 @@ abstract class ImageResultMixin {
 
     public void setS3Url(String s3Url) {
         this.s3Url = s3Url;
+    }
+
+    public Map<String, Object> getVsMetadata() {
+        return vsMetadata;
+    }
+
+    public void setVsMetadata(Map<String, Object> vsMetadata) {
+        this.vsMetadata = vsMetadata;
     }
 }

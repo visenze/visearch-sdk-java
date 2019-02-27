@@ -32,5 +32,34 @@ public abstract class ViSearchHttpConstants {
     public static final String IM_FEATURE = "im_feature";
     public static final String TRANS_ID = "TRANS_ID";
 
+    public static final String GROUP_BY = "group_by";
+    public static final String COMMA = ",";
+    public static final String FACETS_LIMIT = "facets_limit";
+    public static final String FACETS_SHOW_COUNT = "facets_show_count";
+    public static final String SCORE = "score";
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
+    public static final String SCORE_MIN = "score_min";
+    public static final String SCORE_MAX = "score_max";
+    public static final String SORT_BY = "sort_by";
+    public static final String SORT_GROUP_BY = "sort_group_by";
+    public static final String SORT_GROUP_STRATEGY = "sort_group_strategy";
+    public static final String FQ = "fq";
+    public static final String COLON = ":";
+    public static final String VS_FQ = "vs_fq";
+    public static final String VS_FL = "vs_fl";
+    public static final String FL = "fl";
+    public static final String GET_ALL_FL = "get_all_fl";
+    public static final String DEDUP = "dedup";
+    public static final String DEDUP_SCORE_THRESHOLD = "dedup_score_threshold";
+
+    public static final String BOX = "box";
+    public static final String IM_URL = "im_url";
+    public static final String DETECTION = "detection";
+    public static final String DETECTION_LIMIT = "detection_limit";
+    public static final String RESULT_LIMIT = "result_limit";
+    public static final String DETECTION_SENSITIVITY = "detection_sensitivity";
+    public static final String VS_CONFIG = "vs_config";
+
 
 }
