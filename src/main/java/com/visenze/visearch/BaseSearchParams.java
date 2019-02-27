@@ -339,17 +339,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
             map.put(FQ, entry.getKey() + COLON + entry.getValue());
         }
 
-        if (vsfq.isPresent()) {
-            for (Map.Entry<String, String> entry : vsfq.get().entrySet()) {
-                map.put(VS_FQ, entry.getKey() + COLON + entry.getValue());
-            }
-        }
-
-        if (vsConfig.isPresent()) {
-            for (Map.Entry<String, String> entry : vsConfig.get().entrySet()) {
-                map.put(VS_CONFIG, entry.getKey() + COLON + entry.getValue());
-            }
-        }
+        updateMapParam(map, vsfq, VS_FQ);
+        updateMapParam(map, vsConfig, VS_CONFIG);
 
         if (vsfl.isPresent()) {
             for (String filter : vsfl.get()) {
@@ -386,5 +377,13 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         }
 
         return map;
+    }
+
+    private void updateMapParam(Multimap<String, String> paramMap, Optional<Map<String, String>> valueMapOptional, String key) {
+        if (valueMapOptional.isPresent()) {
+            for (Map.Entry<String, String> entry : valueMapOptional.get().entrySet()) {
+                paramMap.put(key, entry.getKey() + COLON + entry.getValue());
+            }
+        }
     }
 }
