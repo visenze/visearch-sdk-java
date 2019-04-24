@@ -1,5 +1,8 @@
 package com.visenze.visearch;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ public class ObjectSearchResult {
     private int total;
     private List<ImageResult> result;
     private List<Facet> facets;
+    private List<GroupSearchResult> groupResults;
 
     public ObjectSearchResult() {
 
@@ -82,5 +86,14 @@ public class ObjectSearchResult {
 
     public void setFacets(List<Facet> facets) {
         this.facets = facets;
+    }
+
+    public List<GroupSearchResult> getGroupResults() {
+        return groupResults;
+    }
+
+    @JsonProperty(ViSearchHttpConstants.GROUP_RESULTS)
+    public void setGroupResults(List<GroupSearchResult> groupResults) {
+        this.groupResults = groupResults;
     }
 }

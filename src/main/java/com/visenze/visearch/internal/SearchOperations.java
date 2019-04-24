@@ -16,6 +16,8 @@ public interface SearchOperations {
 
     FeatureResponseResult extractFeature(UploadSearchParams uploadSearchParams);
 
+    PagedSearchResult matchSearch(MatchSearchParams searchParams);
+
     @Deprecated
     PagedSearchResult similarProductsSearch(UploadSearchParams similarProductsSearchParams);
 }

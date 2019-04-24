@@ -5,7 +5,7 @@
     <groupId>com.visenze</groupId>
     <artifactId>visearch-java-sdk</artifactId>
     <name>ViSearch Java SDK</name>
-    <version>1.8.9</version>
+    <version>1.9.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <url>https://github.com/visenze/visearch-sdk-java</url>
     <description>ViSearch Java SDK</description>
@@ -106,12 +106,79 @@
         </dependency>
     </dependencies>
 
+    <!--<distributionManagement>-->
+        <!--<snapshotRepository>-->
+            <!--<id>ossrh</id>-->
+            <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+        <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
+
     <distributionManagement>
+        <site>
+            <id>maven-s3-site</id>
+            <name>S3 Maven Site</name>
+            <url>s3://weardex-maven-repo/site</url>
+        </site>
+        <repository>
+            <id>maven-s3-release-repo</id>
+            <name>S3 Release Repository</name>
+            <url>s3://weardex-maven-repo/release</url>
+        </repository>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>maven-s3-snapshot-repo</id>
+            <name>S3 Snapshot Repository</name>
+            <url>s3://weardex-maven-repo/snapshot</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>maven-s3-release-repo</id>
+            <name>S3 Release Repository</name>
+            <url>s3://weardex-maven-repo/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>maven-s3-snapshot-repo</id>
+            <name>S3 Snapshot Repository</name>
+            <url>s3://weardex-maven-repo/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-s3-release-repo</id>
+            <name>S3 Release Repository</name>
+            <url>s3://weardex-maven-repo/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven-s3-snapshot-repo</id>
+            <name>S3 Snapshot Repository</name>
+            <url>s3://weardex-maven-repo/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
