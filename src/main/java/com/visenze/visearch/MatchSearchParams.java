@@ -19,8 +19,9 @@ public class MatchSearchParams extends SearchParams {
         return objectLimit;
     }
 
-    public void setObjectLimit(int objectLimit) {
+    public MatchSearchParams setObjectLimit(int objectLimit) {
         this.objectLimit = objectLimit;
+        return this;
     }
 
     @Override
