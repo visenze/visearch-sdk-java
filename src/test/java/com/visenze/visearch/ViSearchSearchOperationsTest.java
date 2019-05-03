@@ -1160,6 +1160,7 @@ public class ViSearchSearchOperationsTest {
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "im_name");
         expectedParams.put("object_limit", "-1");
+        expectedParams.put("result_limit", "10");
         expectedParams.put("score", "false");
         given(mockClient.get(eq("/match"), eq(expectedParams))).willReturn(response);
 
@@ -1204,6 +1205,7 @@ public class ViSearchSearchOperationsTest {
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "im_name");
         expectedParams.put("object_limit", "-1");
+        expectedParams.put("result_limit", "10");
         expectedParams.put("score", "false");
         given(mockClient.get(eq("/match"), eq(expectedParams))).willReturn(response);
 

@@ -21,8 +21,10 @@ public class MatchSearchParams extends SearchParams {
         return objectLimit;
     }
 
-    public MatchSearchParams setObjectLimit(int objectLimit) {
-        this.objectLimit = objectLimit;
+    public MatchSearchParams setObjectLimit(Integer objectLimit) {
+        if (objectLimit != null) {
+            this.objectLimit = objectLimit;
+        }
         return this;
     }
 
@@ -30,8 +32,10 @@ public class MatchSearchParams extends SearchParams {
         return resultLimit;
     }
 
-    public MatchSearchParams setResultLimit(int resultLimit) {
-        this.resultLimit = resultLimit;
+    public MatchSearchParams setResultLimit(Integer resultLimit) {
+        if (resultLimit != null) {
+            this.resultLimit = resultLimit;
+        }
         return this;
     }
 
