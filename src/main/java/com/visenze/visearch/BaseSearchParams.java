@@ -104,24 +104,27 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return (P) this;
     }
 
-    public void setVsConfig(Map<String, String> map) {
+    public P setVsConfig(Map<String, String> map) {
         this.vsConfig = Optional.fromNullable(map);
+        return (P) this;
     }
 
     public Optional<Map<String, String>> getVsfq() {
         return vsfq;
     }
 
-    public void setVsfq(Map<String, String> vsfq) {
+    public P setVsfq(Map<String, String> vsfq) {
         this.vsfq = Optional.fromNullable(vsfq);
+        return (P) this;
     }
 
     public Optional<List<String>> getVsfl() {
         return vsfl;
     }
 
-    public void setVsfl(List<String> vsfl) {
+    public P setVsfl(List<String> vsfl) {
         this.vsfl = Optional.fromNullable(vsfl);
+        return (P) this;
     }
 
     @SuppressWarnings("unchecked")

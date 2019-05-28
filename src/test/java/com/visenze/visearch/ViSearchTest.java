@@ -222,4 +222,11 @@ public class ViSearchTest {
         visearch.similarProductsSearch(uploadSearchParams);
         verify(searchOperations, new Times(1)).similarProductsSearch(any(UploadSearchParams.class));
     }
+
+    @Test
+    public void testMatchSearch() {
+        MatchSearchParams searchParams = new MatchSearchParams("test_name");
+        visearch.matchSearch(searchParams);
+        verify(searchOperations).matchSearch(searchParams);
+    }
 }

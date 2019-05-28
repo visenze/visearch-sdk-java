@@ -22,6 +22,7 @@
 	    - 5.2.1 [Selection Box](#521-selection-box)
       - 5.3 [Multiple Product Search](#53-multiple-product-search)
 	  - 5.4 [Search by Color](#54-search-by-color)
+	  - 5.5 [Visually Similar Recommendations In Multiple Objects Index Mode](#55-visually-similar-recommendations-in-multiple-objects-index-mode)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
@@ -335,6 +336,18 @@ GET /colorsearch
 ColorSearchParams params = new ColorSearchParams("9b351b");
 PagedSearchResult searchResult = client.colorSearch(params);
 ```
+
+### 5.5 Visually Similar Recommendations In Multiple Objects Index Mode
+
+GET /match
+
+**Visually Similar Recommendations For Multiple Objects Index Mode** solution is to search for all objects which below the visually similar images in the image database giving an indexed image's unique identifier (im_name).
+
+```java
+MatchSearchParams params = new MatchSearchParams("im_name");
+PagedSearchResult searchResult = client.matchSearch(params);
+```
+
 
 
 ## 6. Search Results

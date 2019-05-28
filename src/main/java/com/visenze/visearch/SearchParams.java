@@ -13,9 +13,10 @@ public class SearchParams extends BaseSearchParams<SearchParams> {
         setImName(imName);
     }
 
-    private void setImName(String imName) {
+    private SearchParams setImName(String imName) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(imName), "im_name must not be null or empty for pre-indexed search.");
         this.imName = imName;
+        return this;
     }
 
     public String getImName() {

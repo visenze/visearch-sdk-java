@@ -323,6 +323,22 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     }
 
     /**
+     * Search by all objects for similar images from the ViSearch App given an existing image in the App.
+     *
+     * @param matchSearchParams the search parameters, must contain the im_name of the existing image
+     * @return the page of search result
+     */
+    @Override
+    public PagedSearchResult matchSearch(MatchSearchParams matchSearchParams) {
+        PagedSearchResult result = searchOperations.matchSearch(matchSearchParams);
+        if (result != null && enableAutoSolutionActionTrack) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("match", reqId);
+        }
+        return result;
+    }
+
+    /**
      * send search actions after finishing search
      * @param action
      * @param reqId
