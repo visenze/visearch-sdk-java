@@ -1,6 +1,5 @@
 package com.visenze.visearch;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
@@ -8,7 +7,10 @@ import com.google.common.collect.Multimap;
 import java.io.File;
 import java.io.InputStream;
 
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
+
 public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
+
 
     private File imageFile;
     private InputStream imageStream;
@@ -136,27 +138,26 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
         if (box != null && box.allCoordsExist()) {
-            map.put("box", box.getX1() + "," + box.getY1() + "," + box.getX2() + "," + box.getY2());
+            map.put(BOX, box.getX1() + COMMA + box.getY1() + COMMA + box.getX2() + COMMA + box.getY2());
         }
         if (imageUrl != null) {
-            map.put("im_url", imageUrl);
+            map.put(IM_URL, imageUrl);
         }
         if (imId != null) {
-            map.put("im_id", imId);
+            map.put(IM_ID, imId);
         }
         if (detection != null) {
-            map.put("detection", detection);
+            map.put(DETECTION, detection);
         }
         if (detectionLimit != null) {
-            map.put("detection_limit" , detectionLimit.toString());
+            map.put(DETECTION_LIMIT, detectionLimit.toString());
         }
         if (resultLimit != null) {
-            map.put("result_limit", resultLimit.toString());
+            map.put(RESULT_LIMIT, resultLimit.toString());
         }
         if (detectionSensitivity != null) {
-            map.put("detection_sensitivity", detectionSensitivity.toString());
+            map.put(DETECTION_SENSITIVITY, detectionSensitivity.toString());
         }
-
 
         return map;
     }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.visenze.visearch.*;
@@ -67,10 +68,20 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
     @Override
     public InsertStatus insertStatus(String transId) {
 
+        return insertStatus(transId, Maps.<String, String>newHashMap());
+    }
+
+    @Override
+    public InsertStatus insertStatus(String transId, Map<String, String> customParams) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(transId), "trans_id must not be null or empty");
+        Preconditions.checkNotNull(customParams, "custom params must not be null");
 
         try {
-            ViSearchHttpResponse response = viSearchHttpClient.get("/insert/status/" + transId, HashMultimap.<String, String>create());
+            Multimap<String, String> params = HashMultimap.create();
+            for (Map.Entry<String, String> entry : customParams.entrySet()) {
+                params.put(entry.getKey(), entry.getValue());
+            }
+            ViSearchHttpResponse response = viSearchHttpClient.get("/insert/status/" + transId, params);
             return parseInsertStatus(response.getBody(), response.getHeaders());
         } catch (InternalViSearchException e) {
             return new InsertStatus(e.getMessage(), e.getCause(), e.getServerRawResponse());
@@ -79,13 +90,21 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
 
     @Override
     public InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit) {
+        return insertStatus(transId, errorPage, errorLimit, Maps.<String, String>newHashMap());
+    }
 
+    @Override
+    public InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit, Map<String, String> customParams) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(transId), "trans_id must not be null or empty");
         Preconditions.checkNotNull(errorPage, "error page must not be null");
         Preconditions.checkNotNull(errorLimit, "error limit must not be null");
+        Preconditions.checkNotNull(customParams, "custom params must not be null");
 
         try {
             Multimap<String, String> params = HashMultimap.create();
+            for (Map.Entry<String, String> entry : customParams.entrySet()) {
+                params.put(entry.getKey(), entry.getValue());
+            }
             params.put("error_page", errorPage.toString());
             params.put("error_limit", errorLimit.toString());
             ViSearchHttpResponse response = viSearchHttpClient.get("/insert/status/" + transId, params);

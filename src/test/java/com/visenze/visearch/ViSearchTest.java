@@ -94,9 +94,23 @@ public class ViSearchTest {
     }
 
     @Test
+    public void testInsertStatusWithParams() {
+        Map<String, String> customParams = Maps.newHashMap();
+        visearch.insertStatus("transId", customParams);
+        verify(dataOperations).insertStatus("transId", customParams);
+    }
+
+    @Test
     public void testInsertStatus1() throws Exception {
         visearch.insertStatus("transId", 1, 10);
         verify(dataOperations).insertStatus("transId", 1, 10);
+    }
+
+    @Test
+    public void testInsertStatusGetErrorPageWithParams() {
+        Map<String, String> customParams = Maps.newHashMap();
+        visearch.insertStatus("transId", 1, 10, customParams);
+        verify(dataOperations).insertStatus("transId", 1, 10, customParams);
     }
 
     @Test
@@ -207,5 +221,12 @@ public class ViSearchTest {
         // with auto solution action
         visearch.similarProductsSearch(uploadSearchParams);
         verify(searchOperations, new Times(1)).similarProductsSearch(any(UploadSearchParams.class));
+    }
+
+    @Test
+    public void testMatchSearch() {
+        MatchSearchParams searchParams = new MatchSearchParams("test_name");
+        visearch.matchSearch(searchParams);
+        verify(searchOperations).matchSearch(searchParams);
     }
 }

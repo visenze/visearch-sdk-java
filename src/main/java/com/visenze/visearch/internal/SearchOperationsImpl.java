@@ -1,7 +1,6 @@
 package com.visenze.visearch.internal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -12,9 +11,11 @@ import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
     private static final String ENDPOINT_SIMILAR_PRODUCTS_SEARCH = "/similarproducts";
     private static final String ENDPOINT_EXTRACT_FEATURE= "/extractfeature";
+    private static final String ENDPOINT_MATCH= "/match";
 
     public SearchOperationsImpl(ViSearchHttpClient viSearchHttpClient, ObjectMapper objectMapper) {
         super(viSearchHttpClient, objectMapper);
@@ -73,7 +75,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
 
     /**
-     * Perform real disover search
+     * Perform real discover search
      * @param uploadSearchParams
      * @return
      */
@@ -87,7 +89,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     }
 
     /**
-     * Perform real disover search
+     * Perform real discover search
      * @param uploadSearchParams
      * @return
      */
@@ -113,6 +115,17 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             return getFeatureResponseResult(response);
         } catch (InternalViSearchException e) {
             return new FeatureResponseResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
+
+
+    @Override
+    public PagedSearchResult matchSearch(MatchSearchParams matchSearchParams) {
+        try {
+            ViSearchHttpResponse response = viSearchHttpClient.get(ENDPOINT_MATCH, matchSearchParams.toMap());
+            return getPagedResult(response);
+        } catch (InternalViSearchException e) {
+            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
         }
     }
 

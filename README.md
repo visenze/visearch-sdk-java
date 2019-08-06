@@ -22,6 +22,7 @@
 	    - 5.2.1 [Selection Box](#521-selection-box)
       - 5.3 [Multiple Product Search](#53-multiple-product-search)
 	  - 5.4 [Search by Color](#54-search-by-color)
+	  - 5.5 [Visually Similar Recommendations In Multiple Objects Index Mode](#55-visually-similar-recommendations-in-multiple-objects-index-mode)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
@@ -284,6 +285,10 @@ params.setImId("some_im_id");
 PagedSearchResult searchResult = client.uploadSearch(params);
 ```
 
+> For optimal results, we recommend images around `1024x1024` pixels. Low resolution images may result in unsatisfying search results.  
+> If the image is larger, we recommended to resize the image to `1024x1024` pixels before sending to API. Too high resolution images may result in timeout.  
+> The maximum file size of an image is 10MB. 
+
 #### 5.2.1 Selection Box
 
 If the object you wish to search for takes up only a small portion of your image, or if other irrelevant objects exists in the same image, chances are the search result could become inaccurate. Use the Box parameter to refine the search area of the image to improve accuracy. The box coordinates are set with respect to the original size of the uploading image:
@@ -331,6 +336,18 @@ GET /colorsearch
 ColorSearchParams params = new ColorSearchParams("9b351b");
 PagedSearchResult searchResult = client.colorSearch(params);
 ```
+
+### 5.5 Visually Similar Recommendations In Multiple Objects Index Mode
+
+GET /match
+
+**Visually Similar Recommendations For Multiple Objects Index Mode** solution is to search for all objects which below the visually similar images in the image database giving an indexed image's unique identifier (im_name).
+
+```java
+MatchSearchParams params = new MatchSearchParams("im_name");
+PagedSearchResult searchResult = client.matchSearch(params);
+```
+
 
 
 ## 6. Search Results

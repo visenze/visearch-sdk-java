@@ -163,6 +163,17 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     }
 
     /**
+     * (For testing) Get insert status by insert trans id.
+     *
+     * @param transId the id of the insert trans.
+     * @return the insert trans
+     */
+    @Override
+    public InsertStatus insertStatus(String transId, Map<String, String> customParams) {
+        return dataOperations.insertStatus(transId, customParams);
+    }
+
+    /**
      * Get insert status by insert trans id, and get errors page.
      *
      * @param transId    the id of the insert transaction.
@@ -174,6 +185,22 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     public InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit) {
         return dataOperations.insertStatus(transId, errorPage, errorLimit);
     }
+
+    /**
+     * (For testing) Get insert status by insert trans id, and get errors page.
+     *
+     * @param transId    the id of the insert transaction.
+     * @param errorPage  page number of the error list
+     * @param errorLimit per page limit number of the error list
+     *
+     * @return the insert transaction
+     */
+    @Override
+    public InsertStatus insertStatus(String transId, Integer errorPage, Integer errorLimit, Map<String, String> customParams) {
+        return dataOperations.insertStatus(transId, errorPage, errorLimit, customParams);
+    }
+
+
 
     /**
      * Remove a list of images from the ViSearch App, identified by their im_names.
@@ -292,6 +319,22 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public FeatureResponseResult extractFeature(UploadSearchParams uploadSearchParams) {
         FeatureResponseResult result = searchOperations.extractFeature(uploadSearchParams);
+        return result;
+    }
+
+    /**
+     * Search by all objects for similar images from the ViSearch App given an existing image in the App.
+     *
+     * @param matchSearchParams the search parameters, must contain the im_name of the existing image
+     * @return the page of search result
+     */
+    @Override
+    public PagedSearchResult matchSearch(MatchSearchParams matchSearchParams) {
+        PagedSearchResult result = searchOperations.matchSearch(matchSearchParams);
+        if (result != null && enableAutoSolutionActionTrack) {
+            String reqId = result.getReqId();
+            this.sendSolutionActions("match", reqId);
+        }
         return result;
     }
 

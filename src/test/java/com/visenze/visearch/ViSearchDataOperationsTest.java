@@ -106,6 +106,25 @@ public class ViSearchDataOperationsTest {
     }
 
     @Test
+    public void testInsertStatusParamsWithCustomParams() {
+        String insertResponse = "{\"status\":\"OK\",\"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":2,\"fail_count\":0,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\"}]}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        Map<String, String> responseHeaders = Maps.newHashMap();
+        responseHeaders.put("test-param", "123");
+        when(mockResponse.getHeaders()).thenReturn(responseHeaders);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        Map<String, String> customParam = Maps.newHashMap();
+        customParam.put("custom_param", "custom_value");
+        InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968", customParam);
+        assertEquals(responseHeaders, insertStatus.getHeaders());
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("custom_param", "custom_value");
+        verify(mockClient).get("/insert/status/317503499455827968", expectedParams);
+    }
+
+    @Test
     public void testRemoveParams() throws Exception {
         String insertResponse = "{\"status\":\"OK\",\"method\":\"remove\",\"result\":[],\"error\":[],\"total\":2}";
         ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
@@ -196,6 +215,23 @@ public class ViSearchDataOperationsTest {
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("error_page", "1");
         expectedParams.put("error_limit", "10");
+        verify(mockClient).get("/insert/status/317503499455827968", expectedParams);
+    }
+
+    @Test
+    public void testInsertStatusErrorPageParamsWithCustomParameter() {
+        String insertResponse = "{\"status\":\"OK\",\"method\":\"insert/status\",\"result\":[{\"trans_id\":317503499455827968,\"processed_percent\":100,\"total\":2,\"success_count\":1,\"fail_count\":1,\"start_time\":\"2015-01-02T03:04:05.678+0000\",\"update_time\":\"2015-01-02T03:04:05.678+0000\",\"error_list\":[{\"im_name\":\"test_im\",\"error_code\":201,\"error_message\":\"Could not download the image from im_url.\"}],\"error_page\":1,\"error_limit\":10}]}";
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(insertResponse);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        DataOperations dataOperations = new DataOperationsImpl(mockClient, objectMapper);
+        Map<String, String> customParam = Maps.newHashMap();
+        customParam.put("custom_param", "custom_value");
+        InsertStatus insertStatus = dataOperations.insertStatus("317503499455827968", 1, 10, customParam);
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("error_page", "1");
+        expectedParams.put("error_limit", "10");
+        expectedParams.put("custom_param", "custom_value");
         verify(mockClient).get("/insert/status/317503499455827968", expectedParams);
     }
 

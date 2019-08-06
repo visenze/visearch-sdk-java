@@ -19,12 +19,14 @@ import org.mockito.Matchers;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 public class ViSearchSearchOperationsTest {
@@ -981,5 +983,261 @@ public class ViSearchSearchOperationsTest {
         assertEquals("shoe", pagedResult.getProductTypes().get(0).getType());
         assertEquals("mpid", pagedResult.getGroupByKey());
 
+    }
+
+    @Test
+    public void testSearchParamsBasicS3Url() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":2,\"limit\":11,\"total\":200,\"result\":[{\"im_name\":\"test_im_1\",\"s3_url\":\"http://abc.d\"}]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        Map<String, String> responseHeaders = Maps.newHashMap();
+        responseHeaders.put("test-param1", "124");
+        when(response.getHeaders()).thenReturn(responseHeaders);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im1");
+        PagedSearchResult pagedSearchResult = searchOperations.search(searchParams);
+        List<ImageResult> results = pagedSearchResult.getResult();
+        assertEquals("http://abc.d" , results.get(0).getS3Url());
+        assertEquals(responseHeaders, pagedSearchResult.getHeaders());
+        assertEquals("test_im1", searchParams.getImName());
+        assertEquals(null, pagedSearchResult.getErrorMessage());
+        assertEquals(null, pagedSearchResult.getCause());
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "test_im1");
+        expectedParams.put("score", "false");
+        verify(mockClient).get("/search", expectedParams);
+
+    }
+
+    @Test
+    public void testSearchParamsVsFl() {
+        String responseBody = "{\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"uploadsearch\",\n" +
+                "    \"error\": [],\n" +
+                "    \"page\": 1,\n" +
+                "    \"limit\": 1,\n" +
+                "    \"total\": 1000,\n" +
+                "    \"product_types\": [\n" +
+                "        {\n" +
+                "            \"type\": \"package\",\n" +
+                "            \"attributes\": {},\n" +
+                "            \"score\": 0.9430378079414368,\n" +
+                "            \"box\": [\n" +
+                "                195,\n" +
+                "                38,\n" +
+                "                664,\n" +
+                "                770\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"product_types_list\": [\n" +
+                "        {\n" +
+                "            \"type\": \"bag\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"bottom\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"dress\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"ethnic_wear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"eyewear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"furniture\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"jewelry\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"outerwear\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"package\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"shoe\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"skirt\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"top\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"watch\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"type\": \"other\",\n" +
+                "            \"attributes_list\": {}\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"result\": [\n" +
+                "        {\n" +
+                "            \"im_name\": \"MVIDEO-RU_30025140\",\n" +
+                "            \"value_map\": {\n" +
+                "                \"brand\": \"Samsung\"\n" +
+                "            },\n" +
+                "            \"vs_value_map\": {\n" +
+                "                \"vs_test\": \"package\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"im_id\": \"20190227365624323b915e6f8eb7e0ea2b047acc3cde1916a8a.jpg\",\n" +
+                "    \"reqid\": \"867912053329882207\"\n" +
+                "}";
+
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+
+        Map<String, String> responseHeaders = Maps.newHashMap();
+        when(response.getHeaders()).thenReturn(responseHeaders);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        String testImName = "test_im2";
+        SearchParams searchParams = new SearchParams(testImName);
+        String sysField = "vs_test";
+        searchParams.setVsfl(Lists.newArrayList(sysField));
+        Map<String, String> vsConfig = new HashMap<String, String>();
+        vsConfig.put("a" , "b");
+        searchParams.setVsConfig(vsConfig);
+
+        PagedSearchResult pagedSearchResult = searchOperations.search(searchParams);
+        List<ImageResult> results = pagedSearchResult.getResult();
+        assertEquals(1, results.size());
+
+        ImageResult firstResult = results.get(0);
+
+        assertEquals("MVIDEO-RU_30025140" , firstResult.getImName() );
+
+        Map<String, String> vsMeta = firstResult.getVsMetadata();
+        assertEquals(1, vsMeta.size());
+        assertEquals("package", vsMeta.get(sysField));
+
+        Map<String, String> meta = firstResult.getMetadata();
+        assertEquals(1, meta.size());
+        assertEquals("Samsung", meta.get("brand"));
+
+        assertEquals(testImName, searchParams.getImName());
+
+        assertEquals(null, pagedSearchResult.getErrorMessage());
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", testImName);
+        expectedParams.put("score", "false");
+        expectedParams.put("vs_fl", sysField);
+        expectedParams.put("vs_config", "a:b");
+
+        verify(mockClient).get("/search", expectedParams);
+    }
+
+    @Test
+    public void testMatchSearch() {
+        // given
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        String responseBody = "{\"status\":\"OK\",\"method\":\"match\",\"error\":[],\"result_limit\":10,\"page\":1,\"objects\":[{\"type\":\"dress\",\"attributes\":{},\"box\":[256,85,370,273],\"total\":3,\"result\":[{\"im_name\":\"3\",\"score\":0.3695266544818878,\"value_map\":{\"brand\":\"adidas\"}},{\"im_name\":\"2\",\"score\":0.2964479327201843,\"value_map\":{\"brand\":\"nike\"}},{\"im_name\":\"1\",\"score\":0.14500796794891357,\"value_map\":{\"brand\":\"nike\"}}]},{\"type\":\"dress\",\"attributes\":{},\"box\":[393,52,595,293],\"total\":3,\"result\":[{\"im_name\":\"3\",\"score\":0.3568868041038513,\"value_map\":{\"brand\":\"adidas\"}},{\"im_name\":\"2\",\"score\":0.2902722954750061,\"value_map\":{\"brand\":\"nike\"}},{\"im_name\":\"1\",\"score\":0.21793799102306366,\"value_map\":{\"brand\":\"nike\"}}]},{\"type\":\"outerwear\",\"attributes\":{},\"box\":[10,52,231,288],\"total\":3,\"result\":[{\"im_name\":\"3\",\"score\":0.43908262252807617,\"value_map\":{\"brand\":\"adidas\"}},{\"im_name\":\"2\",\"score\":0.3037453889846802,\"value_map\":{\"brand\":\"nike\"}},{\"im_name\":\"1\",\"score\":0.17324328422546387,\"value_map\":{\"brand\":\"nike\"}}]}],\"qinfo\":{\"im_name\":\"4\",\"brand\":\"nike\",\"im_url\":\"https://im_url.jpg\"},\"reqid\":\"888240171491790881\"}";
+        when(response.getBody()).thenReturn(responseBody);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "im_name");
+        expectedParams.put("object_limit", "-1");
+        expectedParams.put("result_limit", "10");
+        expectedParams.put("score", "false");
+        given(mockClient.get(eq("/match"), eq(expectedParams))).willReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        MatchSearchParams matchSearchParams = new MatchSearchParams("im_name");
+        // then
+        PagedSearchResult result = searchOperations.matchSearch(matchSearchParams);
+        // should
+        assertEquals(3, result.getObjects().size());
+        ObjectSearchResult objectSearchResult0 = result.getObjects().get(0);
+        assertEquals("dress", objectSearchResult0.getType());
+        assertEquals(Lists.newArrayList(256, 85, 370, 273), objectSearchResult0.getBox());
+        assertEquals(3, objectSearchResult0.getTotal());
+        assertEquals(3, objectSearchResult0.getResult().size());
+        ImageResult imageResult0 = objectSearchResult0.getResult().get(0);
+        assertEquals("3", imageResult0.getImName());
+        assertNotNull(imageResult0.getScore());
+        assertNotNull("adidas", imageResult0.getMetadata().get("brand"));
+        ImageResult imageResult1 = objectSearchResult0.getResult().get(1);
+        assertEquals("2", imageResult1.getImName());
+        assertNotNull(imageResult1.getScore());
+        assertNotNull("nike", imageResult1.getMetadata().get("brand"));
+        ImageResult imageResult2 = objectSearchResult0.getResult().get(2);
+        assertEquals("1", imageResult2.getImName());
+        assertNotNull(imageResult2.getScore());
+        assertNotNull("nike", imageResult2.getMetadata().get("brand"));
+
+        assertNotNull(result.getReqId());
+
+        assertEquals("4", result.getQueryInfo().get("im_name"));
+        assertEquals("nike", result.getQueryInfo().get("brand"));
+        assertEquals("https://im_url.jpg", result.getQueryInfo().get("im_url"));
+    }
+
+    @Test
+    public void testMatchSearchGroupBy() {
+        // given
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        String responseBody = "{\"status\":\"OK\",\"method\":\"match\",\"error\":[],\"result_limit\":10,\"page\":1,\"objects\":[{\"type\":\"dress\",\"attributes\":{},\"box\":[256,85,370,273],\"total\":3,\"group_results\":[{\"group_by_value\":\"adidas\",\"result\":[{\"im_name\":\"3\",\"score\":0.3695266544818878}]},{\"group_by_value\":\"nike\",\"result\":[{\"im_name\":\"2\",\"score\":0.2964479327201843},{\"im_name\":\"1\",\"score\":0.14500796794891357}]}]},{\"type\":\"dress\",\"attributes\":{},\"box\":[393,52,595,293],\"total\":3,\"group_results\":[{\"group_by_value\":\"adidas\",\"result\":[{\"im_name\":\"3\",\"score\":0.3568868041038513}]},{\"group_by_value\":\"nike\",\"result\":[{\"im_name\":\"2\",\"score\":0.2902722954750061},{\"im_name\":\"1\",\"score\":0.21793799102306366}]}]},{\"type\":\"outerwear\",\"attributes\":{},\"box\":[10,52,231,288],\"total\":3,\"group_results\":[{\"group_by_value\":\"adidas\",\"result\":[{\"im_name\":\"3\",\"score\":0.43908262252807617}]},{\"group_by_value\":\"nike\",\"result\":[{\"im_name\":\"2\",\"score\":0.3037453889846802},{\"im_name\":\"1\",\"score\":0.17324328422546387}]}]}],\"qinfo\":{\"im_name\":\"4\",\"brand\":\"nike\",\"im_url\":\"https://im_url.jpg\"},\"reqid\":\"888245396306923560\",\"group_limit\":10,\"group_by_key\":\"brand\"}";
+        when(response.getBody()).thenReturn(responseBody);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "im_name");
+        expectedParams.put("object_limit", "-1");
+        expectedParams.put("result_limit", "10");
+        expectedParams.put("score", "false");
+        given(mockClient.get(eq("/match"), eq(expectedParams))).willReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        MatchSearchParams matchSearchParams = new MatchSearchParams("im_name");
+        // then
+        PagedSearchResult result = searchOperations.matchSearch(matchSearchParams);
+        // should
+        assertEquals(3, result.getObjects().size());
+        ObjectSearchResult objectSearchResult0 = result.getObjects().get(0);
+        assertEquals("dress", objectSearchResult0.getType());
+        assertEquals(Lists.newArrayList(256, 85, 370, 273), objectSearchResult0.getBox());
+        assertEquals(3, objectSearchResult0.getTotal());
+        assertEquals(2, objectSearchResult0.getGroupResults().size());
+
+        GroupSearchResult groupSearchResult0 = objectSearchResult0.getGroupResults().get(0);
+        assertEquals("adidas", groupSearchResult0.getGroupByValue());
+        assertEquals(1, groupSearchResult0.getResult().size());
+        assertEquals("3", groupSearchResult0.getResult().get(0).getImName());
+
+        GroupSearchResult groupSearchResult1 = objectSearchResult0.getGroupResults().get(1);
+
+        assertEquals("nike", groupSearchResult1.getGroupByValue());
+        assertEquals(2, groupSearchResult1.getResult().size());
+        assertEquals("2", groupSearchResult1.getResult().get(0).getImName());
+        assertEquals("1", groupSearchResult1.getResult().get(1).getImName());
+
+        assertNotNull(result.getReqId());
+
+        assertEquals("4", result.getQueryInfo().get("im_name"));
+        assertEquals("nike", result.getQueryInfo().get("brand"));
+        assertEquals("https://im_url.jpg", result.getQueryInfo().get("im_url"));
+        assertEquals("brand", result.getGroupByKey());
     }
 }
