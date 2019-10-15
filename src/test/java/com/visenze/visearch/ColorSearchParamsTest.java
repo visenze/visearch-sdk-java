@@ -54,6 +54,8 @@ public class ColorSearchParamsTest {
             new ColorSearchParams(Lists.newArrayList(colorAndWeight1, colorAndWeight2));
         Multimap<String, String> params = colorSearchParams.toMap();
         String[] colors = params.get("colors").toArray(new String[0]);
+        System.out.println( colors[0]);
+        System.out.println( colors[1]);
         assertEquals("000000:10", colors[0]);
         assertEquals("ffffff:20", colors[1]);
     }

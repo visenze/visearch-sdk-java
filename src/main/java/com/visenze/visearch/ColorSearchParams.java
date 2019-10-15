@@ -24,9 +24,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
     }
 
     private void setColor(String color) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(color), "color must not be null or empty.");
-        Preconditions.checkArgument(COLOR_PATTERN.matcher(color).matches(), "Invalid color. " +
-                "It should be a six hexadecimal number color code e.g. 123ACF.");
+        validateColor(color);
         this.color = color;
     }
 
@@ -42,6 +40,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
     public List<ColorAndWeight> getColors() {
         return colors;
     }
+
     @Override
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
@@ -49,10 +48,17 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
             map.put("color", color);
         } else if (colors != null) {
             for (ColorAndWeight color : colors) {
+                System.out.println("put color " + color.generateParam());
                 map.put("colors", color.generateParam());
             }
         }
         return map;
+    }
+
+    private static void validateColor(String color) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(color), "color must not be null or empty.");
+        Preconditions.checkArgument(COLOR_PATTERN.matcher(color).matches(), "Invalid color. " +
+            "It should be a six hexadecimal number color code e.g. 123ACF.");
     }
 
     public static class ColorAndWeight {
@@ -82,9 +88,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
         }
 
         private void setColor(String color) {
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(color), "color must not be null or empty.");
-            Preconditions.checkArgument(COLOR_PATTERN.matcher(color).matches(), "Invalid color. " +
-                "It should be a six hexadecimal number color code e.g. 123ACF.");
+            validateColor(color);
             this.color = color;
         }
 
