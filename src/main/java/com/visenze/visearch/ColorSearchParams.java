@@ -48,7 +48,6 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
             map.put("color", color);
         } else if (colors != null) {
             for (ColorAndWeight color : colors) {
-                System.out.println("put color " + color.generateParam());
                 map.put("colors", color.generateParam());
             }
         }
