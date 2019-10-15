@@ -13,6 +13,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class ColorSearchParamsTest {
 
+    @Test
+    public void testColorSearchParamsGetColor() {
+        ColorSearchParams params = new ColorSearchParams("123123");
+        assertEquals("123123", params.getColor());
+    }
+
+    @Test
+    public void testColorSearchParamsGetColors() {
+        ColorSearchParams.ColorAndWeight colorAndWeight1 = new ColorSearchParams.ColorAndWeight("000000", 10);
+        ColorSearchParams.ColorAndWeight colorAndWeight2 = new ColorSearchParams.ColorAndWeight("ffffff", 20);
+        ColorSearchParams params =
+            new ColorSearchParams(Lists.newArrayList(colorAndWeight1, colorAndWeight2));
+        assertEquals(Lists.newArrayList(colorAndWeight1, colorAndWeight2), params.getColors());
+    }
+
     @Test(expected = java.lang.IllegalArgumentException.class)
     public void testColorSearchParamsInvalidColor() {
         ColorSearchParams colorSearchParams = new ColorSearchParams("gac");
@@ -22,6 +37,20 @@ public class ColorSearchParamsTest {
     public void testColorSearchParamsInvalidColors() {
         List<ColorSearchParams.ColorAndWeight> colors = Lists.newArrayList();
         ColorSearchParams colorSearchParams = new ColorSearchParams(colors);
+    }
+
+    @Test
+    public void testColorAndWeightsGetParams() {
+        ColorSearchParams.ColorAndWeight colorAndWeight = new ColorSearchParams.ColorAndWeight("123123");
+        assertEquals("123123", colorAndWeight.getColor());
+        assertEquals(0, colorAndWeight.getWeight());
+    }
+
+    @Test
+    public void testColorAndWeightsGetParamsWithWeight() {
+        ColorSearchParams.ColorAndWeight colorAndWeight = new ColorSearchParams.ColorAndWeight("123123", 10);
+        assertEquals("123123", colorAndWeight.getColor());
+        assertEquals(10, colorAndWeight.getWeight());
     }
 
     @Test(expected = java.lang.IllegalArgumentException.class)
