@@ -13,6 +13,8 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
 
     private String color;
     private List<ColorAndWeight> colors;
+
+    @Deprecated
     public ColorSearchParams(String color) {
         super();
         setColor(color);
@@ -33,6 +35,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
         this.colors = colors;
     }
 
+    @Deprecated
     public String getColor() {
         return color;
     }
