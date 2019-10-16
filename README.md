@@ -332,8 +332,17 @@ GET /colorsearch
 
 **Search by color** solution is to search images with similar color by providing a color code. The color code should be in Hexadecimal and passed to the colorsearch service.
 
+Search by single color.
 ```java
-ColorSearchParams params = new ColorSearchParams("9b351b");
+ColorSearchParams.ColorAndWeight color = new ColorSearchParams.ColorAndWeight("000000");
+ColorSearchParams params = new ColorSearchParams(Lists.newArrayList(color));
+PagedSearchResult searchResult = client.colorSearch(params);
+```
+Search by multiple colors and relative ratios.  
+```java
+ColorSearchParams.ColorAndWeight colorAndWeight1 = new ColorSearchParams.ColorAndWeight("000000", 50);
+ColorSearchParams.ColorAndWeight colorAndWeight2 = new ColorSearchParams.ColorAndWeight("ffffff", 50);
+ColorSearchParams params = new ColorSearchParams(Lists.newArrayList(colorAndWeight1, colorAndWeight2));
 PagedSearchResult searchResult = client.colorSearch(params);
 ```
 
