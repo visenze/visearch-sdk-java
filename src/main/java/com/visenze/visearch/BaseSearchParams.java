@@ -3,7 +3,7 @@ package com.visenze.visearch;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
@@ -287,7 +287,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     }
 
     public Multimap<String, String> toMap() {
-        Multimap<String, String> map = HashMultimap.create();
+        Multimap<String, String> map = LinkedHashMultimap.create();
 
         if (getPage() != null) {
             map.put(PAGE, getPage().toString());
