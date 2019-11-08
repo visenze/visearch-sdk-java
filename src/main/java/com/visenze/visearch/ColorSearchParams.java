@@ -22,7 +22,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
 
     public ColorSearchParams(List<ColorAndWeight> colorAndWeights) {
         super();
-        setColors(colorAndWeights);
+        setColorAndWeights(colorAndWeights);
     }
 
     private void setColor(String color) {
@@ -30,7 +30,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
         this.color = color;
     }
 
-    private void setColors(List<ColorAndWeight> colors) {
+    private void setColorAndWeights(List<ColorAndWeight> colors) {
         Preconditions.checkArgument(colors != null && !colors.isEmpty(), "colors must not be null or empty.");
         this.colors = colors;
     }
@@ -40,7 +40,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
         return color;
     }
 
-    public List<ColorAndWeight> getColors() {
+    public List<ColorAndWeight> getColorAndWeights() {
         return colors;
     }
 
@@ -51,7 +51,7 @@ public class ColorSearchParams extends BaseSearchParams<ColorSearchParams> {
             map.put("color", color);
         } else if (colors != null) {
             for (ColorAndWeight color : colors) {
-                map.put("colors", color.generateParam());
+                map.put("color", color.generateParam());
             }
         }
         return map;
