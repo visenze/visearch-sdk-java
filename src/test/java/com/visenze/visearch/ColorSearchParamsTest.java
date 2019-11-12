@@ -25,7 +25,7 @@ public class ColorSearchParamsTest {
         ColorSearchParams.ColorAndWeight colorAndWeight2 = new ColorSearchParams.ColorAndWeight("ffffff", 20);
         ColorSearchParams params =
             new ColorSearchParams(Lists.newArrayList(colorAndWeight1, colorAndWeight2));
-        assertEquals(Lists.newArrayList(colorAndWeight1, colorAndWeight2), params.getColors());
+        assertEquals(Lists.newArrayList(colorAndWeight1, colorAndWeight2), params.getColorAndWeights());
     }
 
     @Test(expected = java.lang.IllegalArgumentException.class)
@@ -82,7 +82,7 @@ public class ColorSearchParamsTest {
         ColorSearchParams colorSearchParams =
             new ColorSearchParams(Lists.newArrayList(colorAndWeight1, colorAndWeight2));
         Multimap<String, String> params = colorSearchParams.toMap();
-        String[] colors = params.get("colors").toArray(new String[0]);
+        String[] colors = params.get("color").toArray(new String[0]);
         assertEquals(2, colors.length);
         assertEquals("000000:10", colors[0]);
         assertEquals("ffffff:20", colors[1]);
@@ -95,7 +95,7 @@ public class ColorSearchParamsTest {
         ColorSearchParams colorSearchParams =
             new ColorSearchParams(Lists.newArrayList(colorAndWeight1, colorAndWeight2));
         Multimap<String, String> params = colorSearchParams.toMap();
-        String[] colors = params.get("colors").toArray(new String[0]);
+        String[] colors = params.get("color").toArray(new String[0]);
         assertEquals(2, colors.length);
         assertEquals("ffffff:10", colors[0]);
         assertEquals("ffffff:20", colors[1]);
