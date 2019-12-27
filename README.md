@@ -526,9 +526,9 @@ PagedSearchResult searchResult = client.sendEvent(params);
     String reqId = searchResult.getReqId()
     ```
 
-* `action` is the action type of this event. you may have following types of events:
-    - "click" when user click on the results found using the ViSenze solution
-    - "add_cart" products found using the ViSenze solution and added to their cart.
-    - "buy" products found using the ViSenze solution that were ultimately purchased
+* `action` is the action type of this event. Below is the list of actions we currently support:
+    - "click" when user clicks to view the details of the product
+    - "add_to_cart" when user adds the product to cart
+    - "add_to_wishlist" when user addes the product to wishlist
 
 * `im_name` is the name of the image which the user has clicked on. im_name is the unique identifier of the indexed image, in this case the searched result.
