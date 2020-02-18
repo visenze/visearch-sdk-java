@@ -61,5 +61,6 @@ public abstract class ViSearchHttpConstants {
     public static final String DETECTION_SENSITIVITY = "detection_sensitivity";
     public static final String VS_CONFIG = "vs_config";
 
+    public static final String DIVERSITY = "diversity";
 
 }
