@@ -28,7 +28,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     private static final Boolean DEFAULT_GET_ALL_FL = false;
     private static final Boolean DEFAULT_DEDUP = false;
     private static final Map<String, String> DEFAULT_VS_CONFIG = new HashMap<String, String>();
-
+    private static final List<DiversityQuery> DEFAULT_DIVERSITY_QUERIES = Lists.newArrayList();
+    public static final String DIVERSITY = "diversity";
 
 
     protected Optional<Integer> page = Optional.absent();
@@ -60,6 +61,9 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<String> sortBy = Optional.absent();
     protected Optional<String> sortGroupBy = Optional.absent();
     protected Optional<String> sortGroupStrategy = Optional.absent();
+
+
+    protected Optional<List<DiversityQuery>> diversityQueries = Optional.absent();
 
 
     @SuppressWarnings("unchecked")
@@ -205,6 +209,12 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return (P) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public P setDiversityQueries(List<DiversityQuery> diversityQueries) {
+        this.diversityQueries = Optional.fromNullable(diversityQueries);
+        return (P) this;
+    }
+
     public Integer getPage() {
         return page.orNull();
     }
@@ -284,6 +294,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
     public Map<String, String> getVsConfig() {
         return vsConfig.or(DEFAULT_VS_CONFIG);
+    }
+
+    public List<DiversityQuery> getDiversityQueries() {
+        return diversityQueries.or(DEFAULT_DIVERSITY_QUERIES);
     }
 
     public Multimap<String, String> toMap() {
@@ -369,6 +383,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
         if (getDedupThreshold() != null) {
             map.put(DEDUP_SCORE_THRESHOLD, getDedupThreshold().toString());
+        }
+
+        for (DiversityQuery diversityQuery : getDiversityQueries()) {
+            map.put(DIVERSITY, diversityQuery.toParamValue());
         }
 
         for (Map.Entry<String, String> entry : getCustom().entrySet()) {
