@@ -29,8 +29,6 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     private static final Boolean DEFAULT_DEDUP = false;
     private static final Map<String, String> DEFAULT_VS_CONFIG = new HashMap<String, String>();
     private static final List<DiversityQuery> DEFAULT_DIVERSITY_QUERIES = Lists.newArrayList();
-    public static final String DIVERSITY = "diversity";
-
 
     protected Optional<Integer> page = Optional.absent();
     protected Optional<Integer> limit = Optional.absent();
