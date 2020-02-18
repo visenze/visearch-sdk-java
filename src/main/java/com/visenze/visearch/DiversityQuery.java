@@ -35,13 +35,4 @@ public class DiversityQuery {
     public String toParamValue() {
         return String.format("%s:%s:%s", field, value, ratio);
     }
-
-    @Override
-    public String toString() {
-        return "DiversityQuery{" +
-                "field='" + field + '\'' +
-                ", value='" + value + '\'' +
-                ", ratio=" + ratio +
-                '}';
-    }
 }
