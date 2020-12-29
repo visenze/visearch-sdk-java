@@ -111,10 +111,12 @@ images.add(new Image(imName, imUrl));
 // index the image and get the InsertTrans
 InsertTrans trans = client.insert(images);
 // check if the insert endpoint reports any errors
-System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().size() + " fail");
-System.out.println("Error list: ");
-for (int i = 0; i < trans.getErrorList().size(); i++) {
-    System.out.println(trans.getErrorList().get(i));
+if (trans.getErrorList() != null && trans.getErrorList().size > 0) {
+    System.out.println(trans.getTotal() + " succeed and " + trans.getErrorList().size() + " fail");
+    System.out.println("Error list: ");
+    for (int i = 0; i < trans.getErrorList().size(); i++) {
+        System.out.println(trans.getErrorList().get(i));
+    }
 }
 ```
 
