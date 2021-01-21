@@ -1,10 +1,15 @@
 package com.visenze.productsearch;
 
-import com.visenze.common.http.ViHttpClient;
-import com.visenze.common.http.ViHttpResponse;
 import com.visenze.productsearch.param.*;
 import com.visenze.visearch.ClientConfig;
-import org.jetbrains.annotations.NotNull;
+import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.internal.InternalViSearchException;
+import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
+import com.visenze.visearch.internal.http.ViSearchHttpResponse;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * <h1> ProductSearch </h1>
@@ -26,7 +31,9 @@ public class ProductSearch {
     /**
      * Default endpoint if none is set
      */
-    public static final String DEFAULT_ENDPOINT = "http://visearch.visenze.com";
+    public static final String DEFAULT_ENDPOINT = "https://search-dev.visenze.com//v1";
+    public static final String DEFAULT_IMAGE_SEARCH_PATH = "/similar-products";
+    public static final String DEFAULT_VISUAL_SIMILAR_PATH = "/similar-products";
 
     /**
      * App key, required field that also acts as authentication element
@@ -46,7 +53,7 @@ public class ProductSearch {
     /**
      * The Http wrapper class for easy functionalities
      */
-    private ViHttpClient httpClient;
+    private ViSearchHttpClientImpl httpClient;
 
     /**
      * Builder class to make configuring of ProductSearch more readable
@@ -87,8 +94,8 @@ public class ProductSearch {
         /**
          * Constructor with only highly necessary parameters.
          *
-         * @param app_key
-         * @param placement_id
+         * @param app_key unique access key used as credentials
+         * @param placement_id which placement ID (from dashboard)
          */
         public Builder(String app_key, Integer placement_id) {
             this.app_key      = app_key;
@@ -147,31 +154,50 @@ public class ProductSearch {
         this.app_key      = app_key;
         this.placement_id = placement_id;
         this.endpoint     = endpoint;
-        this.httpClient   = new ViHttpClient(config, app_key, placement_id.toString());
+        this.httpClient   = new ViSearchHttpClientImpl(this.endpoint, app_key, placement_id.toString(), config);
     }
 
     /**
-     * WIP untill the endpoints are confirmed
-     * @param params
-     * @return
+     * Calls the POST method for the image search API
+     *
+     * @param params ImageSearchParam specific parameters to perform request
+     *
+     * @return ViSearchHttpResponse http response of search results
      */
-    public ViHttpResponse imageSearch(ImageSearchParam params) {
+    public ViSearchHttpResponse imageSearch(ImageSearchParam params) {
         // required field is automatically set here
         params.setAppKey(app_key);
         params.setPlacementId(placement_id);
-        return httpClient.post(endpoint + "/similar-products", params.toMultimap());
+        // test for image validity
+        ViSearchHttpResponse response;
+        File imageFile = params.getImage();
+        boolean invalidImageId = params.getImageId() == null || params.getImageId().isEmpty();
+        boolean invalidImageUrl = params.getImageUrl() == null || params.getImageUrl().isEmpty();
+        if (imageFile == null && invalidImageId &&invalidImageUrl)
+            throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_SOURCE);
+        // attempt search using image file
+        if (imageFile != null) {
+            try {
+                return httpClient.postImage(DEFAULT_IMAGE_SEARCH_PATH, params.toMultimap(), new FileInputStream(imageFile), imageFile.getName());
+            } catch (FileNotFoundException e) {
+                throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
+            }
+        }
+        // attempt using post for image url or image id
+        return httpClient.post(DEFAULT_IMAGE_SEARCH_PATH, params.toMultimap());
     }
 
     /**
-     * WIP untill the endpoints are confirmed
-     * @param params
-     * @return
+     * Calls the GET method for the API which appends the product_id to the path.
+     *
+     * @param params VisualSimilarParam specific parameters to perform request
+     *
+     * @return ViSearchHttpResponse http response of search results
      */
-    public ViHttpResponse visualSimilarSearch(VisualSimilarParam params) {
+    public ViSearchHttpResponse visualSimilarSearch(VisualSimilarParam params) {
         // required field is automatically set here
         params.setAppKey(app_key);
-        params.setPlacementId(placement_id);
-        return httpClient.post(endpoint + "/similar-products", params.toMultimap());
+        return httpClient.get(DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId(), params.toMultimap());
     }
 
 

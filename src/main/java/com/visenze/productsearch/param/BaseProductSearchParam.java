@@ -28,7 +28,7 @@ import java.util.Map;
  * @version 1.0
  * @since 08 Jan 2021
  */
-public class BaseSearchParam {
+public class BaseProductSearchParam {
 
     /**
      * The result page number. Default to 1. Max 50.
@@ -174,21 +174,70 @@ public class BaseSearchParam {
      */
     protected String app_key;
 
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_os = Optional.absent();
 
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_osv = Optional.absent();
 
-    //va_os
-    //va_osv
-    //va_device_brand
-    //va_device_model
-    //va_app_bundle_id
-    //va_app_name
-    //va_app_version
-    //va_aaid
-    //va_didmd5
-    //va_n1
-    //va_n2
-    //va_s1
-    //va_s2
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_device_brand = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_device_model = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_app_bundle_id = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_app_name = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_app_version = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_aaid = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_didmd5 = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_n1 = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_n2 = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_s1 = Optional.absent();
+
+    /**
+     * Visenze Analytics fields
+     */
+    protected Optional<String> va_s2 = Optional.absent();
 
     /**
      * Convert this object into it's multimap representation.
@@ -278,8 +327,50 @@ public class BaseSearchParam {
         if (va_sdk_version.isPresent())
             multimap.put(VA_SDK_VERSION, va_sdk_version.get());
 
-        multimap.put(PLACEMENT_ID, placement_id.toString());
+        if (custom_map.isPresent())
+            for (Map.Entry<String, String> entry : custom_map.get().entrySet())
+                multimap.put(CUSTOM_MAP, entry.getKey() + COLON + entry.getValue());
 
+        if (va_os.isPresent())
+            multimap.put(VA_OS, va_os.get());
+
+        if (va_osv.isPresent())
+            multimap.put(VA_OSV, va_osv.get());
+
+        if (va_device_brand.isPresent())
+            multimap.put(VA_DEVICE_BRAND, va_device_brand.get());
+
+        if (va_device_model.isPresent())
+            multimap.put(VA_DEVICE_MODEL, va_device_model.get());
+
+        if (va_app_bundle_id.isPresent())
+            multimap.put(VA_APP_BUNDLE_ID, va_app_bundle_id.get());
+
+        if (va_app_name.isPresent())
+            multimap.put(VA_APP_NAME, va_app_name.get());
+
+        if (va_app_version.isPresent())
+            multimap.put(VA_APP_VERSION, va_app_version.get());
+
+        if (va_aaid.isPresent())
+            multimap.put(VA_AAID, va_aaid.get());
+
+        if (va_didmd5.isPresent())
+            multimap.put(VA_DIDMD5, va_didmd5.get());
+
+        if (va_n1.isPresent())
+            multimap.put(VA_N1, va_n1.get());
+
+        if (va_n2.isPresent())
+            multimap.put(VA_N2, va_n2.get());
+
+        if (va_s1.isPresent())
+            multimap.put(VA_S1, va_s1.get());
+
+        if (va_s2.isPresent())
+            multimap.put(VA_S2, va_s2.get());
+
+        multimap.put(PLACEMENT_ID, placement_id.toString());
         multimap.put(APP_KEY, app_key);
 
         return multimap;

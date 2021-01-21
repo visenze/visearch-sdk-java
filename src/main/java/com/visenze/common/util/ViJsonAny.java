@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.common.exception.ViException;
+import com.visenze.visearch.internal.InternalViSearchException;
 
 import java.io.IOException;
 import java.util.List;
@@ -62,7 +62,7 @@ public class ViJsonAny {
         try {
             this.jsonNode = mapper.readTree(jsonString);
         } catch(IOException e) {
-            throw new ViException(e.getMessage());
+            throw new InternalViSearchException(e.getMessage());
         }
     }
 
@@ -117,7 +117,7 @@ public class ViJsonAny {
         try {
             return mapper.readValue(jsonNode.toString(), type);
         } catch(IOException e) {
-            throw new ViException(e.getMessage());
+            throw new InternalViSearchException(e.getMessage());
         }
     }
 
@@ -132,7 +132,7 @@ public class ViJsonAny {
         try {
             return mapper.readValue(jsonNode.toString(), type);
         } catch(IOException e) {
-            throw new ViException(e.getMessage());
+            throw new InternalViSearchException(e.getMessage());
         }
     }
 
@@ -147,7 +147,7 @@ public class ViJsonAny {
         try {
             return mapper.readValue(jsonNode.toString(), type);
         } catch(IOException e) {
-            throw new ViException(e.getMessage());
+            throw new InternalViSearchException(e.getMessage());
         }
     }
 

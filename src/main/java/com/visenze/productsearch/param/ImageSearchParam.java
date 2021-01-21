@@ -2,8 +2,11 @@ package com.visenze.productsearch.param;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
-import com.visenze.common.util.ViBox;
+import com.visenze.visearch.Box;
+import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.internal.InternalViSearchException;
 
 import java.io.File;
 
@@ -15,14 +18,12 @@ import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.DETEC
  * This class holds the specific parameters required to support Search by Image.
  * It extends the BaseSearchParam to inherit all it's variables that defines all
  * general search parameter.
- * <p>
- * This class aims to be Json compatible by implementing Jackson annotation
  *
  * @author Shannon Tan
  * @version 1.0
  * @since 08 Jan 2021
  */
-public class ImageSearchParam extends BaseSearchParam {
+public class ImageSearchParam extends BaseProductSearchParam {
 
     /**
      * Image URL
@@ -43,7 +44,7 @@ public class ImageSearchParam extends BaseSearchParam {
      * Optional parameter for restricting the image area x1,y1,x2,y2. The
      * upper-left corner of an image is (0,0).
      */
-    protected Optional<ViBox<Integer>> box = Optional.absent();
+    protected Optional<Box> box = Optional.absent();
 
     /**
      * Turn on automatic object detection so the algorithm will try to detect
@@ -75,8 +76,25 @@ public class ImageSearchParam extends BaseSearchParam {
      * @param image_url image url
      */
     public ImageSearchParam(String image_url, String image_id) {
+        super();
+        boolean invalidImageId = image_id == null || image_id.isEmpty();
+        boolean invalidImageUrl = image_url == null || image_url.isEmpty();
+        if (invalidImageId && invalidImageUrl)
+            throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL);
         this.im_url = image_url;
         this.im_id = image_id;
+        this.image = null;
+    }
+
+    /**
+     * Constructor using an image file
+     *
+     * @param image_file File of the Image
+     */
+    public ImageSearchParam(File image_file) {
+        super();
+        Preconditions.checkNotNull(image_file, "The image file must not be null.");
+        this.image = image_file;
     }
 
     /**
@@ -170,7 +188,7 @@ public class ImageSearchParam extends BaseSearchParam {
      *
      * @return box
      */
-    public ViBox<Integer> getBox() {
+    public Box getBox() {
         return box.orNull();
     }
 
@@ -179,7 +197,7 @@ public class ImageSearchParam extends BaseSearchParam {
      *
      * @param box box coordinates
      */
-    public void setBox(ViBox<Integer> box) {
+    public void setBox(Box box) {
         this.box = Optional.fromNullable(box);
     }
 

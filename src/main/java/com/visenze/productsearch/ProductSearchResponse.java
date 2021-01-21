@@ -2,13 +2,13 @@ package com.visenze.productsearch;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.common.exception.ViException;
-import com.visenze.common.facet.ViFacet;
-import com.visenze.common.http.ViHttpResponse;
 import com.visenze.productsearch.response.ErrorType;
 import com.visenze.productsearch.response.ProductInfo;
-import com.visenze.productsearch.response.ProductType;
+import com.visenze.visearch.ProductType;
+import com.visenze.visearch.Facet;
 import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.internal.InternalViSearchException;
+import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class ProductSearchResponse {
      * List of facets from filtering
      */
     @JsonProperty("facets")
-    private List<ViFacet> facets = new ArrayList();
+    private List<Facet> facets = new ArrayList();
 
     // objects
     //group_results
@@ -143,14 +143,14 @@ public class ProductSearchResponse {
      * @param response The ViHttpResponse received by calling ViHttpClient
      *                 api functions.
      */
-    public static ProductSearchResponse From(ViHttpResponse response) {
+    public static ProductSearchResponse From(ViSearchHttpResponse response) {
         final ObjectMapper mapper = new ObjectMapper();
         try {
             // read the json formatted string values into the response class
             return mapper.readValue(response.getBody(), ProductSearchResponse.class);
         } catch(IOException e){
             e.printStackTrace();
-            throw new ViException(ResponseMessages.PARSE_RESPONSE_ERROR, e.getMessage());
+            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e.getMessage());
         }
     }
 

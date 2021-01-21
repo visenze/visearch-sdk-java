@@ -81,6 +81,20 @@ public abstract class ViSearchHttpConstants {
     public static final String VA_SDK_VERSION = "va_sdk_version";
     public static final String PLACEMENT_ID = "placement_id";
     public static final String APP_KEY = "app_key";
-
+    public static final String CUSTOM_MAP = "custom_map";
+    // analytics
+    public static final String VA_OS = "va_os";
+    public static final String VA_OSV = "va_osv";
+    public static final String VA_DEVICE_BRAND = "va_device_brand";
+    public static final String VA_DEVICE_MODEL = "va_device_model";
+    public static final String VA_APP_BUNDLE_ID= "va_app_bundle_id";
+    public static final String VA_APP_NAME = "va_app_name";
+    public static final String VA_APP_VERSION = "va_app_version";
+    public static final String VA_AAID = "va_aaid";
+    public static final String VA_DIDMD5 = "va_didmd5";
+    public static final String VA_N1 = "va_n1";
+    public static final String VA_N2 = "va_n2";
+    public static final String VA_S1 = "va_s1";
+    public static final String VA_S2 = "va_s2";
 
 }

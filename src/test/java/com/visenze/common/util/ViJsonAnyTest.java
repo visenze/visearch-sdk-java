@@ -3,7 +3,7 @@ package com.visenze.common.util;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.common.exception.ViException;
+import com.visenze.visearch.internal.InternalViSearchException;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -44,13 +44,12 @@ public class ViJsonAnyTest extends TestCase {
      *
      * @param jsonString string to convert
      * @return JsonNode based on string
-     * @throws IOException
      */
     private static JsonNode ToJsonObject(String jsonString) {
         try {
             return mapper.readTree(jsonString);
         } catch(IOException e) {
-            throw new ViException(e.getMessage());
+            throw new InternalViSearchException(e.getMessage());
         }
     }
 
