@@ -1,7 +1,6 @@
 package com.visenze.common.exception;
 
 import com.visenze.visearch.ResponseMessages;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * <h1> ViSenze exception object </h1>
@@ -46,7 +45,7 @@ public class ViException extends RuntimeException {
      *                         exception
      * @see ResponseMessages
      */
-    public ViException(@NotNull ResponseMessages responseMessages) {
+    public ViException(ResponseMessages responseMessages) {
         super(responseMessages.getMessage());
     }
 
@@ -59,7 +58,7 @@ public class ViException extends RuntimeException {
      *
      * @see ResponseMessages
      */
-    public ViException(@NotNull ResponseMessages responseMessages, Throwable cause) {
+    public ViException(ResponseMessages responseMessages, Throwable cause) {
         super(responseMessages.getMessage(), cause);
     }
 
@@ -72,7 +71,7 @@ public class ViException extends RuntimeException {
      *
      * @see ResponseMessages
      */
-    public ViException(@NotNull ResponseMessages responseMessages, String serverRawResponse) {
+    public ViException(ResponseMessages responseMessages, String serverRawResponse) {
         super(responseMessages.getMessage());
         this.serverRawResponse = serverRawResponse;
     }
@@ -87,7 +86,7 @@ public class ViException extends RuntimeException {
      *
      * @see ResponseMessages
      */
-    public ViException(@NotNull ResponseMessages responseMessages, Throwable cause, String serverRawResponse) {
+    public ViException(ResponseMessages responseMessages, Throwable cause, String serverRawResponse) {
         super(responseMessages.getMessage(), cause);
         this.serverRawResponse = serverRawResponse;
     }

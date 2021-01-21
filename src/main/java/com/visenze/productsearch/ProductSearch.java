@@ -143,7 +143,7 @@ public class ProductSearch {
      * @param endpoint Which endpoint to use for all ViHttpClient queries
      * @param config Configuration to the behaviours of the ViHttpClient
      */
-    private ProductSearch(String app_key, @NotNull Integer placement_id, String endpoint, ClientConfig config) {
+    private ProductSearch(String app_key, Integer placement_id, String endpoint, ClientConfig config) {
         this.app_key      = app_key;
         this.placement_id = placement_id;
         this.endpoint     = endpoint;
@@ -155,7 +155,7 @@ public class ProductSearch {
      * @param params
      * @return
      */
-    public ViHttpResponse imageSearch(@NotNull ImageSearchParam params) {
+    public ViHttpResponse imageSearch(ImageSearchParam params) {
         // required field is automatically set here
         params.setAppKey(app_key);
         params.setPlacementId(placement_id);
@@ -167,7 +167,7 @@ public class ProductSearch {
      * @param params
      * @return
      */
-    public ViHttpResponse visualSimilarSearch(@NotNull VisualSimilarParam params) {
+    public ViHttpResponse visualSimilarSearch(VisualSimilarParam params) {
         // required field is automatically set here
         params.setAppKey(app_key);
         params.setPlacementId(placement_id);

@@ -1,14 +1,6 @@
 package com.visenze.common.util;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.common.exception.ViException;
-import com.visenze.visearch.ResponseMessages;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 /**
  * <h1> 'Box' Container </h1>
@@ -73,7 +65,7 @@ public class ViBox<T> {
      *
      * @param dataPoints Array of 4 values
      */
-    public ViBox(@NotNull T[] dataPoints) {
+    public ViBox(T[] dataPoints) {
         // enforce
         if (dataPoints.length != 4)
             throw new IllegalArgumentException("parameter must be an array of exactly 4!");

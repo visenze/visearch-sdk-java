@@ -9,7 +9,6 @@ import com.visenze.productsearch.response.ErrorType;
 import com.visenze.productsearch.response.ProductInfo;
 import com.visenze.productsearch.response.ProductType;
 import com.visenze.visearch.ResponseMessages;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -144,7 +143,7 @@ public class ProductSearchResponse {
      * @param response The ViHttpResponse received by calling ViHttpClient
      *                 api functions.
      */
-    public static ProductSearchResponse From(@NotNull ViHttpResponse response) {
+    public static ProductSearchResponse From(ViHttpResponse response) {
         final ObjectMapper mapper = new ObjectMapper();
         try {
             // read the json formatted string values into the response class

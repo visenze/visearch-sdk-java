@@ -3,7 +3,6 @@ package com.visenze.productsearch.param;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.*;
-import org.jetbrains.annotations.NotNull;
 
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 
@@ -338,7 +337,7 @@ public class BaseSearchParam {
      *
      * @param va_uid uid to identify this app
      */
-    public void setVaUid(@NotNull String va_uid) {
+    public void setVaUid(String va_uid) {
         // dont allow empty string
         this.va_uid = Optional.fromNullable(va_uid.isEmpty() ? null : va_uid);
     }
@@ -358,7 +357,7 @@ public class BaseSearchParam {
      *
      * @param va_sid ID to identify this 'session' for analytics
      */
-    public void setVaSid(@NotNull String va_sid) {
+    public void setVaSid(String va_sid) {
         // dont allow empty string
         this.va_sid = Optional.fromNullable(va_sid.isEmpty() ? null : va_sid);
     }
@@ -381,7 +380,7 @@ public class BaseSearchParam {
      *
      * @param filters A map of filters' key-value
      */
-    public void setFilters(@NotNull Map<String, String> filters) {
+    public void setFilters(Map<String, String> filters) {
         // don't allow empty map
         if (filters.isEmpty()) {
             this.filters = Optional.absent();
@@ -408,7 +407,7 @@ public class BaseSearchParam {
      *
      * @param text_filters filters for text search
      */
-    public void setTextFilters(@NotNull Map<String, String> text_filters) {
+    public void setTextFilters(Map<String, String> text_filters) {
         // dont allow empty map
         if (text_filters.isEmpty()) {
             this.text_filters = Optional.absent();
@@ -437,7 +436,7 @@ public class BaseSearchParam {
      *
      * @param attrs_to_get list of attributes
      */
-    public void setAttrsToGet(@NotNull List<String> attrs_to_get) {
+    public void setAttrsToGet(List<String> attrs_to_get) {
         // dont allow empty list
         if (attrs_to_get.isEmpty()) {
             this.attrs_to_get = Optional.absent();
@@ -462,7 +461,7 @@ public class BaseSearchParam {
      *
      * @param facets list of facets
      */
-    public void setFacets(@NotNull List<String> facets) {
+    public void setFacets(List<String> facets) {
         if (facets.isEmpty()) {
             this.facets = Optional.absent();
         }

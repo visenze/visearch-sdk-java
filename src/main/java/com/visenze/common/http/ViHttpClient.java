@@ -23,7 +23,6 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +80,7 @@ public class ViHttpClient {
      * @see ClientConfig
      * @see UsernamePasswordCredentials
      */
-    public ViHttpClient(@NotNull ClientConfig config, String access, String secret) {
+    public ViHttpClient(ClientConfig config, String access, String secret) {
         // build the request configuration for HTTP
         final RequestConfig reqConfig = RequestConfig
                 .custom()
@@ -271,9 +270,8 @@ public class ViHttpClient {
      *
      * @see MultipartEntityBuilder
      */
-    @NotNull
     private HttpUriRequest buildPostRequestForImage(String url,
-                                                    @NotNull Multimap<String, String> params,
+                                                    Multimap<String, String> params,
                                                     File file)
     {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -301,9 +299,8 @@ public class ViHttpClient {
      * @see MultipartEntityBuilder
      * @see InputStream
      */
-    @NotNull
     private HttpUriRequest buildPostRequestForImage(String url,
-                                                    @NotNull Multimap<String, String> params,
+                                                    Multimap<String, String> params,
                                                     InputStream inputStream,
                                                     String filename)
     {
@@ -332,9 +329,8 @@ public class ViHttpClient {
      *
      * @see MultipartEntityBuilder
      */
-    @NotNull
     private HttpUriRequest buildPostRequestForImFeature(String url,
-                                                        @NotNull Multimap<String, String> params,
+                                                        Multimap<String, String> params,
                                                         String imFeature)
     {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -363,7 +359,6 @@ public class ViHttpClient {
      *
      * @return HttpUriRequest
      */
-    @NotNull
     private HttpUriRequest buildMultipartPostRequest(String url,
                                                      HttpEntity entity)
     {
@@ -380,7 +375,6 @@ public class ViHttpClient {
      *
      * @return ViHttpResponse A wrapper to the actual web response received.
      */
-    @NotNull
     private ViHttpResponse getResponse(HttpUriRequest request) {
         // update the HTTP request headers
         updateHeaders(request);
@@ -431,8 +425,7 @@ public class ViHttpClient {
      *
      * @return List<NameValuePair> A list of, pairs of strings.
      */
-    @NotNull
-    public static List<NameValuePair> convertMapToList(@NotNull Multimap<String, ?> params) {
+    public static List<NameValuePair> convertMapToList(Multimap<String, ?> params) {
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         // go through the map and convert each element to string pairs
         for (Map.Entry<String, ?> entry : params.entries()) {
