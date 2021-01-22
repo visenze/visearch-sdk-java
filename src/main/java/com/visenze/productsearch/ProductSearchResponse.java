@@ -1,9 +1,9 @@
 package com.visenze.productsearch;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.productsearch.response.ErrorType;
-import com.visenze.productsearch.response.ProductInfo;
+import com.visenze.common.util.ViJsonMapper;
+import com.visenze.productsearch.response.ErrorMsg;
+import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.Facet;
 import com.visenze.visearch.ResponseMessages;
@@ -33,7 +33,7 @@ import java.util.Map;
  * @since 12 Jan 2021
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductSearchResponse {
+public class ProductSearchResponse extends ViJsonMapper {
     /**
      * Each request is associated with an id to help with tracking api calls.
      *
@@ -56,7 +56,7 @@ public class ProductSearchResponse {
      * Image ID. Can be used to search again without re-uploading.
      */
     @JsonProperty("im_id")
-    private String image_id;
+    private String imageId;
 
     /**
      * The result page number. Each response is tied to 1 'page' of a response.
@@ -85,7 +85,7 @@ public class ProductSearchResponse {
      *      i.e. when status is “warning” or “fail”.
      */
     @JsonProperty("error")
-    private ErrorType error;
+    private ErrorMsg error;
 
     /**
      * This list of product types picked up from the image.
@@ -108,14 +108,14 @@ public class ProductSearchResponse {
      * above.
      */
     @JsonProperty("result")
-    private List<ProductInfo> result = new ArrayList();
+    private List<Product> result = new ArrayList();
 
     /**
      * A map of Key-to-Value pairs. The keys in  it represent ViSenze's keys
      * (our field names) and the values associated with it is the Client's keys
      * (their field names). Use this to look-up ProductInfo's 'data' variable.
      *
-     * @see ProductInfo
+     * @see Product
      */
     @JsonProperty("catalog_fields_mapping")
     private Map<String, String> catalog_fields_mapping;
@@ -125,14 +125,6 @@ public class ProductSearchResponse {
      */
     @JsonProperty("facets")
     private List<Facet> facets = new ArrayList();
-
-    /**
-     * There should be results for 'objects', 'group_results', 'group_by_key'
-     * later
-     */
-    // private List<String> objects;
-    // private Map<String,List<String>> group_results;
-    // private Map<String,List<String>> group_by_key;
 
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
@@ -146,8 +138,7 @@ public class ProductSearchResponse {
      * @param response The ViHttpResponse received by calling ViHttpClient
      *                 api functions.
      */
-    public static ProductSearchResponse From(ViSearchHttpResponse response) {
-        final ObjectMapper mapper = new ObjectMapper();
+    public static ProductSearchResponse fromResponse(ViSearchHttpResponse response) {
         try {
             return mapper.readValue(response.getBody(), ProductSearchResponse.class);
         } catch(IOException e){
@@ -179,7 +170,7 @@ public class ProductSearchResponse {
      * @return The image id
      */
     public String getImageId() {
-        return image_id;
+        return imageId;
     }
 
     /**
@@ -214,7 +205,7 @@ public class ProductSearchResponse {
      *
      * @return Map of error key-value pairs.
      */
-    public ErrorType getError() {
+    public ErrorMsg getError() {
         return error;
     }
 
@@ -240,8 +231,8 @@ public class ProductSearchResponse {
      * Get the list of product information for this page.
      *
      * @return result
-     * @see ProductInfo
+     * @see Product
      */
-    public List<ProductInfo> getResult() { return result; }
+    public List<Product> getResult() { return result; }
 
 }

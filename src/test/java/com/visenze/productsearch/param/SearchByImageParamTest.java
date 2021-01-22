@@ -20,8 +20,8 @@ import static org.junit.Assert.*;
  * @version 1.0
  * @since 21 Jan 2021
  */
-public class ImageSearchParamTest {
-    final String PARAM_DESIRED = "box=1,1,5,5&im_id=SOME_ID.jpg&im_url=SOME_URL";
+public class SearchByImageParamTest {
+    final String PARAM_DESIRED = "box=1,1,5,5&im_url=SOME_URL";
 
     /**
      * Sort List<NameValuePair> because multimap has no definite order to test
@@ -40,7 +40,7 @@ public class ImageSearchParamTest {
 
     @Test
     public void toMultimap() {
-        ImageSearchParam param = new ImageSearchParam("SOME_URL", "SOME_ID.jpg");
+        SearchByImageParam param = SearchByImageParam.newFromImageUrl("SOME_URL");
         param.setBox(new Box(1,1,5,5));
         List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
         try{

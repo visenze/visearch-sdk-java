@@ -3,7 +3,7 @@ package com.visenze.common.util;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
 
 import java.io.IOException;
@@ -34,9 +34,7 @@ import java.util.Map;
  * @version 1.0
  * @since 20 Jan 2021
  */
-public class ViJsonAny {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
+public class ViJsonAny extends ViJsonMapper{
     /**
      * The raw json node data.
      */
@@ -147,7 +145,7 @@ public class ViJsonAny {
         try {
             return mapper.readValue(jsonNode.toString(), type);
         } catch(IOException e) {
-            throw new InternalViSearchException(e.getMessage());
+            throw new InternalViSearchException(ResponseMessages.PARSE_EXCEPTION, e.getMessage());
         }
     }
 

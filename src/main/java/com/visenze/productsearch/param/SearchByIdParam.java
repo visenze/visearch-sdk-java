@@ -13,21 +13,21 @@ import com.google.common.collect.Multimap;
  * @version 1.0
  * @since 08 Jan 2021
  */
-public class VisualSimilarParam extends BaseProductSearchParam {
+public class SearchByIdParam extends BaseProductSearchParam {
     /**
      * Product ID returned by other API. Will be used to append to visual
      * similar search path.
      */
-    protected String product_id;
+    protected String productId;
 
     /**
      * Constructor with the necessary parameters
      *
      * @param product_id product id to search against
      */
-    public VisualSimilarParam(String product_id) {
+    public SearchByIdParam(String product_id) {
         super();
-        this.product_id = product_id;
+        this.productId = product_id;
     }
 
     /**
@@ -43,20 +43,20 @@ public class VisualSimilarParam extends BaseProductSearchParam {
     /**
      * Getter for product id
      *
-     * @return product_id
+     * @return productId
      */
     public String getProductId() {
-        return product_id;
+        return productId;
     }
 
     /**
      * Setter for product id
      *
-     * @param product_id This parameter is the product ID returned by the other
+     * @param productId This parameter is the product ID returned by the other
      *                  APIs
      */
-    public void setProductId(String product_id) {
-        this.product_id = product_id;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
 }

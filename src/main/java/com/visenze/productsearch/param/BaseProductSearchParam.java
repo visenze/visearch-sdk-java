@@ -3,10 +3,6 @@ package com.visenze.productsearch.param;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.*;
-import com.visenze.visearch.ResponseMessages;
-import com.visenze.visearch.internal.InternalViSearchException;
-
-import javax.xml.ws.Response;
 
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 
@@ -51,12 +47,12 @@ public class BaseProductSearchParam {
      * advertising ID or a server generated string (reqid for first search) for
      * analytics purposes.
      */
-    protected Optional<String> va_uid = Optional.absent();
+    protected Optional<String> vaUid = Optional.absent();
 
     /**
      * Analytics session ID
      */
-    protected Optional<String> va_sid = Optional.absent();
+    protected Optional<String> vaSid = Optional.absent();
 
     /**
      * For first release, can consider to narrow scope to only product_id,
@@ -67,13 +63,13 @@ public class BaseProductSearchParam {
     /**
      * For fq for text search
      */
-    protected Optional<Map<String, String>> text_filters = Optional.absent();
+    protected Optional<Map<String, String>> textFilters = Optional.absent();
 
     /**
      * By default we should always show the common fields (title, product_id,
      * main_image_url, title, price, product_url, brand)
      */
-    protected Optional<List<String>> attrs_to_get = Optional.absent();
+    protected Optional<List<String>> attrsToGet = Optional.absent();
 
     /**
      * Same as Visearch
@@ -83,37 +79,37 @@ public class BaseProductSearchParam {
     /**
      * Same as Visearch
      */
-    protected Optional<Integer> facets_limit = Optional.absent();
+    protected Optional<Integer> facetsLimit = Optional.absent();
 
     /**
      * Same as Visearch
      */
-    protected Optional<Boolean> facets_show_count = Optional.absent();
+    protected Optional<Boolean> facetsShowCount = Optional.absent();
 
     /**
      * Same as Visearch
      */
-    protected Optional<String> sort_by = Optional.absent();
+    protected Optional<String> sortBy = Optional.absent();
 
     /**
      * Same as Visearch
      */
-    protected Optional<String> group_by = Optional.absent();
+    protected Optional<String> groupBy = Optional.absent();
 
     /**
      * Same as Visearch
      */
-    protected Optional<Integer> group_limit = Optional.absent();
+    protected Optional<Integer> groupLimit = Optional.absent();
 
     /**
      * Same as Visearch
      */
-    protected Optional<String> sort_group_by = Optional.absent();
+    protected Optional<String> sortGroupBy = Optional.absent();
 
     /**
      * Same as Visearch
      */
-    protected Optional<String> sort_group_strategy = Optional.absent();
+    protected Optional<String> sortGroupStrategy = Optional.absent();
 
     /**
      * Same as Visearch
@@ -123,125 +119,103 @@ public class BaseProductSearchParam {
     /**
      * Same as Visearch
      */
-    protected Optional<Float> score_min = Optional.absent();
+    protected Optional<Float> scoreMin = Optional.absent();
 
     /**
      * Same as Visearch
      */
-    protected Optional<Float> score_max = Optional.absent();
+    protected Optional<Float> scoreMax = Optional.absent();
 
     /**
      * Default to false, if set to true, will return catalog fields mappings
      */
-    protected Optional<Boolean> return_fields_mapping = Optional.absent();
+    protected Optional<Boolean> returnFieldsMapping = Optional.absent();
 
     /**
      * Return S3 URL (the copy) of the main product image
      */
-    protected Optional<Boolean> return_image_s3_url = Optional.absent();
-
-    /**
-     * Set to true to see debug information
-     */
-    protected Optional<Boolean> debug = Optional.absent();
-
-    /**
-     * Set to visenze_admin to exclude from billing
-     */
-    protected Optional<String> vtt_source = Optional.absent();
+    protected Optional<Boolean> returnImageS3Url = Optional.absent();
 
     /**
      * Which SDK e.g. Javascript, Swift, Android, Java (for server side)
      */
-    protected Optional<String> va_sdk = Optional.absent();
+    protected Optional<String> vaSdk = Optional.absent();
 
     /**
      * Store our tracking SDK’s version e.g. “1.0.2”. For debugging if there is
      * a bug and also to measure SDK popularity/usage
      */
-    protected Optional<String> va_sdk_version = Optional.absent();
+    protected Optional<String> vaSdkVersion = Optional.absent();
 
     /**
      * Custom mapping for future-proofing
      */
-    protected Optional<Map<String, String>>  custom_map = Optional.absent();
-
-    /**
-     * Traffic source (for placement’s concept). This will store the placement
-     * ID instead of placement name
-     */
-    protected Integer placement_id;
-
-    /**
-     * This should be temporary? Do we store app_key as query or inside the
-     * authentication header as credentials.
-     */
-    protected String app_key;
+    protected Optional<Map<String, String>> customParams = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_os = Optional.absent();
+    protected Optional<String> vaOs = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_osv = Optional.absent();
+    protected Optional<String> vaOsv = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_device_brand = Optional.absent();
+    protected Optional<String> vaDeviceBrand = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_device_model = Optional.absent();
+    protected Optional<String> vaDeviceModel = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_app_bundle_id = Optional.absent();
+    protected Optional<String> vaAppBundleId = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_app_name = Optional.absent();
+    protected Optional<String> vaAppName = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_app_version = Optional.absent();
+    protected Optional<String> vaAppVersion = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_aaid = Optional.absent();
+    protected Optional<String> vaAaid = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_didmd5 = Optional.absent();
+    protected Optional<String> vaDidmd5 = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_n1 = Optional.absent();
+    protected Optional<Number> vaN1 = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_n2 = Optional.absent();
+    protected Optional<Number> vaN2 = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_s1 = Optional.absent();
+    protected Optional<String> vaS1 = Optional.absent();
 
     /**
      * Visenze Analytics fields
      */
-    protected Optional<String> va_s2 = Optional.absent();
+    protected Optional<String> vaS2 = Optional.absent();
 
     /**
      * Convert this object into it's multimap representation.
@@ -257,24 +231,24 @@ public class BaseProductSearchParam {
         if (limit.isPresent())
             multimap.put(LIMIT, limit.get().toString());
 
-        if (va_uid.isPresent())
-            multimap.put(VA_UID, va_uid.get());
+        if (vaUid.isPresent())
+            multimap.put(VA_UID, vaUid.get());
 
-        if (va_sid.isPresent())
-            multimap.put(VA_SID, va_sid.get());
+        if (vaSid.isPresent())
+            multimap.put(VA_SID, vaSid.get());
 
         if (filters.isPresent()) {
             for (Map.Entry<String, String> entry : filters.get().entrySet())
                 multimap.put(FILTERS, entry.getKey() + COLON + entry.getValue());
         }
 
-        if (text_filters.isPresent()) {
-            for (Map.Entry<String, String> entry : text_filters.get().entrySet())
+        if (textFilters.isPresent()) {
+            for (Map.Entry<String, String> entry : textFilters.get().entrySet())
                 multimap.put(TEXT_FILTERS, entry.getKey() + COLON + entry.getValue());
         }
 
-        if (attrs_to_get.isPresent()) {
-            for (String val : attrs_to_get.get())
+        if (attrsToGet.isPresent()) {
+            for (String val : attrsToGet.get())
                 multimap.put(ATTR_TO_GET, val);
         }
 
@@ -283,104 +257,90 @@ public class BaseProductSearchParam {
                 multimap.put(FACETS, val);
         }
 
-        if (facets_limit.isPresent())
-            multimap.put(FACETS_LIMIT, facets_limit.get().toString());
+        if (facetsLimit.isPresent())
+            multimap.put(FACETS_LIMIT, facetsLimit.get().toString());
 
-        if (facets_show_count.isPresent())
-            multimap.put(FACETS_SHOW_COUNT, facets_show_count.get().toString());
+        if (facetsShowCount.isPresent())
+            multimap.put(FACETS_SHOW_COUNT, facetsShowCount.get().toString());
 
-        if (sort_by.isPresent())
-            multimap.put(SORT_BY, sort_by.get());
+        if (sortBy.isPresent())
+            multimap.put(SORT_BY, sortBy.get());
 
-        if (group_by.isPresent())
-            multimap.put(GROUP_BY, group_by.get());
+        if (groupBy.isPresent())
+            multimap.put(GROUP_BY, groupBy.get());
 
-        if (group_limit.isPresent())
-            multimap.put(GROUP_LIMIT, group_limit.get().toString());
+        if (groupLimit.isPresent())
+            multimap.put(GROUP_LIMIT, groupLimit.get().toString());
 
-        if (sort_group_by.isPresent())
-            multimap.put(SORT_GROUP_BY, sort_group_by.get());
+        if (sortGroupBy.isPresent())
+            multimap.put(SORT_GROUP_BY, sortGroupBy.get());
 
-        if (sort_group_strategy.isPresent())
-            multimap.put(SORT_GROUP_STRATEGY, sort_group_strategy.get());
+        if (sortGroupStrategy.isPresent())
+            multimap.put(SORT_GROUP_STRATEGY, sortGroupStrategy.get());
 
         if (score.isPresent())
             multimap.put(SCORE, score.get().toString());
 
-        if (score_min.isPresent())
-            multimap.put(SCORE_MIN, score_min.get().toString());
+        if (scoreMin.isPresent())
+            multimap.put(SCORE_MIN, scoreMin.get().toString());
 
-        if (score_max.isPresent())
-            multimap.put(SCORE_MAX, score_max.get().toString());
+        if (scoreMax.isPresent())
+            multimap.put(SCORE_MAX, scoreMax.get().toString());
 
-        if (return_fields_mapping.isPresent())
-            multimap.put(RETURN_FIELDS_MAPPING, return_fields_mapping.get().toString());
+        if (returnFieldsMapping.isPresent())
+            multimap.put(RETURN_FIELDS_MAPPING, returnFieldsMapping.get().toString());
 
-        if (return_image_s3_url.isPresent())
-            multimap.put(RETURN_IMAGE_S3_URL, return_image_s3_url.get().toString());
+        if (returnImageS3Url.isPresent())
+            multimap.put(RETURN_IMAGE_S3_URL, returnImageS3Url.get().toString());
 
-        if (debug.isPresent())
-            multimap.put(DEBUG, debug.get().toString());
+        if (vaSdk.isPresent())
+            multimap.put(VA_SDK, vaSdk.get());
 
-        if (vtt_source.isPresent())
-            multimap.put(VTT_SOURCE, vtt_source.get());
+        if (vaSdkVersion.isPresent())
+            multimap.put(VA_SDK_VERSION, vaSdkVersion.get());
 
-        if (va_sdk.isPresent())
-            multimap.put(VA_SDK, va_sdk.get());
-
-        if (va_sdk_version.isPresent())
-            multimap.put(VA_SDK_VERSION, va_sdk_version.get());
-
-        if (custom_map.isPresent())
-            for (Map.Entry<String, String> entry : custom_map.get().entrySet())
+        if (customParams.isPresent())
+            for (Map.Entry<String, String> entry : customParams.get().entrySet())
                 multimap.put(CUSTOM_MAP, entry.getKey() + COLON + entry.getValue());
 
-        if (va_os.isPresent())
-            multimap.put(VA_OS, va_os.get());
+        if (vaOs.isPresent())
+            multimap.put(VA_OS, vaOs.get());
 
-        if (va_osv.isPresent())
-            multimap.put(VA_OSV, va_osv.get());
+        if (vaOsv.isPresent())
+            multimap.put(VA_OSV, vaOsv.get());
 
-        if (va_device_brand.isPresent())
-            multimap.put(VA_DEVICE_BRAND, va_device_brand.get());
+        if (vaDeviceBrand.isPresent())
+            multimap.put(VA_DEVICE_BRAND, vaDeviceBrand.get());
 
-        if (va_device_model.isPresent())
-            multimap.put(VA_DEVICE_MODEL, va_device_model.get());
+        if (vaDeviceModel.isPresent())
+            multimap.put(VA_DEVICE_MODEL, vaDeviceModel.get());
 
-        if (va_app_bundle_id.isPresent())
-            multimap.put(VA_APP_BUNDLE_ID, va_app_bundle_id.get());
+        if (vaAppBundleId.isPresent())
+            multimap.put(VA_APP_BUNDLE_ID, vaAppBundleId.get());
 
-        if (va_app_name.isPresent())
-            multimap.put(VA_APP_NAME, va_app_name.get());
+        if (vaAppName.isPresent())
+            multimap.put(VA_APP_NAME, vaAppName.get());
 
-        if (va_app_version.isPresent())
-            multimap.put(VA_APP_VERSION, va_app_version.get());
+        if (vaAppVersion.isPresent())
+            multimap.put(VA_APP_VERSION, vaAppVersion.get());
 
-        if (va_aaid.isPresent())
-            multimap.put(VA_AAID, va_aaid.get());
+        if (vaAaid.isPresent())
+            multimap.put(VA_AAID, vaAaid.get());
 
-        if (va_didmd5.isPresent())
-            multimap.put(VA_DIDMD5, va_didmd5.get());
+        if (vaDidmd5.isPresent())
+            multimap.put(VA_DIDMD5, vaDidmd5.get());
 
-        if (va_n1.isPresent())
-            multimap.put(VA_N1, va_n1.get());
+        if (vaN1.isPresent())
+            multimap.put(VA_N1, vaN1.get().toString());
 
-        if (va_n2.isPresent())
-            multimap.put(VA_N2, va_n2.get());
+        if (vaN2.isPresent())
+            multimap.put(VA_N2, vaN2.get().toString());
 
-        if (va_s1.isPresent())
-            multimap.put(VA_S1, va_s1.get());
+        if (vaS1.isPresent())
+            multimap.put(VA_S1, vaS1.get());
 
-        if (va_s2.isPresent())
-            multimap.put(VA_S2, va_s2.get());
-
-        // 'Authentication'
-
-        if (placement_id != null)
-            multimap.put(PLACEMENT_ID, placement_id.toString());
-
-        if (app_key != null)
-            multimap.put(APP_KEY, app_key);
+        if (vaS2.isPresent())
+            multimap.put(VA_S2, vaS2.get());
 
         return multimap;
     }
@@ -425,21 +385,21 @@ public class BaseProductSearchParam {
     /**
      * Get the unique identifier for client application/usage
      *
-     * @return va_uid
+     * @return vaUid
      */
     @JsonProperty("va_uid")
     public String getVaUid() {
-        return va_uid.orNull();
+        return vaUid.orNull();
     }
 
     /**
      * Set the unique identifier for client application/usage
      *
-     * @param va_uid uid to identify this app
+     * @param vaUid uid to identify this app
      */
-    public void setVaUid(String va_uid) {
+    public void setVaUid(String vaUid) {
         // dont allow empty string
-        this.va_uid = Optional.fromNullable(va_uid.isEmpty() ? null : va_uid);
+        this.vaUid = Optional.fromNullable(vaUid);
     }
 
     /**
@@ -449,17 +409,17 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("va_sid")
     public String getVaSid() {
-        return va_sid.orNull();
+        return vaSid.orNull();
     }
 
     /**
      * Set the session ID for analytics
      *
-     * @param va_sid ID to identify this 'session' for analytics
+     * @param vaSid ID to identify this 'session' for analytics
      */
-    public void setVaSid(String va_sid) {
+    public void setVaSid(String vaSid) {
         // dont allow empty string
-        this.va_sid = Optional.fromNullable(va_sid.isEmpty() ? null : va_sid);
+        this.vaSid = Optional.fromNullable(vaSid);
     }
 
     /**
@@ -482,12 +442,12 @@ public class BaseProductSearchParam {
      */
     public void setFilters(Map<String, String> filters) {
         // don't allow empty map
-        if (filters.isEmpty()) {
+        if (filters == null || filters.isEmpty()) {
             this.filters = Optional.absent();
         }
         // remove null entries
         else {
-            while (filters.values().remove(null));
+            // filters.entrySet().removeIf(entries -> entries.getValue() == null);
             this.filters = Optional.of(filters);
         }
     }
@@ -499,23 +459,23 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("text_filters")
     public Map<String, String> getTextFilters() {
-        return text_filters.orNull();
+        return textFilters.orNull();
     }
 
     /**
      * Set the filters for text search
      *
-     * @param text_filters filters for text search
+     * @param textFilters filters for text search
      */
-    public void setTextFilters(Map<String, String> text_filters) {
+    public void setTextFilters(Map<String, String> textFilters) {
         // dont allow empty map
-        if (text_filters.isEmpty()) {
-            this.text_filters = Optional.absent();
+        if (textFilters == null || textFilters.isEmpty()) {
+            this.textFilters = Optional.absent();
         }
         // remove null entries
         else {
-            while (text_filters.values().remove(null));
-            this.text_filters = Optional.of(text_filters);
+            // text_filters.entrySet().removeIf(entries -> entries.getValue() == null);
+            this.textFilters = Optional.of(textFilters);
         }
     }
 
@@ -527,22 +487,22 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("attrs_to_get")
     public List<String> getAttrsToGet() {
-        return attrs_to_get.orNull();
+        return attrsToGet.orNull();
     }
 
     /**
      * Set the attributes required, common fields
      *      i.e. product_id, main_image_url, title
      *
-     * @param attrs_to_get list of attributes
+     * @param attrsToGet list of attributes
      */
-    public void setAttrsToGet(List<String> attrs_to_get) {
+    public void setAttrsToGet(List<String> attrsToGet) {
         // dont allow empty list
-        if (attrs_to_get.isEmpty()) {
-            this.attrs_to_get = Optional.absent();
+        if (attrsToGet == null || attrsToGet.isEmpty()) {
+            this.attrsToGet = Optional.absent();
         }
         else {
-            this.attrs_to_get = Optional.of(attrs_to_get);
+            this.attrsToGet = Optional.of(attrsToGet);
         }
     }
 
@@ -577,16 +537,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("facets_limit")
     public Integer getFacetsLimit() {
-        return facets_limit.orNull();
+        return facetsLimit.orNull();
     }
 
     /**
      * Set the facets' limit
      *
-     * @param facets_limit facets' limit
+     * @param facetsLimit facets' limit
      */
-    public void setFacetsLimit(Integer facets_limit) {
-        this.facets_limit = Optional.fromNullable(facets_limit);
+    public void setFacetsLimit(Integer facetsLimit) {
+        this.facetsLimit = Optional.fromNullable(facetsLimit);
     }
 
     /**
@@ -596,16 +556,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("facets_show_count")
     public Boolean getFacetsShowCount() {
-        return facets_show_count.orNull();
+        return facetsShowCount.orNull();
     }
 
     /**
      * Set the facets show count
      *
-     * @param facets_show_count should facet show count
+     * @param facetsShowCount should facet show count
      */
-    public void setFacetsShowCount(Boolean facets_show_count) {
-        this.facets_show_count = Optional.fromNullable(facets_show_count);
+    public void setFacetsShowCount(Boolean facetsShowCount) {
+        this.facetsShowCount = Optional.fromNullable(facetsShowCount);
     }
 
     /**
@@ -615,16 +575,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("sort_by")
     public String getSortBy() {
-        return sort_by.orNull();
+        return sortBy.orNull();
     }
 
     /**
      * Set the 'sort by' criteria
      *
-     * @param sort_by criteria of 'sort by'
+     * @param sortBy criteria of 'sort by'
      */
-    public void setSortBy(String sort_by) {
-        this.sort_by = Optional.fromNullable(sort_by);
+    public void setSortBy(String sortBy) {
+        this.sortBy = Optional.fromNullable(sortBy);
     }
 
     /**
@@ -634,16 +594,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("group_by")
     public String getGroupBy() {
-        return group_by.orNull();
+        return groupBy.orNull();
     }
 
     /**
      * Set the 'group by' criteria
      *
-     * @param group_by criteria of 'group by'
+     * @param groupBy criteria of 'group by'
      */
-    public void setGroupBy(String group_by) {
-        this.group_by = Optional.fromNullable(group_by);
+    public void setGroupBy(String groupBy) {
+        this.groupBy = Optional.fromNullable(groupBy);
     }
 
     /**
@@ -653,16 +613,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("group_limit")
     public Integer getGroupLimit() {
-        return group_limit.orNull();
+        return groupLimit.orNull();
     }
 
     /**
      * Set the group limit
      *
-     * @param group_limit group limit
+     * @param groupLimit group limit
      */
-    public void setGroupLimit(Integer group_limit) {
-        this.group_limit = Optional.fromNullable(group_limit);
+    public void setGroupLimit(Integer groupLimit) {
+        this.groupLimit = Optional.fromNullable(groupLimit);
     }
 
     /**
@@ -672,16 +632,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("sort_group_by")
     public String getSortGroupBy() {
-        return sort_group_by.orNull();
+        return sortGroupBy.orNull();
     }
 
     /**
      * Set the 'sort group by'
      *
-     * @param sort_group_by criteria for 'sort group by'
+     * @param sortGroupBy criteria for 'sort group by'
      */
-    public void setSortGroupBy(String sort_group_by) {
-        this.sort_group_by = Optional.fromNullable(sort_group_by);
+    public void setSortGroupBy(String sortGroupBy) {
+        this.sortGroupBy = Optional.fromNullable(sortGroupBy);
     }
 
     /**
@@ -691,16 +651,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("sort_group_strategy")
     public String getSortGroupStrategy() {
-        return sort_group_strategy.orNull();
+        return sortGroupStrategy.orNull();
     }
 
     /**
      * Set the 'sort group by' strategy
      *
-     * @param sort_group_strategy sort strategy
+     * @param sortGroupStrategy sort strategy
      */
-    public void setSortGroupStrategy(String sort_group_strategy) {
-        this.sort_group_strategy = Optional.fromNullable(sort_group_strategy);
+    public void setSortGroupStrategy(String sortGroupStrategy) {
+        this.sortGroupStrategy = Optional.fromNullable(sortGroupStrategy);
     }
 
     /**
@@ -729,16 +689,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("score_min")
     public Float getScoreMin() {
-        return score_min.orNull();
+        return scoreMin.orNull();
     }
 
     /**
      * Set the min score
      *
-     * @param score_min minimum score
+     * @param scoreMin minimum score
      */
-    public void setScoreMin(Float score_min) {
-        this.score_min = Optional.fromNullable(score_min);
+    public void setScoreMin(Float scoreMin) {
+        this.scoreMin = Optional.fromNullable(scoreMin);
     }
 
     /**
@@ -748,16 +708,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("score_max")
     public Float getScoreMax() {
-        return score_max.orNull();
+        return scoreMax.orNull();
     }
 
     /**
      * Set the max score
      *
-     * @param score_max maximum score
+     * @param scoreMax maximum score
      */
-    public void setScoreMax(Float score_max) {
-        this.score_max = Optional.fromNullable(score_max);
+    public void setScoreMax(Float scoreMax) {
+        this.scoreMax = Optional.fromNullable(scoreMax);
     }
 
     /**
@@ -767,19 +727,19 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("return_fields_mapping")
     public Boolean getReturnFieldsMapping() {
-        return return_fields_mapping.orNull();
+        return returnFieldsMapping.orNull();
     }
 
     /**
      * Set if the query response will return field mappings (which ViSenze's
      * fields are mapped to which Client's fields).
      *
-     * @param return_mapping Setting this to true will cause the response to be
-     *                       populated with how ViSenze's fields are mapped to
-     *                       Client's fields.
+     * @param returnFieldsMapping Setting this to true will cause the response
+     *                            to bepopulated with how ViSenze's fields are
+     *                            mapped to Client's fields.
      */
-    public void setReturnFieldsMapping(Boolean return_mapping) {
-        this.return_fields_mapping = Optional.fromNullable(return_mapping);
+    public void setReturnFieldsMapping(Boolean returnFieldsMapping) {
+        this.returnFieldsMapping = Optional.fromNullable(returnFieldsMapping);
     }
 
     /**
@@ -789,54 +749,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("return_image_s3_url")
     public Boolean getReturnImageS3Url() {
-        return return_image_s3_url.orNull();
+        return returnImageS3Url.orNull();
     }
 
     /**
      * Set if returns image s3 url
      *
-     * @param return_image_s3_url should return images s3 url
+     * @param returnImageS3Url should return images s3 url
      */
-    public void setReturnImageS3Url(Boolean return_image_s3_url) {
-        this.return_image_s3_url = Optional.fromNullable(return_image_s3_url);
-    }
-
-    /**
-     * Get debug required
-     *
-     * @return if result should include debug info
-     */
-    @JsonProperty("debug")
-    public Boolean getDebug() {
-        return debug.orNull();
-    }
-
-    /**
-     * Set debug required
-     *
-     * @param debug if result should include debug info
-     */
-    public void setDebug(Boolean debug) {
-        this.debug = Optional.fromNullable(debug);
-    }
-
-    /**
-     * Get source for admin usage to exclude billing
-     *
-     * @return 'visenze_admin' or not
-     */
-    @JsonProperty("vtt_source")
-    public String getVttSource() {
-        return vtt_source.orNull();
-    }
-
-    /**
-     * Set source for admin usage to exclude billing
-     *
-     * @param vtt_source 'visenze_admin'?
-     */
-    public void setVttSource(String vtt_source) {
-        this.vtt_source = Optional.fromNullable(vtt_source);
+    public void setReturnImageS3Url(Boolean returnImageS3Url) {
+        this.returnImageS3Url = Optional.fromNullable(returnImageS3Url);
     }
 
     /**
@@ -846,16 +768,16 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("va_sdk")
     public String getVaSdk() {
-        return va_sdk.orNull();
+        return vaSdk.orNull();
     }
 
     /**
      * Set sdk using the api
      *
-     * @param va_sdk which sdk is this
+     * @param vaSdk which sdk is this
      */
-    public void setVaSdk(String va_sdk) {
-        this.va_sdk = Optional.fromNullable(va_sdk);
+    public void setVaSdk(String vaSdk) {
+        this.vaSdk = Optional.fromNullable(vaSdk);
     }
 
     /**
@@ -865,57 +787,17 @@ public class BaseProductSearchParam {
      */
     @JsonProperty("va_sdk_version")
     public String getVaSdkVersion() {
-        return va_sdk_version.orNull();
+        return vaSdkVersion.orNull();
     }
 
     /**
      * Set sdk version
      *
-     * @param va_sdk_version sdk version
+     * @param vaSdkVersion sdk version
      */
-    public void setVaSdkVersion(String va_sdk_version) {
-        this.va_sdk_version = Optional.fromNullable(va_sdk_version);
+    public void setVaSdkVersion(String vaSdkVersion) {
+        this.vaSdkVersion = Optional.fromNullable(vaSdkVersion);
     }
-
-    /**
-     * Get the placement id. Calling this will result to nothing happening since this
-     * is automatically called internally by ProductSearch class to use its
-     * placement_id - meaning it will override anything you set.
-     *
-     * @return placement_id
-     */
-    @JsonProperty("placement_id")
-    public Integer getPlacementId() {
-        return placement_id;
-    }
-
-    /**
-     * Set the placement id
-     *
-     * @param placement_id placement id
-     */
-    public void setPlacementId(Integer placement_id) {
-        this.placement_id = placement_id;
-    }
-
-    /**
-     * Get the app_key
-     *
-     * @return app_key
-     */
-    @JsonProperty("app_key")
-    public String getAppKey() {
-        return app_key;
-    }
-
-    /**
-     * Set the app_key. Calling this will result to nothing happening since this
-     * is automatically called internally by ProductSearch class to use its
-     * app_key - meaning it will override anything you set.
-     *
-     * @param app_key app_key
-     */
-    public void setAppKey(String app_key) { this.app_key = app_key; }
 
     /**
      * Get the custom mapping data
@@ -923,16 +805,16 @@ public class BaseProductSearchParam {
      * @return custom_map
      */
     @JsonProperty("custom_map")
-    public Map<String, String> getCustomMap() {
-        return custom_map.orNull();
+    public Map<String, String> getCustomParams() {
+        return customParams.orNull();
     }
 
     /**
      * Set the custom mapping data
      *
-     * @param custom_map custom data
+     * @param customParams custom data
      */
-    public void setCustomMap(Map<String, String> custom_map) {
-        this.custom_map = Optional.fromNullable(custom_map);
+    public void setCustomParams(Map<String, String> customParams) {
+        this.customParams = Optional.fromNullable(customParams);
     }
 }

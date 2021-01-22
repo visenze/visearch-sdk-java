@@ -1,10 +1,9 @@
 package com.visenze.productsearch;
 
-import com.visenze.productsearch.param.ImageSearchParam;
-import com.visenze.productsearch.param.VisualSimilarParam;
-import com.visenze.productsearch.response.ProductInfo;
+import com.visenze.productsearch.param.SearchByImageParam;
+import com.visenze.productsearch.param.SearchByIdParam;
+import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.internal.InternalViSearchException;
-import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 import org.junit.Test;
 
 import java.io.File;
@@ -44,14 +43,13 @@ public class ProductSearchTest {
      */
     public ProductSearchResponse imageSearchByUrl(String url) {
         // configure your dummy data here:
-        ImageSearchParam param = new ImageSearchParam(url, null);
+        SearchByImageParam param = SearchByImageParam.newFromImageUrl(url);
         param.setShowScore(true);
         param.setReturnFieldsMapping(true);
 
         // execute search and return response
         ProductSearch sdk = getProductSearch();
-        ViSearchHttpResponse res = sdk.imageSearch(param);
-        return ProductSearchResponse.From(res);
+        return sdk.imageSearch(param);
     }
 
     /**
@@ -63,14 +61,13 @@ public class ProductSearchTest {
      */
     public ProductSearchResponse imageSearchByFile(String filepath) {
         // configure your dummy data here:
-        ImageSearchParam param = new ImageSearchParam(new File(filepath));
+        SearchByImageParam param = SearchByImageParam.newFromImageFile(new File(filepath));
         param.setShowScore(true);
         param.setReturnFieldsMapping(true);
 
         // execute search and return response
         ProductSearch sdk = getProductSearch();
-        ViSearchHttpResponse res = sdk.imageSearch(param);
-        return ProductSearchResponse.From(res);
+        return sdk.imageSearch(param);
     }
 
     /**
@@ -82,14 +79,13 @@ public class ProductSearchTest {
      */
     public ProductSearchResponse imageSearchByID(String imageID) {
         // configure your dummy data here:
-        ImageSearchParam param = new ImageSearchParam(null, imageID);
+        SearchByImageParam param = SearchByImageParam.newFromImageId(imageID);
         param.setShowScore(true);
         param.setReturnFieldsMapping(true);
 
         // execute search and return response
         ProductSearch sdk = getProductSearch();
-        ViSearchHttpResponse res = sdk.imageSearch(param);
-        return ProductSearchResponse.From(res);
+        return sdk.imageSearch(param);
     }
 
 
@@ -102,20 +98,20 @@ public class ProductSearchTest {
      */
     public ProductSearchResponse visualSimilarSearch(String product_id) {
         // configure your dummy data here:
-        VisualSimilarParam param = new VisualSimilarParam(product_id);
+        SearchByIdParam param = new SearchByIdParam(product_id);
         param.setShowScore(true);
         param.setReturnFieldsMapping(true);
 
         // execute search and return response
         ProductSearch sdk = getProductSearch();
-        ViSearchHttpResponse res = sdk.visualSimilarSearch(param);
-        return ProductSearchResponse.From(res);
+        return sdk.visualSimilarSearch(param);
     }
 
     @Test
     public void byUrl() {
+        ProductSearchResponse responseUrl;
         try {
-            ProductSearchResponse responseUrl = imageSearchByUrl(IMG_URL);
+            responseUrl = imageSearchByUrl(IMG_URL);
         } catch (InternalViSearchException e) {
             fail(e.getMessage());
         }
@@ -123,8 +119,9 @@ public class ProductSearchTest {
 
     @Test
     public void byFile() {
+        ProductSearchResponse responseFile;
         try {
-            ProductSearchResponse responseFile = imageSearchByFile(IMG_FILEPATH);
+            responseFile = imageSearchByFile(IMG_FILEPATH);
         } catch (InternalViSearchException e) {
             fail(e.getMessage());
         }
@@ -142,13 +139,13 @@ public class ProductSearchTest {
             ProductSearchResponse responseID1 = imageSearchByID(responseUrl.getImageId());
             ProductSearchResponse responseID2 = imageSearchByID(responseFile.getImageId());
 
-            List<ProductInfo> prods1 = responseID1.getResult();
+            List<Product> prods1 = responseID1.getResult();
             Random rand = new Random();
             int randomIndex = rand.nextInt(prods1.size());
             ProductSearchResponse responseSimilar1 = visualSimilarSearch(prods1.get(randomIndex).getProductId());
             assertEquals("OK", responseSimilar1.getStatus());
 
-            List<ProductInfo> prods2 = responseID2.getResult();
+            List<Product> prods2 = responseID2.getResult();
             randomIndex = rand.nextInt(prods2.size());
             ProductSearchResponse responseSimilar2 = visualSimilarSearch(prods2.get(randomIndex).getProductId());
             assertEquals("OK", responseSimilar2.getStatus());

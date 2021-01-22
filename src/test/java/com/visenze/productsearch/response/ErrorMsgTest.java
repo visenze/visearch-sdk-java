@@ -1,7 +1,6 @@
 package com.visenze.productsearch.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ import static org.junit.Assert.*;
  * @version 1.0
  * @since 20 Jan 2021
  */
-public class ErrorTypeTest {
+public class ErrorMsgTest {
     final String jsonFormat = "{\"code\": 100, \"message\": \"Parameter 'im_url' is required\"}";
     /**
      * Parsing JSON formatted string
@@ -23,7 +22,7 @@ public class ErrorTypeTest {
     public void testJsonDeserializing() {
         final ObjectMapper mapper = new ObjectMapper();
         try {
-            ErrorType err = mapper.readValue(jsonFormat, ErrorType.class);
+            ErrorMsg err = mapper.readValue(jsonFormat, ErrorMsg.class);
             assertEquals(100, err.getCode().intValue());
             assertEquals("Parameter 'im_url' is required", err.getMessage());
         }

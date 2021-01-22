@@ -1,7 +1,7 @@
 package com.visenze.productsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visenze.productsearch.response.ProductInfo;
+import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
 import org.junit.Test;
 
@@ -79,7 +79,7 @@ public class ProductSearchResponseTest {
         assertEquals(7, types.get(1).getBox().get(2).intValue());
         assertEquals(8, types.get(1).getBox().get(3).intValue());
 
-        List<ProductInfo> info = response.getResult();
+        List<Product> info = response.getResult();
         assertEquals(2, info.size());
         assertEquals("RESULT_PRODUCT_ID_1", info.get(0).getProductId());
         assertEquals("RESULT_PRODUCT_ID_2", info.get(1).getProductId());

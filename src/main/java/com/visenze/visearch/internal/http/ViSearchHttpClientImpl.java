@@ -3,7 +3,6 @@ package com.visenze.visearch.internal.http;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.sun.security.ntlm.Client;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;

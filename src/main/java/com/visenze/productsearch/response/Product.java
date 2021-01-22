@@ -15,25 +15,25 @@ import java.util.Map;
  * @version 1.0
  * @since 15 Jan 2021
  */
-public class ProductInfo {
+public class Product {
 
     /**
      * Unique identifier for this particular product
      */
     @JsonProperty("product_id")
-    private String product_id;
+    private String productId;
 
     /**
      * URL to the product's main image (e.g. thumbnail).
      */
     @JsonProperty("main_image_url")
-    private String main_image_url;
+    private String mainImageUrl;
 
     /**
      * The score given to this product (ML models usually output a score)
      */
     @JsonProperty("score")
-    private float score;
+    private Float score;
 
     /**
      * Due to the possibility of non-standardized type of values, this variable
@@ -58,19 +58,19 @@ public class ProductInfo {
     /**
      * Get the unique identifier of this product
      *
-     * @return product_id
+     * @return productId
      */
     public String getProductId() {
-        return product_id;
+        return productId;
     }
 
     /**
      * Get the URL for the main image
      *
-     * @return main_image_url
+     * @return mainImageUrl
      */
     public String getMainImageUrl() {
-        return main_image_url;
+        return mainImageUrl;
     }
 
     /**
@@ -78,7 +78,7 @@ public class ProductInfo {
      *
      * @return score
      */
-    public float getScore() {
+    public Float getScore() {
         return score;
     }
 

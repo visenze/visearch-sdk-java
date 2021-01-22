@@ -2,7 +2,6 @@ package com.visenze.productsearch.param;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
 import com.visenze.visearch.Box;
 import com.visenze.visearch.ResponseMessages;
@@ -22,17 +21,17 @@ import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
  * @version 1.0
  * @since 08 Jan 2021
  */
-public class ImageSearchParam extends BaseProductSearchParam {
+public class SearchByImageParam extends BaseProductSearchParam {
 
     /**
      * Image URL
      */
-    protected String im_url;
+    protected String imUrl;
 
     /**
      * Image ID
      */
-    protected String im_id;
+    protected String imId;
 
     /**
      * Image file object (multi-part)
@@ -56,44 +55,57 @@ public class ImageSearchParam extends BaseProductSearchParam {
      * value is 5. Values must range between 1-30. Returns the objects with
      * higher confidence score first.
      */
-    protected Optional<Integer> detection_limit = Optional.absent();
+    protected Optional<Integer> detectionLimit = Optional.absent();
 
     /**
      * Parameter to set the detection to more or less sensitive. Default is low.
      */
-    protected Optional<String> detection_sensitivity = Optional.absent();
+    protected Optional<String> detectionSensitivity = Optional.absent();
 
     /**
-     * Constructor that must have one of the string parameters assigned with
-     * valid values.
-     *
-     *      Both - GOOD but unsure which will be used,
-     *      Only One - GOOD,
-     *      Neither - BAD
-     *
-     * @param image_id image id
-     * @param image_url image url
+     * Hide default constructor
      */
-    public ImageSearchParam(String image_url, String image_id) {
+    private SearchByImageParam() {
         super();
-        boolean invalidImageId = image_id == null || image_id.isEmpty();
-        boolean invalidImageUrl = image_url == null || image_url.isEmpty();
-        if (invalidImageId && invalidImageUrl)
-            throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL);
-        this.im_url = image_url;
-        this.im_id = image_id;
-        this.image = null;
     }
 
     /**
-     * Constructor using an image file
+     * Method to get constructor using image URL
      *
-     * @param image_file File of the Image
+     * @param imageUrl url to the image
      */
-    public ImageSearchParam(File image_file) {
-        super();
-        Preconditions.checkNotNull(image_file, "The image file must not be null.");
-        this.image = image_file;
+    public static SearchByImageParam newFromImageUrl(String imageUrl) {
+        SearchByImageParam param = new SearchByImageParam();
+        if (imageUrl == null || imageUrl.isEmpty())
+            throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_URL);
+        param.setImageUrl(imageUrl);
+        return param;
+    }
+
+    /**
+     * Method to get constructor using image ID
+     *
+     * @param imageId id of the image
+     */
+    public static SearchByImageParam newFromImageId(String imageId) {
+        SearchByImageParam param = new SearchByImageParam();
+        if (imageId == null || imageId.isEmpty())
+            throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_ID);
+        param.setImageId(imageId);
+        return param;
+    }
+
+    /**
+     * Method to get constructor using an image file
+     *
+     * @param imageFile File of the Image
+     */
+    public static SearchByImageParam newFromImageFile(File imageFile) {
+        SearchByImageParam param = new SearchByImageParam();
+        if (imageFile == null)
+            throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_FILE);
+        param.setImage(imageFile);
+        return param;
     }
 
     /**
@@ -111,20 +123,20 @@ public class ImageSearchParam extends BaseProductSearchParam {
                     box.get().getY2()
             );
         }
-        if (im_url != null) {
-            multimap.put(IM_URL, im_url);
+        if (imUrl != null) {
+            multimap.put(IM_URL, imUrl);
         }
-        if (im_id != null) {
-            multimap.put(IM_ID, im_id);
+        if (imId != null) {
+            multimap.put(IM_ID, imId);
         }
         if (detection.isPresent()) {
             multimap.put(DETECTION, detection.get());
         }
-        if (detection_limit.isPresent()) {
-            multimap.put(DETECTION_LIMIT, detection_limit.get().toString());
+        if (detectionLimit.isPresent()) {
+            multimap.put(DETECTION_LIMIT, detectionLimit.get().toString());
         }
-        if (detection_sensitivity.isPresent()) {
-            multimap.put(DETECTION_SENSITIVITY, detection_sensitivity.get());
+        if (detectionSensitivity.isPresent()) {
+            multimap.put(DETECTION_SENSITIVITY, detectionSensitivity.get());
         }
         return multimap;
     }
@@ -132,35 +144,35 @@ public class ImageSearchParam extends BaseProductSearchParam {
     /**
      * Get Image url
      *
-     * @return im_url
+     * @return imUrl
      */
     @JsonProperty("im_url")
-    public String getImageUrl() { return im_url; }
+    public String getImageUrl() { return imUrl; }
 
     /**
      * Set Image url
      *
-     * @param im_url url to image
+     * @param imUrl url to image
      */
-    public void setImageUrl(String im_url) { this.im_url = im_url; }
+    public void setImageUrl(String imUrl) { this.imUrl = imUrl; }
 
     /**
      * Get Image ID
      *
-     * @return im_id
+     * @return imId
      */
     @JsonProperty("im_id")
     public String getImageId() {
-        return im_id;
+        return imId;
     }
 
     /**
      * Set Image ID
      *
-     * @param im_id image id provided by api response
+     * @param imId image id provided by api response
      */
-    public void setImageId(String im_id) {
-        this.im_id = im_id;
+    public void setImageId(String imId) {
+        this.imId = imId;
     }
 
     /**
@@ -221,36 +233,36 @@ public class ImageSearchParam extends BaseProductSearchParam {
     /**
      * Get the maximum number of products could be detected for
      *
-     * @return detection_limit
+     * @return detectionLimit
      */
     public Integer getDetectionLimit() {
-        return detection_limit.orNull();
+        return detectionLimit.orNull();
     }
 
     /**
      * Set the maximum number of products that could be detected for.
-     * e.g. detection_limit=3, image can detect up to 3 objects
+     * e.g. detectionLimit=3, image can detect up to 3 objects
      *
-     * @param detection_limit maximum detected objects. (1-30)
+     * @param detectionLimit maximum detected objects. (1-30)
      */
-    public void setDetectionLimit(Integer detection_limit) {
-        this.detection_limit = Optional.fromNullable(detection_limit);
+    public void setDetectionLimit(Integer detectionLimit) {
+        this.detectionLimit = Optional.fromNullable(detectionLimit);
     }
 
     /** Get detection sensitivity, default is low.
      *
-     * @return detection_sensitivity
+     * @return detectionSensitivity
      */
     public String getDetectionSensitivity() {
-        return detection_sensitivity.orNull();
+        return detectionSensitivity.orNull();
     }
 
     /** Sett detection sensitivity, default is low.
      *
-     * @param detection_sensitivity sensitivity of detection
+     * @param detectionSensitivity sensitivity of detection
      */
-    public void setDetectionSensitivity(String detection_sensitivity) {
-        this.detection_sensitivity = Optional.fromNullable(detection_sensitivity);
+    public void setDetectionSensitivity(String detectionSensitivity) {
+        this.detectionSensitivity = Optional.fromNullable(detectionSensitivity);
     }
 
 }

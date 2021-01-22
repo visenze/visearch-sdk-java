@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @version 1.0
  * @since 20 Jan 2021
  */
-public class ProductInfoTest {
+public class ProductTest {
     final ObjectMapper mapper = new ObjectMapper();
     final String JSON_KNOWN = "{\"product_id\":\"PRODUCT_ID\",\"main_image_url\":\"IMAGE_URL\",\"score\":0.827}";
     final String JSON_UNKNOWN = "{\"data\":{\"sku\":1234,\"product_name\":\"PRODUCT_NAME\",\"sale_price\":{\"currency\":\"SGD\",\"value\":\"120\"},\"color\":[\"blue\",\"red\",\"green\"]}}";
@@ -42,7 +42,7 @@ public class ProductInfoTest {
      *
      * @param info ProductInfo to verify
      */
-    private void verifyKnownOnly(ProductInfo info) {
+    private void verifyKnownOnly(Product info) {
         assertEquals("PRODUCT_ID", info.getProductId());
         assertEquals("IMAGE_URL", info.getMainImageUrl());
         assertEquals(0.827, info.getScore(), 0.0001f);
@@ -54,7 +54,7 @@ public class ProductInfoTest {
      *
      * @param info ProductInfo to verify
      */
-    private void verifyUnknownOnly(ProductInfo info) {
+    private void verifyUnknownOnly(Product info) {
         Map<String, ViJsonAny> mappedData = info.getData();
         assertEquals(1234, mappedData.get("sku").getAsValue(new TypeReference<Integer>() {}).intValue());
         assertEquals("PRODUCT_NAME", mappedData.get("product_name").getAsValue(new TypeReference<String>() {}));
@@ -74,7 +74,7 @@ public class ProductInfoTest {
     @Test
     public void testJsonDeserializingKnown() {
         try {
-            ProductInfo info = mapper.readValue(JSON_KNOWN, ProductInfo.class);
+            Product info = mapper.readValue(JSON_KNOWN, Product.class);
             verifyKnownOnly(info);
         }
         catch (IOException e) {
@@ -85,7 +85,7 @@ public class ProductInfoTest {
     @Test
     public void testJsonDeserializingUnknown() {
         try {
-            ProductInfo info = mapper.readValue(JSON_UNKNOWN, ProductInfo.class);
+            Product info = mapper.readValue(JSON_UNKNOWN, Product.class);
             verifyUnknownOnly(info);
         }
         catch (IOException e) {
@@ -97,7 +97,7 @@ public class ProductInfoTest {
     public void testJsonDeserializingSimulate() {
         final String simulatedResponse = concatJsonString(JSON_KNOWN, JSON_UNKNOWN);
         try {
-            ProductInfo info = mapper.readValue(simulatedResponse, ProductInfo.class);
+            Product info = mapper.readValue(simulatedResponse, Product.class);
             verifyKnownOnly(info);
             verifyUnknownOnly(info);
         }

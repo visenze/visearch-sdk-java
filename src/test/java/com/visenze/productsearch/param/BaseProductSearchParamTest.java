@@ -40,8 +40,6 @@ public class BaseProductSearchParamTest {
     @Test
     public void simpleParameters() {
         BaseProductSearchParam param = new BaseProductSearchParam();
-        param.setAppKey("APP_KEY");
-        param.setPlacementId(1);
         List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
         try{
             URI uri = new URIBuilder(END_POINT).addParameters(paramUrl).build();
@@ -54,15 +52,13 @@ public class BaseProductSearchParamTest {
     @Test
     public void complexParameters() {
         BaseProductSearchParam param = new BaseProductSearchParam();
-        param.setAppKey("APP_KEY");
-        param.setPlacementId(1);
         param.setShowScore(true);
         param.setReturnFieldsMapping(true);
 
-        Map<String, String> txt_filters = new HashMap<String, String>();
-        txt_filters.put("filter_field_1", "filter_field_1_value");
-        txt_filters.put("filter_field_2", "filter_field_2_value");
-        param.setTextFilters(txt_filters);
+        Map<String, String> filters = new HashMap<String, String>();
+        filters.put("filter_field_1", "filter_field_1_value");
+        filters.put("filter_field_2", "filter_field_2_value");
+        param.setTextFilters(filters);
 
         List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
         try{

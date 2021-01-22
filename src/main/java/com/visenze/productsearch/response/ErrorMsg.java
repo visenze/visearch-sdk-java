@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1.0
  * @since 12 Jan 2021
  */
-public class ErrorType {
+public class ErrorMsg {
 
     /**
      * Http status code, 200, 400, 404 etc.
