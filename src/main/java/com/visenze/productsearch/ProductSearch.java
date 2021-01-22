@@ -1,6 +1,7 @@
 package com.visenze.productsearch;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Multimap;
 import com.visenze.productsearch.param.*;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
@@ -182,8 +183,11 @@ public class ProductSearch {
                 throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
             }
         }
+        Multimap<String, String> paramMap = params.toMultimap();
+        paramMap.put("app_key", this.appKey);
+        paramMap.put("placement_id", this.placementId.toString());
         // attempt using post for image url or image id
-        return ProductSearchResponse.fromResponse(httpClient.post(DEFAULT_IMAGE_SEARCH_PATH, params.toMultimap()));
+        return ProductSearchResponse.fromResponse(httpClient.post(DEFAULT_IMAGE_SEARCH_PATH, paramMap));
     }
 
     /**
@@ -196,6 +200,8 @@ public class ProductSearch {
     public ProductSearchResponse visualSimilarSearch(SearchByIdParam params) {
         // append the product id after the visual similar path
         final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
+        Multimap<String, String> paramMap = params.toMultimap();
+        paramMap.put("app_key", this.appKey);
         return ProductSearchResponse.fromResponse(httpClient.get(path, params.toMultimap()));
     }
 
