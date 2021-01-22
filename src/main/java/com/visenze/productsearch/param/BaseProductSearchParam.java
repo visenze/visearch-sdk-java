@@ -700,7 +700,7 @@ public class BaseProductSearchParam {
      * @return score
      */
     @JsonProperty("score")
-    public Boolean getScore() {
+    public Boolean getShowScore() {
         return score.orNull();
     }
 
@@ -709,7 +709,7 @@ public class BaseProductSearchParam {
      *
      * @param score score
      */
-    public void setScore(Boolean score) {
+    public void setShowScore(Boolean score) {
         this.score = Optional.fromNullable(score);
     }
 
@@ -765,12 +765,12 @@ public class BaseProductSearchParam {
      * Set if the query response will return field mappings (which ViSenze's
      * fields are mapped to which Client's fields).
      *
-     * @param return_fields_mapping Setting this to true will cause the response
-     *                              to be populated with how ViSenze's fields
-     *                              are mapped to Client's fields.
+     * @param return_mapping Setting this to true will cause the response to be
+     *                       populated with how ViSenze's fields are mapped to
+     *                       Client's fields.
      */
-    public void setReturnFieldsMapping(Boolean return_fields_mapping) {
-        this.return_fields_mapping = Optional.fromNullable(return_fields_mapping);
+    public void setReturnFieldsMapping(Boolean return_mapping) {
+        this.return_fields_mapping = Optional.fromNullable(return_mapping);
     }
 
     /**
@@ -869,7 +869,9 @@ public class BaseProductSearchParam {
     }
 
     /**
-     * Get the placement id
+     * Get the placement id. Calling this will result to nothing happening since this
+     * is automatically called internally by ProductSearch class to use its
+     * placement_id - meaning it will override anything you set.
      *
      * @return placement_id
      */
@@ -898,7 +900,9 @@ public class BaseProductSearchParam {
     }
 
     /**
-     * Set the app_key
+     * Set the app_key. Calling this will result to nothing happening since this
+     * is automatically called internally by ProductSearch class to use its
+     * app_key - meaning it will override anything you set.
      *
      * @param app_key app_key
      */

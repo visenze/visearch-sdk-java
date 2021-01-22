@@ -11,7 +11,6 @@ import com.visenze.visearch.internal.InternalViSearchException;
 import java.io.File;
 
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
-import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.DETECTION_SENSITIVITY;
 
 /**
  * <h1> SBI Parameters </h1>

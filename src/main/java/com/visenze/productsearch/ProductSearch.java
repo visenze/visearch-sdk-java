@@ -1,5 +1,6 @@
 package com.visenze.productsearch;
 
+import com.google.common.base.Preconditions;
 import com.visenze.productsearch.param.*;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
@@ -31,9 +32,9 @@ public class ProductSearch {
     /**
      * Default endpoint if none is set
      */
-    public static final String DEFAULT_ENDPOINT = "https://search-dev.visenze.com//v1";
-    public static final String DEFAULT_IMAGE_SEARCH_PATH = "/similar-products";
-    public static final String DEFAULT_VISUAL_SIMILAR_PATH = "/similar-products";
+    static final String DEFAULT_ENDPOINT = "https://search-dev.visenze.com//v1";
+    static final String DEFAULT_IMAGE_SEARCH_PATH = "/similar-products";
+    static final String DEFAULT_VISUAL_SIMILAR_PATH = "/similar-products";
 
     /**
      * App key, required field that also acts as authentication element
@@ -110,6 +111,9 @@ public class ProductSearch {
          * @return ProductSearch object class
          */
         public ProductSearch build() {
+            if (this.app_key == null || this.app_key.isEmpty()) {
+                throw new InternalViSearchException(ResponseMessages.INVALID_KEY);
+            }
             return new ProductSearch(this.app_key, this.placement_id, endpoint, config);
         }
 
@@ -150,7 +154,9 @@ public class ProductSearch {
      * @param endpoint Which endpoint to use for all ViHttpClient queries
      * @param config Configuration to the behaviours of the ViHttpClient
      */
-    private ProductSearch(String app_key, Integer placement_id, String endpoint, ClientConfig config) {
+    private ProductSearch(String app_key, Integer placement_id, String endpoint,
+                          ClientConfig config)
+    {
         this.app_key      = app_key;
         this.placement_id = placement_id;
         this.endpoint     = endpoint;
@@ -168,12 +174,13 @@ public class ProductSearch {
         // required field is automatically set here
         params.setAppKey(app_key);
         params.setPlacementId(placement_id);
-        // test for image validity
-        ViSearchHttpResponse response;
-        File imageFile = params.getImage();
-        boolean invalidImageId = params.getImageId() == null || params.getImageId().isEmpty();
-        boolean invalidImageUrl = params.getImageUrl() == null || params.getImageUrl().isEmpty();
-        if (imageFile == null && invalidImageId &&invalidImageUrl)
+        // test for image parameter validity
+        final File imageFile = params.getImage();
+        final String imageID = params.getImageId();
+        final String imageURL = params.getImageUrl();
+        final boolean invalidID = imageID == null || imageID.isEmpty();
+        final boolean invalidURL = imageURL == null || imageURL.isEmpty();
+        if (imageFile == null && invalidID && invalidURL)
             throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_SOURCE);
         // attempt search using image file
         if (imageFile != null) {
@@ -188,7 +195,7 @@ public class ProductSearch {
     }
 
     /**
-     * Calls the GET method for the API which appends the product_id to the path.
+     * Calls the GET method for the API which appends the product_id to the path
      *
      * @param params VisualSimilarParam specific parameters to perform request
      *
@@ -197,7 +204,9 @@ public class ProductSearch {
     public ViSearchHttpResponse visualSimilarSearch(VisualSimilarParam params) {
         // required field is automatically set here
         params.setAppKey(app_key);
-        return httpClient.get(DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId(), params.toMultimap());
+        // append the product id after the visual similar path
+        final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
+        return httpClient.get(path, params.toMultimap());
     }
 
 

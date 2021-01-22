@@ -10,8 +10,6 @@ import java.util.Map;
  * <h1> Product Information </h1>
  * This class is the actual representation of a single 'product' found through
  * the SDK's APIs.
- * <p>
- * This class aims to be Json compatible by implementing Jackson annotation
  *
  * @author Shannon Tan
  * @version 1.0
@@ -85,8 +83,11 @@ public class ProductInfo {
     }
 
     /**
+     * Wrapped data for Map fields with different Typed values
      *
      * @return data
+     *
+     * @see ViJsonAny
      */
     public Map<String, ViJsonAny> getData() {
         return data;

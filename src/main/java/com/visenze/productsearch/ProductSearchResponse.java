@@ -34,7 +34,6 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductSearchResponse {
-
     /**
      * Each request is associated with an id to help with tracking api calls.
      *
@@ -127,9 +126,13 @@ public class ProductSearchResponse {
     @JsonProperty("facets")
     private List<Facet> facets = new ArrayList();
 
-    // objects
-    //group_results
-    //group_by_key
+    /**
+     * There should be results for 'objects', 'group_results', 'group_by_key'
+     * later
+     */
+    // private List<String> objects;
+    // private Map<String,List<String>> group_results;
+    // private Map<String,List<String>> group_by_key;
 
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
@@ -146,10 +149,8 @@ public class ProductSearchResponse {
     public static ProductSearchResponse From(ViSearchHttpResponse response) {
         final ObjectMapper mapper = new ObjectMapper();
         try {
-            // read the json formatted string values into the response class
             return mapper.readValue(response.getBody(), ProductSearchResponse.class);
         } catch(IOException e){
-            e.printStackTrace();
             throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e.getMessage());
         }
     }

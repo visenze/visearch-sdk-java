@@ -1,5 +1,7 @@
 package com.visenze.productsearch.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * <h1> Error in Responses </h1>
  * When a response is received via the ProductSearch APIs, they might contain
@@ -11,8 +13,6 @@ package com.visenze.productsearch.response;
  *
  * This implies that the type of error is fixed and if the response error
  * changes, this class would also need to change accordingly.
- * <p>
- * This class aims to be Json compatible by implementing Jackson annotation
  *
  * @author Shannon Tan
  * @version 1.0
@@ -23,11 +23,13 @@ public class ErrorType {
     /**
      * Http status code, 200, 400, 404 etc.
      */
-    private String code;
+    @JsonProperty("code")
+    private Integer code;
 
     /**
      * Custom message reply from the API (readable debugging info).
      */
+    @JsonProperty("message")
     private String message;
 
     /**
@@ -35,7 +37,7 @@ public class ErrorType {
      *
      * @return Http status code
      */
-    public String getCode() {
+    public Integer getCode() {
         return code;
     }
 
