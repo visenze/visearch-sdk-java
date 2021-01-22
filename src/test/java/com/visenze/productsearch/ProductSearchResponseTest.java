@@ -3,11 +3,11 @@ package com.visenze.productsearch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visenze.productsearch.response.ProductInfo;
 import com.visenze.visearch.ProductType;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import static org.junit.Assert.*;
 
 /**
  * <h1> Product Search Response Test </h1>
@@ -16,7 +16,7 @@ import java.util.List;
  * @version 1.0
  * @since 21 Jan 2021
  */
-public class ProductSearchResponseTest extends TestCase {
+public class ProductSearchResponseTest {
     final ObjectMapper mapper = new ObjectMapper();
     final String JSON_STRING_FIELDS = "{\"reqid\":\"123REQ\",\"status\":\"OK\",\"im_id\":\"456IMAGE.jpg\"}";
     final String JSON_INT_FIELDS = "{\"page\":1,\"limit\":10,\"total\":100}";
@@ -112,7 +112,7 @@ public class ProductSearchResponseTest extends TestCase {
             verifyStringFields(response);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 
@@ -123,7 +123,7 @@ public class ProductSearchResponseTest extends TestCase {
             verifyIntFields(response);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 
@@ -134,7 +134,7 @@ public class ProductSearchResponseTest extends TestCase {
             verifyListFields(response);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 
@@ -145,7 +145,7 @@ public class ProductSearchResponseTest extends TestCase {
             verifyMapFields(response);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 
@@ -156,17 +156,29 @@ public class ProductSearchResponseTest extends TestCase {
             verifyOtherFields(response);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 
     @Test
     public void testSimulatedResponse() {
-        String stringResponse = concatJsonString(JSON_STRING_FIELDS, JSON_INT_FIELDS);
-        stringResponse = concatJsonString(stringResponse, JSON_LIST_FIELDS);
-        stringResponse = concatJsonString(stringResponse, JSON_MAP_FIELDS);
-        stringResponse = concatJsonString(stringResponse, JSON_OTHER_FIELDS);
         try {
+            String stringResponse = concatJsonString(JSON_STRING_FIELDS, JSON_INT_FIELDS);
+            if (stringResponse == null)
+                fail("Bad Json string format");
+
+            stringResponse = concatJsonString(stringResponse, JSON_LIST_FIELDS);
+            if (stringResponse == null)
+                fail("Bad Json string format");
+
+            stringResponse = concatJsonString(stringResponse, JSON_MAP_FIELDS);
+            if (stringResponse == null)
+                fail("Bad Json string format");
+
+            stringResponse = concatJsonString(stringResponse, JSON_OTHER_FIELDS);
+            if (stringResponse == null)
+                fail("Bad Json string format");
+
             ProductSearchResponse response = mapper.readValue(stringResponse, ProductSearchResponse.class);
             verifyStringFields(response);
             verifyIntFields(response);
@@ -175,7 +187,7 @@ public class ProductSearchResponseTest extends TestCase {
             verifyOtherFields(response);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 }

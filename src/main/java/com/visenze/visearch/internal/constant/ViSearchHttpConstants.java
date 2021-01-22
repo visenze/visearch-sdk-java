@@ -14,7 +14,6 @@ public abstract class ViSearchHttpConstants {
     public static final String GROUP_BY_KEY = "group_by_key";
     public static final String PRODUCT_TYPES = "product_types";
     public static final String PRODUCT_TYPES_LIST = "product_types_list";
-    public static final String IM_ID = "im_id";
     public static final String QINFO = "qinfo";
     public static final String OBJECT_TYPES_LIST = "object_types_list";
     public static final String GROUP_RESULT = "group_result";
@@ -39,13 +38,6 @@ public abstract class ViSearchHttpConstants {
     public static final String DEDUP = "dedup";
     public static final String DEDUP_SCORE_THRESHOLD = "dedup_score_threshold";
 
-    public static final String BOX = "box";
-    public static final String IM_URL = "im_url";
-    public static final String DETECTION = "detection";
-    public static final String DETECTION_LIMIT = "detection_limit";
-    public static final String RESULT_LIMIT = "result_limit";
-    public static final String DETECTION_SENSITIVITY = "detection_sensitivity";
-    public static final String VS_CONFIG = "vs_config";
 
     public static final String DIVERSITY = "diversity";
 
@@ -66,6 +58,15 @@ public abstract class ViSearchHttpConstants {
     public static final String SCORE_MIN = "score_min";
     public static final String SCORE_MAX = "score_max";
 
+    public static final String BOX = "box";
+    public static final String IM_URL = "im_url";
+    public static final String IM_ID = "im_id";
+    public static final String DETECTION = "detection";
+    public static final String DETECTION_LIMIT = "detection_limit";
+    public static final String RESULT_LIMIT = "result_limit";
+    public static final String DETECTION_SENSITIVITY = "detection_sensitivity";
+    public static final String VS_CONFIG = "vs_config";
+
     // product search
 
     public static final String VA_UID = "va_uid";
@@ -82,6 +83,7 @@ public abstract class ViSearchHttpConstants {
     public static final String PLACEMENT_ID = "placement_id";
     public static final String APP_KEY = "app_key";
     public static final String CUSTOM_MAP = "custom_map";
+
     // analytics
     public static final String VA_OS = "va_os";
     public static final String VA_OSV = "va_osv";

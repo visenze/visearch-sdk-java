@@ -1,17 +1,16 @@
 package com.visenze.productsearch;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.visenze.common.util.ViJsonAny;
 import com.visenze.productsearch.param.ImageSearchParam;
 import com.visenze.productsearch.param.VisualSimilarParam;
 import com.visenze.productsearch.response.ProductInfo;
+import com.visenze.visearch.internal.InternalViSearchException;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
+import static org.junit.Assert.*;
 
 /**
  * <h1> ProductSearch Test Cases </h1>
@@ -20,7 +19,7 @@ import java.util.Map;
  * @version 1.0
  * @since 22 Jan 2021
  */
-public class ProductSearchTest extends TestCase {
+public class ProductSearchTest {
     final String END_POINT = "https://search-dev.visenze.com//v1";
     final String APP_KEY = "";
     final Integer PLACEMENT_ID = 1;
@@ -36,24 +35,6 @@ public class ProductSearchTest extends TestCase {
                 .build();
     }
 
-    @Test
-    public void testByUrl() {
-        ProductSearchResponse responseUrl = testImageSearchByUrl(IMG_URL);
-    }
-
-    @Test
-    public void testByFile() {
-        ProductSearchResponse responseFile = testImageSearchByFile(IMG_FILEPATH);
-    }
-
-    @Test
-    public void testCasesWithDependencies() {
-        ProductSearchResponse responseUrl = testImageSearchByUrl(IMG_URL);
-        ProductSearchResponse responseFile = testImageSearchByFile(IMG_FILEPATH);
-        ProductSearchResponse responseID1 = testImageSearchByID(responseUrl.getImageId());
-        ProductSearchResponse responseID2 = testImageSearchByID(responseFile.getImageId());
-    }
-
     /**
      * Calls the imageSearch using image url
      *
@@ -61,7 +42,7 @@ public class ProductSearchTest extends TestCase {
      *
      * @return Search response
      */
-    public ProductSearchResponse testImageSearchByUrl(String url) {
+    public ProductSearchResponse imageSearchByUrl(String url) {
         // configure your dummy data here:
         ImageSearchParam param = new ImageSearchParam(url, null);
         param.setShowScore(true);
@@ -80,7 +61,7 @@ public class ProductSearchTest extends TestCase {
      *
      * @return Search response
      */
-    public ProductSearchResponse testImageSearchByFile(String filepath) {
+    public ProductSearchResponse imageSearchByFile(String filepath) {
         // configure your dummy data here:
         ImageSearchParam param = new ImageSearchParam(new File(filepath));
         param.setShowScore(true);
@@ -99,7 +80,7 @@ public class ProductSearchTest extends TestCase {
      *
      * @return Search response
      */
-    public ProductSearchResponse testImageSearchByID(String imageID) {
+    public ProductSearchResponse imageSearchByID(String imageID) {
         // configure your dummy data here:
         ImageSearchParam param = new ImageSearchParam(null, imageID);
         param.setShowScore(true);
@@ -119,7 +100,7 @@ public class ProductSearchTest extends TestCase {
      *
      * @return Search response
      */
-    public ProductSearchResponse testVisualSimilarSearch(String product_id) {
+    public ProductSearchResponse visualSimilarSearch(String product_id) {
         // configure your dummy data here:
         VisualSimilarParam param = new VisualSimilarParam(product_id);
         param.setShowScore(true);
@@ -129,5 +110,51 @@ public class ProductSearchTest extends TestCase {
         ProductSearch sdk = getProductSearch();
         ViSearchHttpResponse res = sdk.visualSimilarSearch(param);
         return ProductSearchResponse.From(res);
+    }
+
+    @Test
+    public void byUrl() {
+        try {
+            ProductSearchResponse responseUrl = imageSearchByUrl(IMG_URL);
+        } catch (InternalViSearchException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void byFile() {
+        try {
+            ProductSearchResponse responseFile = imageSearchByFile(IMG_FILEPATH);
+        } catch (InternalViSearchException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    /**
+     * Once the product_id API is up and running - uncomment the @Test
+     * annotation to turn on testing for this function
+     */
+    // @Test
+    public void casesWithDependencies() {
+        try {
+            ProductSearchResponse responseUrl = imageSearchByUrl(IMG_URL);
+            ProductSearchResponse responseFile = imageSearchByFile(IMG_FILEPATH);
+            ProductSearchResponse responseID1 = imageSearchByID(responseUrl.getImageId());
+            ProductSearchResponse responseID2 = imageSearchByID(responseFile.getImageId());
+
+            List<ProductInfo> prods1 = responseID1.getResult();
+            Random rand = new Random();
+            int randomIndex = rand.nextInt(prods1.size());
+            ProductSearchResponse responseSimilar1 = visualSimilarSearch(prods1.get(randomIndex).getProductId());
+            assertEquals("OK", responseSimilar1.getStatus());
+
+            List<ProductInfo> prods2 = responseID2.getResult();
+            randomIndex = rand.nextInt(prods2.size());
+            ProductSearchResponse responseSimilar2 = visualSimilarSearch(prods2.get(randomIndex).getProductId());
+            assertEquals("OK", responseSimilar2.getStatus());
+
+        } catch (InternalViSearchException e) {
+            fail(e.getMessage());
+        }
     }
 }

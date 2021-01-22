@@ -3,6 +3,10 @@ package com.visenze.productsearch.param;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.*;
+import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.internal.InternalViSearchException;
+
+import javax.xml.ws.Response;
 
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 
@@ -370,8 +374,13 @@ public class BaseProductSearchParam {
         if (va_s2.isPresent())
             multimap.put(VA_S2, va_s2.get());
 
-        multimap.put(PLACEMENT_ID, placement_id.toString());
-        multimap.put(APP_KEY, app_key);
+        // 'Authentication'
+
+        if (placement_id != null)
+            multimap.put(PLACEMENT_ID, placement_id.toString());
+
+        if (app_key != null)
+            multimap.put(APP_KEY, app_key);
 
         return multimap;
     }

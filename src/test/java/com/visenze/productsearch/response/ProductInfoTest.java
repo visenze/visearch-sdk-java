@@ -3,12 +3,12 @@ package com.visenze.productsearch.response;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visenze.common.util.ViJsonAny;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import static org.junit.Assert.*;
 
 /**
  * <h1> Product Info Test </h1>
@@ -17,7 +17,7 @@ import java.util.Map;
  * @version 1.0
  * @since 20 Jan 2021
  */
-public class ProductInfoTest extends TestCase {
+public class ProductInfoTest {
     final ObjectMapper mapper = new ObjectMapper();
     final String JSON_KNOWN = "{\"product_id\":\"PRODUCT_ID\",\"main_image_url\":\"IMAGE_URL\",\"score\":0.827}";
     final String JSON_UNKNOWN = "{\"data\":{\"sku\":1234,\"product_name\":\"PRODUCT_NAME\",\"sale_price\":{\"currency\":\"SGD\",\"value\":\"120\"},\"color\":[\"blue\",\"red\",\"green\"]}}";
@@ -78,7 +78,7 @@ public class ProductInfoTest extends TestCase {
             verifyKnownOnly(info);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 
@@ -89,7 +89,7 @@ public class ProductInfoTest extends TestCase {
             verifyUnknownOnly(info);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 
@@ -102,7 +102,7 @@ public class ProductInfoTest extends TestCase {
             verifyUnknownOnly(info);
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 }

@@ -3,6 +3,7 @@ package com.visenze.visearch.internal.http;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.sun.security.ntlm.Client;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
@@ -228,7 +229,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         request.addHeader(HttpHeaders.USER_AGENT, userAgent);
 
         // add x-request-with header
-        request.addHeader(ViSearchHttpConstants.X_REQUESTED_WITH, clientConfig.DEFAULT_XREQUEST_WITH);
+        request.addHeader(ViSearchHttpConstants.X_REQUESTED_WITH, ClientConfig.DEFAULT_XREQUEST_WITH);
     }
 
     private CloseableHttpResponse executeRequest(HttpUriRequest request) {
@@ -241,7 +242,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private List<NameValuePair> mapToNameValuePair(Multimap<String, ?> params) {
+    public static List<NameValuePair> mapToNameValuePair(Multimap<String, ?> params) {
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         for (Map.Entry<String, ?> entry : params.entries()) {
             pairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));

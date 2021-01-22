@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.IOException;
+import static org.junit.Assert.*;
 
 /**
  * <h1> Error Type Test </h1>
@@ -13,7 +14,7 @@ import java.io.IOException;
  * @version 1.0
  * @since 20 Jan 2021
  */
-public class ErrorTypeTest extends TestCase {
+public class ErrorTypeTest {
     final String jsonFormat = "{\"code\": 100, \"message\": \"Parameter 'im_url' is required\"}";
     /**
      * Parsing JSON formatted string
@@ -27,7 +28,7 @@ public class ErrorTypeTest extends TestCase {
             assertEquals("Parameter 'im_url' is required", err.getMessage());
         }
         catch (IOException e) {
-            assertTrue("Failed to let JSON auto-deserialize", false);
+            fail("Failed to let JSON auto-deserialize");
         }
     }
 }
