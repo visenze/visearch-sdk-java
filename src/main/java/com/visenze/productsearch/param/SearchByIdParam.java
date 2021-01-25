@@ -4,10 +4,10 @@ import com.google.common.collect.Multimap;
 
 /**
  *
- * <h1> Visually Similar Parameters </h1>
- * This class holds the specific parameters required to support Visually Similar
- * products search. It extends the BaseSearchParam to inherit all it's variables
- * that defines all general search parameter.
+ * <h1> Search by ID Parameters </h1>
+ * This class holds the specific parameters required to support searching by
+ * product ID. It extends the BaseSearchParam to inherit all it's variables that
+ * defines all general search parameter.
  *
  * @author Shannon Tan
  * @version 1.0
