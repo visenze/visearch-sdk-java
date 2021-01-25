@@ -160,7 +160,6 @@ public class ProductSearchTest {
             Map<String,String> filters = new HashMap<String, String>();
             filters.put(fieldsMap.get("brand"), "Pomelo");
             param.setFilters(filters);
-
             // execute search and return response
             ProductSearch sdk = getProductSearch();
             sdk.imageSearch(param);

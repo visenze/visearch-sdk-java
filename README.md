@@ -23,6 +23,7 @@
       - 5.3 [Multiple Product Search](#53-multiple-product-search)
 	  - 5.4 [Search by Color](#54-search-by-color)
 	  - 5.5 [Visually Similar Recommendations In Multiple Objects Index Mode](#55-visually-similar-recommendations-in-multiple-objects-index-mode)
+	  - 5.6 [Product Search](../blob/feature/PS-1853/src/main/java/com/visenze/productsearch/README.md)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
