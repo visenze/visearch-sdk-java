@@ -115,7 +115,7 @@ searchResults = api.imageSearch(params);
 
 ````
 
-> More parameters can be provided for further customization - see [Basic](#4-basic-search-parameter) 
+> More parameters can be provided for further customization - see [Basic](#4-basic-search-parameters) 
 > and [Advanced](#5-advanced-search-parameters) search parameters.
 
 ### 2.2 Search by ID
@@ -155,13 +155,13 @@ ProductSearchResponse searchResults = api.visualSimilarSearch(params);
 ## 3. Search Results
 
 After performing searches with any of the methods above, they will all return 
-the same object type of [ProductSearchResponse.java](../blob/feature/PS-1853/src/main/java/com/visenze/productsearch/ProductSearchResponse.java). 
+the same object type of [ProductSearchResponse.java](ProductSearchResponse.java). 
 The main purpose of this object is for users to retrieve information of the 
 search result, it should **NOT** require you to use any of its setter methods.
 
 Most of the member variables are self-explanatory with additional comments that 
 can be seen in the class itself. The more complicated one would be the 
-'result' member variable which is a **List of [Product](../blob/feature/PS-1853/src/main/java/com/visenze/productsearch/response/Product.java)**. 
+'result' member variable which is a **List of [Product](response/Product.java)**. 
 
 When a search is made, the API will take reference from an Image source (the 3 
 methods mentioned in [Search by Image](#21-search-by-image)), and return a list 
@@ -181,7 +181,7 @@ for (Product product : products) {
 
 ### 3.1 Product 
 
-The [Product.java](../blob/feature/PS-1853/src/main/java/com/visenze/productsearch/response/Product.java)
+The [Product.java](response/Product.java)
 class holds all the information regarding a single Product, with the most
 complicated member variable being 'data'. To better explain what this 'data'
 field is, take a look at the table below (database field_names):
@@ -201,7 +201,7 @@ thing just named differently.
 
 > i.e. visenze_database["product_id"] == client_x_database["sku"]
 
-This table can be found in the [ProductSearchResponse.java](../blob/feature/PS-1853/src/main/java/com/visenze/productsearch/ProductSearchResponse.java):
+This table can be found in the [ProductSearchResponse.java](ProductSearchResponse.java):
 
 ``` 
 Map<String,String> catalogFieldsMapping = searchResult.getCatalogFieldsMapping()
@@ -271,7 +271,7 @@ List<String> list = any.getAsValue(new TypeReference<List<String>>(){});
 
 ## 4. Basic Search Parameters
 
-Majority of it can be referred back to [ViSearch Java SDK](../blob/feature/PS-1853/README.md).
+Majority of it can be referred back to [ViSearch Java SDK](../../../../../../README.md).
 Here are some common and perhaps confusing ones to take note of:
 
 <table>
@@ -308,11 +308,11 @@ Here are some common and perhaps confusing ones to take note of:
 
 ### 5.1 Grouping
 
-Refer back to [ViSearch Java SDK](../blob/feature/PS-1853/README.md)
+Refer back to [ViSearch Java SDK](../../../../../../README.md)
 
 ### 5.2 Filtering
 
-Refer back to [ViSearch Java SDK](../blob/feature/PS-1853/README.md)
+Refer back to [ViSearch Java SDK](../../../../../../README.md)
 
 ### 5.3 Visual Analytics
 
