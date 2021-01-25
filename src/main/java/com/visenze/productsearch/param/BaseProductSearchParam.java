@@ -56,73 +56,75 @@ public class BaseProductSearchParam {
 
     /**
      * For first release, can consider to narrow scope to only product_id,
-     * price, category, brand, original_price
+     * price, category, brand, original_price. Requires key to be in client's
+     * field name.
      */
     protected Optional<Map<String, String>> filters = Optional.absent();
 
     /**
-     * For fq for text search
+     * For fq for text search. Requires key to be in client's field name.
      */
     protected Optional<Map<String, String>> textFilters = Optional.absent();
 
     /**
      * By default we should always show the common fields (title, product_id,
-     * main_image_url, title, price, product_url, brand)
+     * main_image_url, title, price, product_url, brand). Requires to be in
+     * client's field name.
      */
     protected Optional<List<String>> attrsToGet = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<List<String>> facets = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<Integer> facetsLimit = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<Boolean> facetsShowCount = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch. Requires to be in client's field name.
      */
     protected Optional<String> sortBy = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch. Requires to be in client's field name.
      */
     protected Optional<String> groupBy = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<Integer> groupLimit = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<String> sortGroupBy = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<String> sortGroupStrategy = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<Boolean> score = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<Float> scoreMin = Optional.absent();
 
     /**
-     * Same as Visearch
+     * Same as ViSearch
      */
     protected Optional<Float> scoreMax = Optional.absent();
 
@@ -437,6 +439,7 @@ public class BaseProductSearchParam {
      * Conceptual and non-representational example:
      *      filters["category"] = "clothes";
      *      filters["another_filter_key"] = "some_other_filter_value";
+     * Requires key to be in client's field name.
      *
      * @param filters A map of filters' key-value
      */
@@ -463,7 +466,8 @@ public class BaseProductSearchParam {
     }
 
     /**
-     * Set the filters for text search
+     * Set the filters for text search. Requires key to be in client's field
+     * name.
      *
      * @param textFilters filters for text search
      */
@@ -493,6 +497,7 @@ public class BaseProductSearchParam {
     /**
      * Set the attributes required, common fields
      *      i.e. product_id, main_image_url, title
+     * Requires to be in client's field name.
      *
      * @param attrsToGet list of attributes
      */
@@ -579,7 +584,7 @@ public class BaseProductSearchParam {
     }
 
     /**
-     * Set the 'sort by' criteria
+     * Set the 'sort by' criteria. Requires to be in client's field name.
      *
      * @param sortBy criteria of 'sort by'
      */
@@ -598,7 +603,7 @@ public class BaseProductSearchParam {
     }
 
     /**
-     * Set the 'group by' criteria
+     * Set the 'group by' criteria. Requires to be in client's field name.
      *
      * @param groupBy criteria of 'group by'
      */

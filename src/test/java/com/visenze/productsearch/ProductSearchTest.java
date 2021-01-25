@@ -7,8 +7,8 @@ import com.visenze.visearch.internal.InternalViSearchException;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
 import static org.junit.Assert.*;
 
 /**
@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 public class ProductSearchTest {
     final String END_POINT = "https://search-dev.visenze.com/v1";
     final String APP_KEY = "";
-    final Integer PLACEMENT_ID = 1;
+    final Integer PLACEMENT_ID = 1000;
     final String IMG_URL = "https://img.ltwebstatic.com/images2_pi/2019/09/09/15679978193855617200_thumbnail_900x1199.jpg";
     final String IMG_FILEPATH = "/Users/visenze/Downloads/photoshoot-outfits-ideas-white-t-shirt.jpg";
 
@@ -112,6 +112,7 @@ public class ProductSearchTest {
         ProductSearchResponse responseUrl;
         try {
             responseUrl = imageSearchByUrl(IMG_URL);
+            imageSearchByID(responseUrl.getImageId());
         } catch (InternalViSearchException e) {
             fail(e.getMessage());
         }
@@ -122,6 +123,47 @@ public class ProductSearchTest {
         ProductSearchResponse responseFile;
         try {
             responseFile = imageSearchByFile(IMG_FILEPATH);
+            imageSearchByID(responseFile.getImageId());
+        } catch (InternalViSearchException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void byCatalogueFieldMappings() {
+        ProductSearchResponse response;
+        try {
+            // get an initial response
+            response = imageSearchByUrl(IMG_URL);
+            // retrieve catalogue fields mapping from response
+            Map<String, String> fieldsMap = response.getCatalogFieldsMapping();
+            // create new request using response id (re-use image from initial
+            // response)
+            SearchByImageParam param = SearchByImageParam.newFromImageId(response.getImageId());
+            param.setShowScore(true);
+            param.setReturnFieldsMapping(true);
+            // create list of attributes-to-get using fields mapping to get
+            // client's fields name from ViSenze field name
+            List<String> attrsToGet = new ArrayList<String>();
+            attrsToGet.add(fieldsMap.get("product_url"));
+            attrsToGet.add(fieldsMap.get("title"));
+            attrsToGet.add(fieldsMap.get("category"));
+            attrsToGet.add(fieldsMap.get("brand"));
+            param.setAttrsToGet(attrsToGet);
+            // create map of text filters using fields mapping to get client's
+            // fileds name from ViSenze field name
+            Map<String,String> textFilters = new HashMap<String, String>();
+            textFilters.put(fieldsMap.get("category"), "top");
+            param.setTextFilters(textFilters);
+            // create map of filters using fields mapping to get client's fileds
+            // name from ViSenze field name
+            Map<String,String> filters = new HashMap<String, String>();
+            filters.put(fieldsMap.get("brand"), "Pomelo");
+            param.setFilters(filters);
+
+            // execute search and return response
+            ProductSearch sdk = getProductSearch();
+            sdk.imageSearch(param);
         } catch (InternalViSearchException e) {
             fail(e.getMessage());
         }
