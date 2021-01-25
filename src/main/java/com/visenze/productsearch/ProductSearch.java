@@ -32,7 +32,7 @@ public class ProductSearch {
     /**
      * Default endpoint if none is set
      */
-    static final String DEFAULT_ENDPOINT = "https://search.visenze.com//v1";
+    static final String DEFAULT_ENDPOINT = "https://search.visenze.com/v1";
     static final String DEFAULT_IMAGE_SEARCH_PATH = "/similar-products";
     static final String DEFAULT_VISUAL_SIMILAR_PATH = "/similar-products";
 
