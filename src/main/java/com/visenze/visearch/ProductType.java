@@ -21,27 +21,20 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductType {
 
-    /**
-     * The type of object detected (top/eyewear/bottoms/etc).
-     */
-    @JsonProperty("type")
     private final String type;
 
     /**
      * The score given to this detected object. If 5 objects are detected and
      * only 3 is requested, only the top 3 scorers are returned. (Confidence?)
      */
-    @JsonProperty("score")
     private final Float score;
 
     /**
      * The bounding box in image space (0,0 top left) that represents where
      * the detected object is at.
      */
-    @JsonProperty("box")
     private final List<Integer> box;
 
-    @JsonProperty("attributes")
     private Map<String, List<String>> attributes;
 
     private Map<String, List<String>> attributesList;
@@ -55,10 +48,7 @@ public class ProductType {
         this.attributesList = attributesList;
     }
 
-    @JsonCreator
-    public ProductType(@JsonProperty("type") String type,
-                       @JsonProperty("score") Float score,
-                       @JsonProperty("box") List<Integer> box) {
+    public ProductType(String type, Float score, List<Integer> box) {
         this.type = type;
         this.score = score;
         this.box = box;

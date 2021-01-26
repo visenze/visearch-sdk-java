@@ -2,11 +2,11 @@ package com.visenze.productsearch;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Multimap;
+import com.visenze.productsearch.http.ProductSearchHttpClientImpl;
 import com.visenze.productsearch.param.*;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
-import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,10 +18,6 @@ import java.io.FileNotFoundException;
  * modular pieces that were included in the com.visenze.visearch package. Since
  * This class is located in separate package, there will be a lot of dependency
  * from the .visearch package.
- * <p>
- * Future plan? To split things that are
- * non-api specific into a 'common' or 'util' package for both ProductSearch and
- * ViSearch to use.
  *
  * @author Shannon Tan
  * @version 1.0
@@ -56,7 +52,7 @@ public class ProductSearch {
     /**
      * The Http wrapper class for easy functionalities
      */
-    private ViSearchHttpClientImpl httpClient;
+    private ProductSearchHttpClientImpl httpClient;
 
     /**
      * Builder class to make configuring of ProductSearch more readable
@@ -162,7 +158,7 @@ public class ProductSearch {
         this.appKey       = appKey;
         this.placementId  = placementId;
         this.endpoint     = endpoint;
-        this.httpClient   = new ViSearchHttpClientImpl(this.endpoint, appKey, placementId.toString(), config);
+        this.httpClient   = new ProductSearchHttpClientImpl(this.endpoint, config);
     }
 
     /**
@@ -173,19 +169,19 @@ public class ProductSearch {
      * @return ViSearchHttpResponse http response of search results
      */
     public ProductSearchResponse imageSearch(SearchByImageParam params) {
+        Multimap<String, String> paramMap = params.toMultimap();
+        paramMap.put("app_key", this.appKey);
+        paramMap.put("placement_id", this.placementId.toString());
         // test for image parameter validity
         final File imageFile = params.getImage();
         // attempt search using image file
         if (imageFile != null) {
             try {
-                return ProductSearchResponse.fromResponse(httpClient.postImage(DEFAULT_IMAGE_SEARCH_PATH, params.toMultimap(), new FileInputStream(imageFile), imageFile.getName()));
+                return ProductSearchResponse.fromResponse(httpClient.postImage(DEFAULT_IMAGE_SEARCH_PATH, paramMap, new FileInputStream(imageFile), imageFile.getName()));
             } catch (FileNotFoundException e) {
                 throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
             }
         }
-        Multimap<String, String> paramMap = params.toMultimap();
-        paramMap.put("app_key", this.appKey);
-        paramMap.put("placement_id", this.placementId.toString());
         // attempt using post for image url or image id
         return ProductSearchResponse.fromResponse(httpClient.post(DEFAULT_IMAGE_SEARCH_PATH, paramMap));
     }
@@ -202,6 +198,7 @@ public class ProductSearch {
         final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
         Multimap<String, String> paramMap = params.toMultimap();
         paramMap.put("app_key", this.appKey);
+        paramMap.put("placement_id", this.placementId.toString());
         return ProductSearchResponse.fromResponse(httpClient.get(path, params.toMultimap()));
     }
 

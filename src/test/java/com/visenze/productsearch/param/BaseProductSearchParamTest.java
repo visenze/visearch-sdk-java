@@ -1,5 +1,6 @@
 package com.visenze.productsearch.param;
 
+import com.google.common.collect.Multimap;
 import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -40,7 +41,10 @@ public class BaseProductSearchParamTest {
     @Test
     public void simpleParameters() {
         BaseProductSearchParam param = new BaseProductSearchParam();
-        List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
+        Multimap<String, String> paramMap = param.toMultimap();
+        paramMap.put("app_key", "APP_KEY");
+        paramMap.put("placement_id", "1");
+        List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(paramMap));
         try{
             URI uri = new URIBuilder(END_POINT).addParameters(paramUrl).build();
             assertEquals(PARAM_DESIRED_SIMPLE, uri.getQuery());
@@ -60,7 +64,11 @@ public class BaseProductSearchParamTest {
         filters.put("filter_field_2", "filter_field_2_value");
         param.setTextFilters(filters);
 
-        List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
+        Multimap<String, String> paramMap = param.toMultimap();
+        paramMap.put("app_key", "APP_KEY");
+        paramMap.put("placement_id", "1");
+
+        List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(paramMap));
         try{
             URI uri = new URIBuilder(END_POINT).addParameters(paramUrl).build();
             assertEquals(PARAM_DESIRED_COMPLEX, uri.getQuery());

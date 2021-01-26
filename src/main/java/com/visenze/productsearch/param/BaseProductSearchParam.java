@@ -239,15 +239,8 @@ public class BaseProductSearchParam {
         if (vaSid.isPresent())
             multimap.put(VA_SID, vaSid.get());
 
-        if (filters.isPresent()) {
-            for (Map.Entry<String, String> entry : filters.get().entrySet())
-                multimap.put(FILTERS, entry.getKey() + COLON + entry.getValue());
-        }
-
-        if (textFilters.isPresent()) {
-            for (Map.Entry<String, String> entry : textFilters.get().entrySet())
-                multimap.put(TEXT_FILTERS, entry.getKey() + COLON + entry.getValue());
-        }
+        putMap(multimap, filters, FILTERS);
+        putMap(multimap, textFilters, TEXT_FILTERS);
 
         if (attrsToGet.isPresent()) {
             for (String val : attrsToGet.get())
@@ -345,6 +338,15 @@ public class BaseProductSearchParam {
             multimap.put(VA_S2, vaS2.get());
 
         return multimap;
+    }
+
+    private void putMap(Multimap<String, String> mapToUpdate,
+                        Optional<Map<String,String>> data,
+                        String key) {
+        if (data.isPresent()) {
+            for (Map.Entry<String, String> entry : data.get().entrySet())
+                mapToUpdate.put(key, entry.getKey() + COLON + entry.getValue());
+        }
     }
 
     /**

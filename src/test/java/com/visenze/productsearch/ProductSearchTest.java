@@ -23,7 +23,7 @@ public class ProductSearchTest {
     final String APP_KEY = "";
     final Integer PLACEMENT_ID = 1000;
     final String IMG_URL = "https://img.ltwebstatic.com/images2_pi/2019/09/09/15679978193855617200_thumbnail_900x1199.jpg";
-    final String IMG_FILEPATH = "/Users/visenze/Downloads/photoshoot-outfits-ideas-white-t-shirt.jpg";
+    final String IMG_FILEPATH = "";
 
     /**
      * Retrieve a ProductSearch object with hardcoded keys for testing
@@ -109,6 +109,9 @@ public class ProductSearchTest {
 
     @Test
     public void byUrl() {
+        // cannot test without testing key
+        if (APP_KEY.isEmpty())
+            return;
         ProductSearchResponse responseUrl;
         try {
             responseUrl = imageSearchByUrl(IMG_URL);
@@ -120,6 +123,9 @@ public class ProductSearchTest {
 
     @Test
     public void byFile() {
+        // cannot test without testing key
+        if (APP_KEY.isEmpty())
+            return;
         ProductSearchResponse responseFile;
         try {
             responseFile = imageSearchByFile(IMG_FILEPATH);
@@ -131,6 +137,9 @@ public class ProductSearchTest {
 
     @Test
     public void byCatalogueFieldMappings() {
+        // cannot test without testing key
+        if (APP_KEY.isEmpty())
+            return;
         ProductSearchResponse response;
         try {
             // get an initial response
@@ -174,6 +183,9 @@ public class ProductSearchTest {
      */
     // @Test
     public void casesWithDependencies() {
+        // cannot test without testing key
+        if (APP_KEY.isEmpty())
+            return;
         try {
             ProductSearchResponse responseUrl = imageSearchByUrl(IMG_URL);
             ProductSearchResponse responseFile = imageSearchByFile(IMG_FILEPATH);

@@ -1,6 +1,8 @@
 package com.visenze.productsearch;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.visenze.common.util.ViJsonMapper;
 import com.visenze.productsearch.response.ErrorMsg;
 import com.visenze.productsearch.response.Product;
@@ -12,6 +14,7 @@ import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +96,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      * @see ProductType
      */
     @JsonProperty("product_types")
-    private List<ProductType> product_types = new ArrayList();
+    private List<ProductType> product_types;
 
     /**
      * The list of product that are found based on searching parameter (visual
@@ -108,7 +111,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      * above.
      */
     @JsonProperty("result")
-    private List<Product> result = new ArrayList();
+    private List<Product> result;
 
     /**
      * A map of Key-to-Value pairs. The keys in  it represent ViSenze's keys
@@ -124,7 +127,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      * List of facets from filtering
      */
     @JsonProperty("facets")
-    private List<Facet> facets = new ArrayList();
+    private List<Facet> facets;
 
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
@@ -235,4 +238,33 @@ public class ProductSearchResponse extends ViJsonMapper {
      */
     public List<Product> getResult() { return result; }
 
+    /**
+     * Json reqires JsonCreator or default ctors, but since we clash with
+     * ViSearch's ProductTypes deserialization methods, we custom ours here.
+     */
+    @JsonSetter("product_types")
+    public void setProductTypes(JsonNode node) {
+        try {
+            if (node.isArray()) {
+                product_types = new ArrayList<ProductType>();
+                for (JsonNode n : node) {
+                    List<Integer> boxVals = null;
+                    String type = null;
+                    Float score = null;
+
+                    if (n.has("box")) {
+                        boxVals = mapper.convertValue(n.get("box"), new TypeReference<List<Integer>>() {});
+                    }
+                    if (n.has("type"))
+                        type = n.get("type").asText();
+                    if (n.has("score"))
+                        score = (float)n.get("score").asDouble();
+
+                    product_types.add(new ProductType(type, score, boxVals));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            throw new InternalViSearchException(e.getMessage());
+        }
+    }
 }
