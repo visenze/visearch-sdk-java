@@ -3,6 +3,7 @@ package com.visenze.common.util;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Optional;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
 
@@ -38,7 +39,15 @@ public class ViJsonAny extends ViJsonMapper{
     /**
      * The raw json node data.
      */
-    private JsonNode jsonNode;
+    private final JsonNode jsonNode;
+
+    /**
+     * Valid if this object represents a non-container type
+     */
+    private Optional<Object> data = Optional.absent();
+
+    private Class<?> dataType;
+    private Class<?> containerType;
 
     /**
      * Constructor, annotated with @JsonCreator for JSON to deserialize into
@@ -49,6 +58,8 @@ public class ViJsonAny extends ViJsonMapper{
     @JsonCreator
     public ViJsonAny(JsonNode jsonNode) {
         this.jsonNode = jsonNode;
+        this.dataType = null;
+        this.containerType = null;
     }
 
     /**
@@ -62,6 +73,8 @@ public class ViJsonAny extends ViJsonMapper{
         } catch(IOException e) {
             throw new InternalViSearchException(e.getMessage());
         }
+        this.dataType = null;
+        this.containerType = null;
     }
 
     /**
@@ -72,46 +85,204 @@ public class ViJsonAny extends ViJsonMapper{
     public JsonNode getJsonNode() { return jsonNode; }
 
     /**
-     * Check if this json node is an illegal/unsupported case (nested child).
+     * Get the node as String value.
      *
-     * @return If this node is illegal
+     * @return String, else null if value cannot be converted from raw to String
+     * or value was already converted from raw to something else.
      */
-    public Boolean isIllegal() {
-        if (jsonNode.isContainerNode()) {
-            for (JsonNode n : jsonNode) {
-                if (n.isContainerNode())
-                    return true;
-            }
+    public String asString() {
+        return tryGetValueAs(new TypeReference<String>() {}, String.class);
+    }
+
+    /**
+     * Get the node as Integer value.
+     *
+     * @return Integer, else null if value cannot be converted from raw to
+     * Integer or value was already converted from raw to something else.
+     */
+    public Integer asInteger() {
+        return tryGetValueAs(new TypeReference<Integer>() {}, Integer.class);
+    }
+
+    /**
+     * Get the node as Float value.
+     *
+     * @return Float, else null if value cannot be converted from raw to Float
+     * or value was already converted from raw to something else.
+     */
+    public Float asFloat() {
+        return tryGetValueAs(new TypeReference<Float>() {}, Float.class);
+    }
+
+    /**
+     * Get the node as Double value.
+     *
+     * @return Double, else null if value cannot be converted from raw to Double
+     * or value was already converted from raw to something else.
+     */
+    public Double asDouble() {
+        return tryGetValueAs(new TypeReference<Double>() {}, Double.class);
+    }
+
+    /**
+     * Get the node as List<String> value.
+     *
+     * @return List<String>, else null if value cannot be converted from raw to
+     * List<String> or value was already converted from raw to something else.
+     */
+    public List<String> asStringList() {
+        return tryGetListAs(new TypeReference<List<String>>() {}, String.class);
+    }
+
+    /**
+     * Get the node as List<Integer> value.
+     *
+     * @return List<Integer>, else null if value cannot be converted from raw to
+     * List<Integer> or value was already converted from raw to something else.
+     */
+    public List<Integer> asIntegerList() {
+        return tryGetListAs(new TypeReference<List<Integer>>() {}, Integer.class);
+    }
+
+    /**
+     * Get the node as List<Float> value.
+     *
+     * @return List<Float>, else null if value cannot be converted from raw to
+     * List<Float> or value was already converted from raw to something else.
+     */
+    public List<Float> asFloatList() {
+        return tryGetListAs(new TypeReference<List<Float>>() {}, Float.class);
+    }
+
+    /**
+     * Get the node as List<Double> value.
+     *
+     * @return List<Double>, else null if value cannot be converted from raw to
+     * List<Double> or value was already converted from raw to something else.
+     */
+    public List<Double> asDoubleList() {
+        return tryGetListAs(new TypeReference<List<Double>>() {}, Double.class);
+    }
+
+    /**
+     * Get the node as Map<String,String>  value.
+     *
+     * @return Map<String,String> , else null if value cannot be converted from
+     * raw to Map<String,String> or value was already converted from raw to
+     * something else.
+     */
+    public Map<String,String> asStringStringMap() {
+        return tryGetMapAs(new TypeReference<Map<String,String>>() {}, String.class);
+    }
+
+    /**
+     * Get the node as Map<String,Integer>  value.
+     *
+     * @return Map<String,Integer> , else null if value cannot be converted from
+     * raw to Map<String,Integer> or value was already converted from raw to
+     * something else.
+     */
+    public Map<String,Integer> asStringIntegerMap() {
+        return tryGetMapAs(new TypeReference<Map<String,Integer>>() {}, Integer.class);
+    }
+
+    /**
+     * Attempt to retrieve the raw data as data of type referenced. If the raw
+     * data is being converted for the first time, it will store the dataType
+     * for future reference to check if the retrieval is correct.
+     *
+     * @param type Type reference of how it wants to be retrieved
+     * @param dataType Data type clazz to validate with
+     *
+     * @return Null if failed to convert.
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T tryGetValueAs(TypeReference<T> type, Class<T> dataType) {
+        if (!isLoaded()) {
+            T validValue = loadAsValue(type);
+            if (validValue == null)
+                return null;
+            this.data = Optional.of((Object)validValue);
+            this.dataType = dataType;
         }
-        return false;
+        Object data = this.data.orNull();
+        if (data == null || this.dataType != dataType)
+            return null;
+        return (T)data;
     }
 
     /**
-     * Check if this json node is an array.
+     * Attempt to retrieve the raw data as data of type referenced. If the raw
+     * data is being converted for the first time, it will store the dataType
+     * for future reference to check if the retrieval is correct. List edition.
      *
-     * @return If this node is an array
+     * @param type Type reference of how it wants to be retrieved
+     * @param dataType Data type clazz to validate with
+     *
+     * @return Null if failed to convert.
      */
-    public Boolean isArray() {
-        return jsonNode.isArray();
+    @SuppressWarnings("unchecked")
+    private <T> List<T> tryGetListAs(TypeReference<List<T>> type, Class<T> dataType) {
+        if (!isLoaded()) {
+            List<T> validValues = loadAsArray(type);
+            if (validValues == null)
+                return null;
+            this.data = Optional.of((Object)validValues);
+            this.dataType = dataType;
+            this.containerType = List.class;
+        }
+        Object data = this.data.orNull();
+        if (data == null || this.dataType != dataType || this.containerType != List.class)
+            return null;
+        return (List<T>)data;
     }
 
     /**
-     * Check if this json node is the definite value (integer, boolean, etc) and
-     * not a container (list, map, etc) - 'leaf' node.
+     * Attempt to retrieve the raw data as data of type referenced. If the raw
+     * data is being converted for the first time, it will store the dataType
+     * for future reference to check if the retrieval is correct. Map edition.
      *
-     * @return If this node is a 'leaf' node
+     * @param type Type reference of how it wants to be retrieved
+     * @param dataType Data type clazz to validate with
+     *
+     * @return Null if failed to convert.
      */
-    public Boolean isValue() {
-        return jsonNode.isValueNode();
+    @SuppressWarnings("unchecked")
+    private <V> Map<String,V> tryGetMapAs(TypeReference<Map<String,V>> type, Class<V> dataType) {
+        if (!isLoaded()) {
+            Map<String,V> validValuePairs = loadAsMap(type);
+            if (validValuePairs == null)
+                return null;
+            this.data = Optional.of((Object)validValuePairs);
+            this.dataType = dataType;
+            this.containerType = Map.class;
+        }
+        Object data = this.data.orNull();
+        if (data == null || this.dataType != dataType || this.containerType != Map.class)
+            return null;
+        return (Map<String,V>)data;
     }
 
     /**
-     * Retrieve this node as a list of objects.
+     * Check if the data was already loaded.
      *
-     * @param <T> The return type of the list, usually String
-     * @return A list of object
+     * @return True if dataType was already set by a tryGet... method.
      */
-    public <T> List<T> getAsList(TypeReference<List<T>> type) {
+    private Boolean isLoaded() {
+        return this.dataType != null;
+    }
+
+    /**
+     * Get Object mapper to load as List
+     *
+     * @return List if its valid
+     */
+    private <T> List<T> loadAsArray(TypeReference<? extends List<T>> type) {
+        // validate node type
+        if (!this.jsonNode.isArray()) {
+            return null;
+        }
+        // try read as type
         try {
             return mapper.readValue(jsonNode.toString(), type);
         } catch(IOException e) {
@@ -119,29 +290,17 @@ public class ViJsonAny extends ViJsonMapper{
         }
     }
 
-
     /**
-     * Retrieve this node as a definite value - 'leaf' node.
+     * Get Object mapper to load as Map
      *
-     * @param <T> The return type of the object
-     * @return An object that represents the actual value
+     * @return Map if its valid
      */
-    public <T> T getAsValue(TypeReference<T> type) {
-        try {
-            return mapper.readValue(jsonNode.toString(), type);
-        } catch(IOException e) {
-            throw new InternalViSearchException(e.getMessage());
+    private <K,V> Map<K,V> loadAsMap(TypeReference<? extends Map<K,V>> type) {
+        // validate node type
+        if (!this.jsonNode.isContainerNode() || this.jsonNode.isArray()) {
+            return null;
         }
-    }
-
-    /**
-     * Retrieve this node as a Map container.
-     *
-     * @param <K> The key type
-     * @param <V> The value type
-     * @return The Map<Key, Value> of the object, usually Map<String, String>
-     */
-    public <K,V> Map<K,V> getAsMap(TypeReference<Map<K,V>> type) {
+        // try read as type
         try {
             return mapper.readValue(jsonNode.toString(), type);
         } catch(IOException e) {
@@ -149,5 +308,22 @@ public class ViJsonAny extends ViJsonMapper{
         }
     }
 
+    /**
+     * Get Object mapper to load as T
+     *
+     * @return T if its valid
+     */
+    private <T> T loadAsValue(TypeReference<T> type) {
+        // validate node type
+        if (!this.jsonNode.isValueNode()) {
+            return null;
+        }
+        // try read as type
+        try {
+            return mapper.readValue(jsonNode.toString(), type);
+        } catch(IOException e) {
+            throw new InternalViSearchException(e.getMessage());
+        }
+    }
 
 }

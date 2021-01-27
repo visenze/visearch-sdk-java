@@ -14,7 +14,6 @@ import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +95,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      * @see ProductType
      */
     @JsonProperty("product_types")
-    private List<ProductType> product_types;
+    private List<ProductType> productTypeList;
 
     /**
      * The list of product that are found based on searching parameter (visual
@@ -121,7 +120,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      * @see Product
      */
     @JsonProperty("catalog_fields_mapping")
-    private Map<String, String> catalog_fields_mapping;
+    private Map<String, String> catalogFieldsMapping;
 
     /**
      * List of facets from filtering
@@ -218,7 +217,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      * @return A list of product type
      */
     public List<ProductType> getProductTypes() {
-        return product_types;
+        return productTypeList;
     }
 
     /**
@@ -227,7 +226,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      * @return The, field name-to-field name, mapping
      */
     public Map<String, String> getCatalogFieldsMapping() {
-        return catalog_fields_mapping;
+        return catalogFieldsMapping;
     }
 
     /**
@@ -246,7 +245,7 @@ public class ProductSearchResponse extends ViJsonMapper {
     public void setProductTypes(JsonNode node) {
         try {
             if (node.isArray()) {
-                product_types = new ArrayList<ProductType>();
+                productTypeList = new ArrayList<ProductType>();
                 for (JsonNode n : node) {
                     List<Integer> boxVals = null;
                     String type = null;
@@ -260,7 +259,7 @@ public class ProductSearchResponse extends ViJsonMapper {
                     if (n.has("score"))
                         score = (float)n.get("score").asDouble();
 
-                    product_types.add(new ProductType(type, score, boxVals));
+                    productTypeList.add(new ProductType(type, score, boxVals));
                 }
             }
         } catch (IllegalArgumentException e) {

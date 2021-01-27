@@ -1,13 +1,20 @@
 package com.visenze.productsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Multimap;
+import com.visenze.productsearch.param.SearchByImageParam;
 import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
+import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 import org.junit.Test;
+import org.mockito.Matchers;
 
 import java.io.IOException;
 import java.util.List;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * <h1> Product Search Response Test </h1>
@@ -107,6 +114,14 @@ public class ProductSearchResponseTest {
 
     @Test
     public void testJsonDeserializeString() {
+        ViSearchHttpResponse mockRawResponse = mock(ViSearchHttpResponse.class);
+        ProductSearchResponse mockResponse = mock(ProductSearchResponse.class);
+        SearchByImageParam mockParams = mock(SearchByImageParam.class);
+        ProductSearch mockSdk = mock(ProductSearch.class);
+
+
+        when(mockSdk.imageSearch(mockParams)).thenReturn(mockResponse);
+
         try {
             ProductSearchResponse response = mapper.readValue(JSON_STRING_FIELDS, ProductSearchResponse.class);
             verifyStringFields(response);

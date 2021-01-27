@@ -294,10 +294,6 @@ public class BaseProductSearchParam {
         if (vaSdkVersion.isPresent())
             multimap.put(VA_SDK_VERSION, vaSdkVersion.get());
 
-        if (customParams.isPresent())
-            for (Map.Entry<String, String> entry : customParams.get().entrySet())
-                multimap.put(CUSTOM_MAP, entry.getKey() + COLON + entry.getValue());
-
         if (vaOs.isPresent())
             multimap.put(VA_OS, vaOs.get());
 
@@ -336,6 +332,10 @@ public class BaseProductSearchParam {
 
         if (vaS2.isPresent())
             multimap.put(VA_S2, vaS2.get());
+
+        if (customParams.isPresent())
+            for (Map.Entry<String, String> entry : customParams.get().entrySet())
+                multimap.put(CUSTOM_MAP, entry.getKey() + COLON + entry.getValue());
 
         return multimap;
     }

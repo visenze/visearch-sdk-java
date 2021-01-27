@@ -7,7 +7,6 @@ import com.visenze.productsearch.param.*;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;

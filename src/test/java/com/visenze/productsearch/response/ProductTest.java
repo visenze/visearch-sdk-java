@@ -1,6 +1,5 @@
 package com.visenze.productsearch.response;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visenze.common.util.ViJsonAny;
 import org.junit.Test;
@@ -56,15 +55,15 @@ public class ProductTest {
      */
     private void verifyUnknownOnly(Product info) {
         Map<String, ViJsonAny> mappedData = info.getData();
-        assertEquals(1234, mappedData.get("sku").getAsValue(new TypeReference<Integer>() {}).intValue());
-        assertEquals("PRODUCT_NAME", mappedData.get("product_name").getAsValue(new TypeReference<String>() {}));
+        assertEquals(1234, (int)mappedData.get("sku").asInteger());
+        assertEquals("PRODUCT_NAME", mappedData.get("product_name").asString());
 
-        Map<String, String> price_map = mappedData.get("sale_price").getAsValue(new TypeReference<Map<String,String>>() {});
+        Map<String, String> price_map = mappedData.get("sale_price").asStringStringMap();
         assertEquals(2, price_map.size());
         assertEquals("SGD", price_map.get("currency"));
         assertEquals("120", price_map.get("value"));
 
-        List<String> colors = mappedData.get("color").getAsList(new TypeReference<List<String>>() {});
+        List<String> colors = mappedData.get("color").asStringList();
         assertEquals(3, colors.size());
         assertEquals("blue", colors.get(0));
         assertEquals("red", colors.get(1));
