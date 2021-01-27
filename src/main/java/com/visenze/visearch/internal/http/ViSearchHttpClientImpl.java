@@ -24,6 +24,7 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -186,9 +187,13 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private ViSearchHttpResponse getResponse(HttpUriRequest request) {
+    protected ViSearchHttpResponse getResponse(HttpUriRequest request) {
         addAuthHeader(request);
         addOtherHeaders(request);
+        return getViSearchHttpResponse(request);
+    }
+
+    protected ViSearchHttpResponse getViSearchHttpResponse(HttpUriRequest request) {
         CloseableHttpResponse response = executeRequest(request);
         try {
             Map<String, String> headers = Maps.newHashMap();
@@ -198,9 +203,9 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                     headers.put(header.getName(), header.getValue());
                 }
             }
-            ViSearchHttpResponse response1 = new ViSearchHttpResponse(response);
-            response1.setHeaders(headers);
-            return response1;
+            ViSearchHttpResponse viSearchHttpResponse = new ViSearchHttpResponse(response);
+            viSearchHttpResponse.setHeaders(headers);
+            return viSearchHttpResponse;
         } catch (IllegalArgumentException e) {
             throw new InternalViSearchException(ResponseMessages.SYSTEM_ERROR, e);
             // throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +

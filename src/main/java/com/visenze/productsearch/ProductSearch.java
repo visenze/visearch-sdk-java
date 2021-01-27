@@ -7,6 +7,7 @@ import com.visenze.productsearch.param.*;
 import com.visenze.visearch.ClientConfig;
 import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +32,8 @@ public class ProductSearch {
     static final String DEFAULT_ENDPOINT = "https://search.visenze.com/v1";
     static final String DEFAULT_IMAGE_SEARCH_PATH = "/similar-products";
     static final String DEFAULT_VISUAL_SIMILAR_PATH = "/similar-products";
+    public static final String APP_KEY = "app_key";
+    public static final String PLACEMENT_ID = "placement_id";
 
     /**
      * App key, required field that also acts as authentication element
@@ -169,9 +172,8 @@ public class ProductSearch {
      * @return ViSearchHttpResponse http response of search results
      */
     public ProductSearchResponse imageSearch(SearchByImageParam params) {
-        Multimap<String, String> paramMap = params.toMultimap();
-        paramMap.put("app_key", this.appKey);
-        paramMap.put("placement_id", this.placementId.toString());
+        Multimap<String, String> paramMap = addAuth2Map(params);
+
         // test for image parameter validity
         final File imageFile = params.getImage();
         // attempt search using image file
@@ -196,12 +198,17 @@ public class ProductSearch {
     public ProductSearchResponse visualSimilarSearch(SearchByIdParam params) {
         // append the product id after the visual similar path
         final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
-        Multimap<String, String> paramMap = params.toMultimap();
-        paramMap.put("app_key", this.appKey);
-        paramMap.put("placement_id", this.placementId.toString());
+        addAuth2Map(params);
+
         return ProductSearchResponse.fromResponse(httpClient.get(path, params.toMultimap()));
     }
 
+    private Multimap<String, String> addAuth2Map(BaseProductSearchParam params) {
+        Multimap<String, String> paramMap = params.toMultimap();
+        paramMap.put(APP_KEY, this.appKey);
+        paramMap.put(PLACEMENT_ID, this.placementId.toString());
+        return paramMap;
+    }
 
 
 
