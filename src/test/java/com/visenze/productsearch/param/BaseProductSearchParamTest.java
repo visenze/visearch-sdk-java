@@ -23,21 +23,6 @@ public class BaseProductSearchParamTest {
     final String PARAM_DESIRED_SIMPLE = "app_key=APP_KEY&placement_id=1";
     final String PARAM_DESIRED_COMPLEX = "app_key=APP_KEY&placement_id=1&return_fields_mapping=true&score=true&text_filters=filter_field_2:filter_field_2_value&text_filters=filter_field_1:filter_field_1_value";
 
-    /**
-     * Sort List<NameValuePair> because multimap has no definite order to test
-     * with 1-to-1 match against the desired parameter queries.
-     */
-    private List<NameValuePair> sort(List<NameValuePair> unsorted) {
-        Comparator<NameValuePair> comp = new Comparator<NameValuePair>() {
-            @Override
-            public int compare(NameValuePair p1, NameValuePair p2) {
-                return p1.getName().compareTo(p2.getName());
-            }
-        };
-        Collections.sort(unsorted, comp);
-        return unsorted;
-    }
-
     @Test
     public void simpleParameters() {
         BaseProductSearchParam param = new BaseProductSearchParam();
@@ -75,5 +60,20 @@ public class BaseProductSearchParamTest {
         } catch (URISyntaxException e) {
             fail("Failed to create proper query");
         }
+    }
+
+    /**
+     * Sort List<NameValuePair> because multimap has no definite order to test
+     * with 1-to-1 match against the desired parameter queries.
+     */
+    private List<NameValuePair> sort(List<NameValuePair> unsorted) {
+        Comparator<NameValuePair> comp = new Comparator<NameValuePair>() {
+            @Override
+            public int compare(NameValuePair p1, NameValuePair p2) {
+                return p1.getName().compareTo(p2.getName());
+            }
+        };
+        Collections.sort(unsorted, comp);
+        return unsorted;
     }
 }

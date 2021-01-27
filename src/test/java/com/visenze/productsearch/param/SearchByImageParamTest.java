@@ -23,6 +23,20 @@ import static org.junit.Assert.*;
 public class SearchByImageParamTest {
     final String PARAM_DESIRED = "box=1,1,5,5&im_url=SOME_URL";
 
+    @Test
+    public void toMultimap() {
+        SearchByImageParam param = SearchByImageParam.newFromImageUrl("SOME_URL");
+        param.setBox(new Box(1,1,5,5));
+        List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
+        try{
+            URI uri = new URIBuilder("www.example.com").addParameters(paramUrl).build();
+            assertEquals(PARAM_DESIRED, uri.getQuery());
+        } catch (URISyntaxException e) {
+            fail("Failed to create proper query");
+        }
+
+    }
+
     /**
      * Sort List<NameValuePair> because multimap has no definite order to test
      * with 1-to-1 match against the desired parameter queries.
@@ -36,19 +50,5 @@ public class SearchByImageParamTest {
         };
         Collections.sort(unsorted, comp);
         return unsorted;
-    }
-
-    @Test
-    public void toMultimap() {
-        SearchByImageParam param = SearchByImageParam.newFromImageUrl("SOME_URL");
-        param.setBox(new Box(1,1,5,5));
-        List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
-        try{
-            URI uri = new URIBuilder("www.example.com").addParameters(paramUrl).build();
-            assertEquals(PARAM_DESIRED, uri.getQuery());
-        } catch (URISyntaxException e) {
-            fail("Failed to create proper query");
-        }
-
     }
 }

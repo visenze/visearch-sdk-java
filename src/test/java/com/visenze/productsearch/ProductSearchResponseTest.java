@@ -2,14 +2,16 @@ package com.visenze.productsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Multimap;
+import com.visenze.productsearch.http.ProductSearchHttpClientImpl;
 import com.visenze.productsearch.param.SearchByImageParam;
 import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.when;
  * @version 1.0
  * @since 21 Jan 2021
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ProductSearchResponseTest {
     final ObjectMapper mapper = new ObjectMapper();
     final String JSON_STRING_FIELDS = "{\"reqid\":\"123REQ\",\"status\":\"OK\",\"im_id\":\"456IMAGE.jpg\"}";
@@ -30,6 +33,47 @@ public class ProductSearchResponseTest {
     final String JSON_LIST_FIELDS = "{\"product_types\":[{\"type\":\"top\",\"box\":[1,2,3,4]},{\"type\":\"bottom\",\"box\":[5,6,7,8]}],\"result\":[{\"product_id\":\"RESULT_PRODUCT_ID_1\"},{\"product_id\":\"RESULT_PRODUCT_ID_2\"}]}";
     final String JSON_MAP_FIELDS = "{\"catalog_fields_mapping\":{\"product_id\":\"sku\",\"title\":\"product_name\"}}";
     final String JSON_OTHER_FIELDS = "{\"error\":{\"code\": 100,\"message\":\"Parameter required\"}}";
+
+
+    @Test
+    public void testJsonDeserializeString() {
+        verifyStringFields(GetMockedResponse(JSON_STRING_FIELDS));
+    }
+
+    @Test
+    public void testJsonDeserializeInteger() {
+        verifyIntFields(GetMockedResponse(JSON_INT_FIELDS));
+    }
+
+    @Test
+    public void testJsonDeserializeList() {
+        verifyListFields(GetMockedResponse(JSON_LIST_FIELDS));
+    }
+
+    @Test
+    public void testJsonDeserializeMap() {
+        verifyMapFields(GetMockedResponse(JSON_MAP_FIELDS));
+    }
+
+    @Test
+    public void testJsonDeserializeOther() {
+        verifyOtherFields(GetMockedResponse(JSON_OTHER_FIELDS));
+    }
+
+    @Test
+    public void testSimulatedResponse() {
+        String stringResponse = concatJsonString(JSON_STRING_FIELDS, JSON_INT_FIELDS);
+        stringResponse = concatJsonString(stringResponse, JSON_LIST_FIELDS);
+        stringResponse = concatJsonString(stringResponse, JSON_MAP_FIELDS);
+        stringResponse = concatJsonString(stringResponse, JSON_OTHER_FIELDS);
+
+        ProductSearchResponse response = GetMockedResponse(stringResponse);
+        verifyStringFields(response);
+        verifyIntFields(response);
+        verifyListFields(response);
+        verifyMapFields(response);
+        verifyOtherFields(response);
+    }
 
     /**
      * Combine two json format strings linearly
@@ -42,7 +86,8 @@ public class ProductSearchResponseTest {
         if (first.endsWith("}") && second.startsWith("{")) {
             return first.substring(0, first.length() - 1) + "," + second.substring(1);
         }
-        return null;
+        fail();
+        return first;
     }
 
     /**
@@ -50,7 +95,7 @@ public class ProductSearchResponseTest {
      *
      * @param response ProductSearchResponse to verify
      */
-    public void verifyStringFields(ProductSearchResponse response) {
+    private void verifyStringFields(ProductSearchResponse response) {
         assertEquals("123REQ",response.getRequestId());
         assertEquals("OK",response.getStatus());
         assertEquals("456IMAGE.jpg",response.getImageId());
@@ -61,7 +106,7 @@ public class ProductSearchResponseTest {
      *
      * @param response ProductSearchResponse to verify
      */
-    public void verifyIntFields(ProductSearchResponse response) {
+    private void verifyIntFields(ProductSearchResponse response) {
         assertEquals(1,response.getPage());
         assertEquals(10,response.getLimit());
         assertEquals(100,response.getTotal());
@@ -72,7 +117,7 @@ public class ProductSearchResponseTest {
      *
      * @param response ProductSearchResponse to verify
      */
-    public void verifyListFields(ProductSearchResponse response) {
+    private void verifyListFields(ProductSearchResponse response) {
         List<ProductType> types = response.getProductTypes();
         assertEquals(2, types.size());
         assertEquals("top", types.get(0).getType());
@@ -97,7 +142,7 @@ public class ProductSearchResponseTest {
      *
      * @param response ProductSearchResponse to verify
      */
-    public void verifyMapFields(ProductSearchResponse response) {
+    private void verifyMapFields(ProductSearchResponse response) {
         assertEquals("sku", response.getCatalogFieldsMapping().get("product_id"));
         assertEquals("product_name", response.getCatalogFieldsMapping().get("title"));
     }
@@ -107,102 +152,29 @@ public class ProductSearchResponseTest {
      *
      * @param response ProductSearchResponse to verify
      */
-    public void verifyOtherFields(ProductSearchResponse response) {
+    private void verifyOtherFields(ProductSearchResponse response) {
         assertEquals(100, response.getError().getCode().intValue());
         assertEquals("Parameter required", response.getError().getMessage());
     }
 
-    @Test
-    public void testJsonDeserializeString() {
-        ViSearchHttpResponse mockRawResponse = mock(ViSearchHttpResponse.class);
-        ProductSearchResponse mockResponse = mock(ProductSearchResponse.class);
-        SearchByImageParam mockParams = mock(SearchByImageParam.class);
-        ProductSearch mockSdk = mock(ProductSearch.class);
-
-
-        when(mockSdk.imageSearch(mockParams)).thenReturn(mockResponse);
-
-        try {
-            ProductSearchResponse response = mapper.readValue(JSON_STRING_FIELDS, ProductSearchResponse.class);
-            verifyStringFields(response);
-        }
-        catch (IOException e) {
-            fail("Failed to let JSON auto-deserialize");
-        }
-    }
-
-    @Test
-    public void testJsonDeserializeInteger() {
-        try {
-            ProductSearchResponse response = mapper.readValue(JSON_INT_FIELDS, ProductSearchResponse.class);
-            verifyIntFields(response);
-        }
-        catch (IOException e) {
-            fail("Failed to let JSON auto-deserialize");
-        }
-    }
-
-    @Test
-    public void testJsonDeserializeList() {
-        try {
-            ProductSearchResponse response = mapper.readValue(JSON_LIST_FIELDS, ProductSearchResponse.class);
-            verifyListFields(response);
-        }
-        catch (IOException e) {
-            fail("Failed to let JSON auto-deserialize");
-        }
-    }
-
-    @Test
-    public void testJsonDeserializeMap() {
-        try {
-            ProductSearchResponse response = mapper.readValue(JSON_MAP_FIELDS, ProductSearchResponse.class);
-            verifyMapFields(response);
-        }
-        catch (IOException e) {
-            fail("Failed to let JSON auto-deserialize");
-        }
-    }
-
-    @Test
-    public void testJsonDeserializeOther() {
-        try {
-            ProductSearchResponse response = mapper.readValue(JSON_OTHER_FIELDS, ProductSearchResponse.class);
-            verifyOtherFields(response);
-        }
-        catch (IOException e) {
-            fail("Failed to let JSON auto-deserialize");
-        }
-    }
-
-    @Test
-    public void testSimulatedResponse() {
-        try {
-            String stringResponse = concatJsonString(JSON_STRING_FIELDS, JSON_INT_FIELDS);
-            if (stringResponse == null)
-                fail("Bad Json string format");
-
-            stringResponse = concatJsonString(stringResponse, JSON_LIST_FIELDS);
-            if (stringResponse == null)
-                fail("Bad Json string format");
-
-            stringResponse = concatJsonString(stringResponse, JSON_MAP_FIELDS);
-            if (stringResponse == null)
-                fail("Bad Json string format");
-
-            stringResponse = concatJsonString(stringResponse, JSON_OTHER_FIELDS);
-            if (stringResponse == null)
-                fail("Bad Json string format");
-
-            ProductSearchResponse response = mapper.readValue(stringResponse, ProductSearchResponse.class);
-            verifyStringFields(response);
-            verifyIntFields(response);
-            verifyListFields(response);
-            verifyMapFields(response);
-            verifyOtherFields(response);
-        }
-        catch (IOException e) {
-            fail("Failed to let JSON auto-deserialize");
-        }
+    /**
+     * Get mocked response
+     *
+     * @param mockedBodyResponse JSON formatted response to be used as http body
+     * @return Mock response parsed
+     */
+    private ProductSearchResponse GetMockedResponse(String mockedBodyResponse) {
+        // create mock response to return the desired body
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(mockedBodyResponse);
+        // create mock http client, to skip any actual http calls/operations,
+        // just jump straight to returning mocked response
+        ProductSearchHttpClientImpl mockClient = mock(ProductSearchHttpClientImpl.class);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        // set ProductSearch to use the mock client for mock responses
+        SearchByImageParam dummyParams = SearchByImageParam.newFromImageUrl("dummy");
+        ProductSearch sdk = new ProductSearch.Builder("dummy",0).setApiEndPoint("dummy").build();
+        sdk.setHttpClient(mockClient);
+        return sdk.imageSearch(dummyParams);
     }
 }

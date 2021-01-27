@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
  * @since 08 Jan 2021
  */
 public class ProductSearch {
-
     /**
      * Default endpoint if none is set
      */
@@ -197,11 +196,17 @@ public class ProductSearch {
     public ProductSearchResponse visualSimilarSearch(SearchByIdParam params) {
         // append the product id after the visual similar path
         final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
-        addAuth2Map(params);
-
-        return ProductSearchResponse.fromResponse(httpClient.get(path, params.toMultimap()));
+        Multimap<String, String> paramMap = addAuth2Map(params);
+        return ProductSearchResponse.fromResponse(httpClient.get(path, paramMap));
     }
 
+    /**
+     * Add placement ID and app key to parameter for authentication since we
+     * do not use any in basic auth header
+     *
+     * @param params search parameters
+     * @return parameters with injected placement id and app key
+     */
     private Multimap<String, String> addAuth2Map(BaseProductSearchParam params) {
         Multimap<String, String> paramMap = params.toMultimap();
         paramMap.put(APP_KEY, this.appKey);
@@ -209,8 +214,14 @@ public class ProductSearch {
         return paramMap;
     }
 
-
-
-
+    /**
+     * Sets the http client to use. Meant to be used for testing - mocking, as
+     * the default created on construction is sufficient.
+     *
+     * @param httpClient  http client to use
+     */
+    public void setHttpClient(ProductSearchHttpClientImpl httpClient) {
+        this.httpClient = httpClient;
+    }
 
 }
