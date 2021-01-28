@@ -24,7 +24,6 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
