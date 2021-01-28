@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Multimap;
 import com.visenze.productsearch.http.ProductSearchHttpClientImpl;
 import com.visenze.productsearch.param.SearchByImageParam;
+import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
@@ -34,6 +35,61 @@ public class ProductSearchResponseTest {
     final String JSON_MAP_FIELDS = "{\"catalog_fields_mapping\":{\"product_id\":\"sku\",\"title\":\"product_name\"}}";
     final String JSON_OTHER_FIELDS = "{\"error\":{\"code\": 100,\"message\":\"Parameter required\"}}";
 
+
+    @Test
+    public void testGroupResponse() {
+        String json = "{\n" +
+                "    \"im_id\": \"20210128365611e0ec495d7dcb4a8488bb21b9f960d430bfc59.jpg\",\n" +
+                "    \"reqid\": \"017748e2c400644bd662db1d5c2eeb\",\n" +
+                "    \"page\": 1,\n" +
+                "    \"total\": 956,\n" +
+                "    \"group_by_key\": \"merchant_category\",\n" +
+                "    \"group_limit\": 1,\n" +
+                "    \"group_results\": [\n" +
+                "        {\n" +
+                "            \"group_by_value\": \"Clothing/Shirts\",\n" +
+                "            \"result\": [\n" +
+                "                {\n" +
+                "                    \"product_id\": \"pid1\",\n" +
+                "                    \"main_image_url\": \"http://d3vhkxmeglg6u9.cloudfront.net/img/p/2/2/9/1/2/1/229121.jpg\",\n" +
+                "                    \"data\": {\n" +
+                "                        \"product_name\": \"Sustainable Cotton The New Later Graphic Tee White\"\n" +
+                "                    },\n" +
+                "                    \"score\": 0.5553306\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"similar-products\",\n" +
+                "    \"product_types\": [\n" +
+                "        {\n" +
+                "            \"type\": \"top\",\n" +
+                "            \"score\": 0.912,\n" +
+                "            \"box\": [\n" +
+                "                132,\n" +
+                "                285,\n" +
+                "                682,\n" +
+                "                931\n" +
+                "            ],\n" +
+                "            \"attributes\": {}\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"result\": []\n" +
+                "}";
+
+        ProductSearchResponse response = GetMockedResponse(json);
+
+        List<GroupProductResult> groupProductResults = response.getGroupProductResults();
+        assertTrue(groupProductResults.size() == 1);
+
+        GroupProductResult g1 = groupProductResults.get(0);
+        assertEquals("Clothing/Shirts", g1.getGroupByValue());
+        assertEquals("pid1", g1.getProducts().get(0).getProductId());
+        assertEquals("Sustainable Cotton The New Later Graphic Tee White", g1.getProducts().get(0).getData().get("product_name").asString());
+
+
+    }
 
     @Test
     public void testJsonDeserializeString() {

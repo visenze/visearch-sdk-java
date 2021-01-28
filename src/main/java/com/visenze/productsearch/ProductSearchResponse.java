@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.visenze.common.util.ViJsonMapper;
 import com.visenze.productsearch.response.ErrorMsg;
+import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.Facet;
@@ -115,6 +116,10 @@ public class ProductSearchResponse extends ViJsonMapper {
      */
     @JsonProperty("result")
     private List<Product> result;
+
+
+    @JsonProperty("group_results")
+    private List<GroupProductResult> groupProductResults;
 
     /**
      * A map of Key-to-Value pairs. The keys in  it represent ViSenze's keys
@@ -240,6 +245,14 @@ public class ProductSearchResponse extends ViJsonMapper {
      * @see Product
      */
     public List<Product> getResult() { return result; }
+
+    public List<GroupProductResult> getGroupProductResults() {
+        return groupProductResults;
+    }
+
+    public void setGroupProductResults(List<GroupProductResult> groupProductResults) {
+        this.groupProductResults = groupProductResults;
+    }
 
     /**
      * Json reqires JsonCreator or default ctors, but since we clash with
