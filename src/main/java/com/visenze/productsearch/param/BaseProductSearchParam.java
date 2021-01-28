@@ -184,8 +184,7 @@ public class BaseProductSearchParam {
      *
      * @param page page number to use
      */
-    public void setPage(Integer page) {
-        // minimum 1
+    public void setPage(int page) {
         this.page = Optional.of(page < 1 ? 1 : page);
     }
 
@@ -264,15 +263,7 @@ public class BaseProductSearchParam {
      * @param filters A map of filters' key-value
      */
     public void setFilters(Map<String, String> filters) {
-        // don't allow empty map
-        if (filters == null || filters.isEmpty()) {
-            this.filters = Optional.absent();
-        }
-        // remove null entries
-        else {
-            // filters.entrySet().removeIf(entries -> entries.getValue() == null);
-            this.filters = Optional.of(filters);
-        }
+        this.filters = getOptionalMap(filters);
     }
 
     /**
@@ -291,15 +282,7 @@ public class BaseProductSearchParam {
      * @param textFilters filters for text search
      */
     public void setTextFilters(Map<String, String> textFilters) {
-        // dont allow empty map
-        if (textFilters == null || textFilters.isEmpty()) {
-            this.textFilters = Optional.absent();
-        }
-        // remove null entries
-        else {
-            // text_filters.entrySet().removeIf(entries -> entries.getValue() == null);
-            this.textFilters = Optional.of(textFilters);
-        }
+        this.textFilters = getOptionalMap(textFilters);
     }
 
     /**
@@ -320,13 +303,7 @@ public class BaseProductSearchParam {
      * @param attrsToGet list of attributes
      */
     public void setAttrsToGet(List<String> attrsToGet) {
-        // dont allow empty list
-        if (attrsToGet == null || attrsToGet.isEmpty()) {
-            this.attrsToGet = Optional.absent();
-        }
-        else {
-            this.attrsToGet = Optional.of(attrsToGet);
-        }
+        this.attrsToGet = getOptionalList(attrsToGet);
     }
 
     /**
@@ -344,12 +321,7 @@ public class BaseProductSearchParam {
      * @param facets list of facets
      */
     public void setFacets(List<String> facets) {
-        if (facets.isEmpty()) {
-            this.facets = Optional.absent();
-        }
-        else {
-            this.facets = Optional.of(facets);
-        }
+        this.facets = getOptionalList(facets);
     }
 
     /**
@@ -613,5 +585,21 @@ public class BaseProductSearchParam {
 
     public void setCustomParams(Map<String, String> customParams) {
         this.customParams = Optional.fromNullable(customParams);
+    }
+
+    private Optional<Map<String, String>> getOptionalMap(Map<String, String> map){
+        if (map == null || map.isEmpty()) {
+            return Optional.absent();
+        }
+
+        return Optional.of(map);
+    }
+
+    private Optional<List<String>> getOptionalList(List<String> list){
+        if (list == null || list.isEmpty()) {
+            return Optional.absent();
+        }
+
+        return Optional.of(list);
     }
 }
