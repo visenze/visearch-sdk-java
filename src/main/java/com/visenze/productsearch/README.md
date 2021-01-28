@@ -37,9 +37,12 @@ better understanding of Product Search APIs.
 
 | Term          | Summary                                                      |
 | ------------- | ------------------------------------------------------------ | 
-| App           | The type of product functionality that we enable             |
+| App           | Apps that perform certain search or recommendation capabilities, such as visual search, complete the look and so on.           |
 | Catalog       | Centralized data storage for customers to ingest their data  |
-| Placement     | Where the customers want to store their App                  |
+| Placement     | A location where the customer wants to use the app. They may split this according to their needs, e.g. via platform (ios, android, web), location on their platform (home page, pdp, etc)
+
+Each placement has to be associated with an integration type: API, SDK or widget. Reporting is also viewable by placement.
+                  |
 
 ## 2. APIs
 
@@ -186,20 +189,20 @@ class holds all the information regarding a single Product, with the most
 complicated member variable being 'data'. To better explain what this 'data'
 field is, take a look at the table below (database field_names):
 
-|ViSenze Catalog field keys|Client X's database keys
+|ViSenze pre-defined catalog fields|Client X's catalog original names
 |---|---|
-|product_id|sku|
-|main_image_url|medium_image|
+|product\_id|sku|
+|main\_image\_url|medium_image|
 |title|product_name|
-|product_url|link|
-|price|sale_price|
+|product\_url|link|
+|price|sale\_price|
 |brand|brand|
 
 The above table is a representation of how ViSenze's Catalog name its fields vs
 how Client X's database name its fields - both fields essentially mean the same 
 thing just named differently.
 
-> i.e. visenze_database["product_id"] == client_x_database["sku"]
+> i.e. visenze_database["product\_id"] == client_x_database["sku"]
 
 This table can be found in the [ProductSearchResponse.java](ProductSearchResponse.java):
 
@@ -252,7 +255,7 @@ for (Product product : products) {
    ViJsonAny price = product.getData().get(price_key);
    
    // retrieve as map
-   Map<String,String> originalData = price.getAsValue(new TypeReference<Map<String,String>>() {});
+   Map<String,String> originalData = price.asStringStringMap();
    originalData.get("currency"); // "SGD"
    originalData.get("value"); // "120"
 }
@@ -261,12 +264,12 @@ for (Product product : products) {
 As String:
 ```
 ViJsonAny any = ...
-String s = any.getAsValue(new TypeReference<String>(){});
+String s = any.asString();
 ```
 As List of Strings:
 ```
 ViJsonAny any = ...
-List<String> list = any.getAsValue(new TypeReference<List<String>>(){});
+List<String> list = any.asStringList();
 ```
 
 ## 4. Basic Search Parameters

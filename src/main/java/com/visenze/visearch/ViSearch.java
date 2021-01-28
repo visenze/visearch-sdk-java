@@ -1,7 +1,6 @@
 package com.visenze.visearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.*;
 import com.visenze.visearch.internal.http.ViSearchHttpClient;
 import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 
 
-public class ViSearch implements DataOperations, SearchOperations, TrackOperations {
+public class ViSearch implements DataOperations, SearchOperations {
 
     public static String VISEACH_JAVA_SDK_VERSION;
 
@@ -22,8 +21,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      * Default ViSearch API base endpoint.
      */
     private static final String DEFAULT_VISEARCH_ENDPOINT = "http://visearch.visenze.com";
-
-    private static final String DEFAULT_TRACKING_ENDPOINT = "http://track.visenze.com";
 
     static {
         // load properties values
@@ -40,12 +37,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     }
 
     /**
-     * Whether send a solution action event automatic when finished any solution API Calling.
-     * Default value: true;
-     */
-    private boolean enableAutoSolutionActionTrack=true;
-
-    /**
      * ViSearch Data API i.e. /insert, /insert/status, /remove.
      */
     private final DataOperations dataOperations;
@@ -54,11 +45,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      * ViSearch Search API i.e. /search, /uploadsearch, /colorsearch.
      */
     private final SearchOperations searchOperations;
-
-    /**
-     * ViSearch Tracking API
-     */
-    private final TrackOperations trackOperations;
 
     /**
      * Construct a ViSearch client to call the default ViSearch API endpoint with access key and secret key.
@@ -73,10 +59,9 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     /**
      * (For testing) stub constructor
      */
-    public ViSearch(DataOperations dataOperations, SearchOperations searchOperations, TrackOperations trackOperations) {
+    public ViSearch(DataOperations dataOperations, SearchOperations searchOperations) {
         this.dataOperations = dataOperations;
         this.searchOperations = searchOperations;
-        this.trackOperations = trackOperations;
     }
 
     /**
@@ -108,7 +93,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
         this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
         this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
-        this.trackOperations = new TrackOperationsImpl(new ViSearchHttpClientImpl(DEFAULT_TRACKING_ENDPOINT, accessKey, secretKey));
     }
 
     public ViSearch(String endpoint, String accessKey, String secretKey, ClientConfig clientConfig) {
@@ -125,7 +109,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new ViSearchModule());
         this.dataOperations = new DataOperationsImpl(viSearchHttpClient, objectMapper);
         this.searchOperations = new SearchOperationsImpl(viSearchHttpClient, objectMapper);
-        this.trackOperations = new TrackOperationsImpl(new ViSearchHttpClientImpl(DEFAULT_TRACKING_ENDPOINT, accessKey, secretKey));
     }
 
     /**
@@ -221,12 +204,7 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      */
     @Override
     public PagedSearchResult search(SearchParams searchParams) {
-        PagedSearchResult result = searchOperations.search(searchParams);
-        if(result!=null && enableAutoSolutionActionTrack) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("search", reqId);
-        }
-        return result;
+        return searchOperations.search(searchParams);
     }
 
     /**
@@ -236,10 +214,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
      */
     public PagedSearchResult recommendation(SearchParams searchParams) {
         PagedSearchResult result = searchOperations.recommendation(searchParams);
-        if(result!=null && enableAutoSolutionActionTrack) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("recommendation", reqId);
-        }
         return result;
     }
 
@@ -252,10 +226,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult colorSearch(ColorSearchParams colorSearchParams) {
         PagedSearchResult result = searchOperations.colorSearch(colorSearchParams);
-        if(result!=null && enableAutoSolutionActionTrack) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("colorsearch", reqId);
-        }
         return result;
     }
 
@@ -268,10 +238,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams) {
         PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams);
-        if(result!=null && enableAutoSolutionActionTrack) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("uploadsearch", reqId);
-        }
         return result;
     }
 
@@ -285,10 +251,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult discoverSearch(UploadSearchParams discoverSearchParams) {
         PagedSearchResult result = searchOperations.discoverSearch(discoverSearchParams);
-        if(result!=null && enableAutoSolutionActionTrack) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("discoversearch", reqId);
-        }
         return result;
     }
 
@@ -303,10 +265,6 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Deprecated
     public PagedSearchResult similarProductsSearch(UploadSearchParams similarProductsSearchParams) {
         PagedSearchResult result = searchOperations.similarProductsSearch(similarProductsSearchParams);
-        if(result!=null) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("similarproductssearch", reqId);
-        }
         return result;
     }
 
@@ -331,45 +289,7 @@ public class ViSearch implements DataOperations, SearchOperations, TrackOperatio
     @Override
     public PagedSearchResult matchSearch(MatchSearchParams matchSearchParams) {
         PagedSearchResult result = searchOperations.matchSearch(matchSearchParams);
-        if (result != null && enableAutoSolutionActionTrack) {
-            String reqId = result.getReqId();
-            this.sendSolutionActions("match", reqId);
-        }
         return result;
     }
 
-    /**
-     * send search actions after finishing search
-     * @param action
-     * @param reqId
-     */
-    private void sendSolutionActions(String action, String reqId){
-        if(reqId!=null && !reqId.equals("")) {
-            Map<String, String> map = Maps.newHashMap();
-            map.put("action", action);
-            map.put("reqid", reqId);
-            this.sendEvent(map);
-        }
-    }
-
-    /**
-     * Send tracking event to our tracking server
-     * @param params
-     */
-    @Override
-    public void sendEvent(Map<String, String> params) {
-        trackOperations.sendEvent(params);
-    }
-
-
-    /**
-     * Setting if need to send a solution action event automatic when finished any solution API Calling.
-     * If false,  you need call send event manually.
-     * @param enableAutoSolutionActionTrack
-     * @return
-     */
-    public ViSearch setEnableAutoSolutionActionTrack(boolean enableAutoSolutionActionTrack) {
-        this.enableAutoSolutionActionTrack = enableAutoSolutionActionTrack;
-        return this;
-    }
 }

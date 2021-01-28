@@ -63,6 +63,18 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
     protected Optional<List<DiversityQuery>> diversityQueries = Optional.absent();
 
+    /**
+     * Unique string that can identify the user/app, e.g. device serial number,
+     * advertising ID or a server generated string (reqid for first search) for
+     * analytics purposes.
+     */
+    protected Optional<String> vaUid = Optional.absent();
+
+    /**
+     * Analytics session ID
+     */
+    protected Optional<String> vaSid = Optional.absent();
+
 
     @SuppressWarnings("unchecked")
     public P setPage(Integer page) {
@@ -298,6 +310,39 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return diversityQueries.or(DEFAULT_DIVERSITY_QUERIES);
     }
 
+    public String getVaUid() {
+        return vaUid.orNull();
+    }
+
+    /**
+     * Set the unique identifier for client application/usage
+     *
+     * @param vaUid uid to identify this app
+     */
+    public void setVaUid(String vaUid) {
+        // dont allow empty string
+        this.vaUid = Optional.fromNullable(vaUid);
+    }
+
+    /**
+     * Get the session ID for analytics
+     *
+     * @return va_sid
+     */
+    public String getVaSid() {
+        return vaSid.orNull();
+    }
+
+    /**
+     * Set the session ID for analytics
+     *
+     * @param vaSid ID to identify this 'session' for analytics
+     */
+    public void setVaSid(String vaSid) {
+        // dont allow empty string
+        this.vaSid = Optional.fromNullable(vaSid);
+    }
+
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = LinkedHashMultimap.create();
 
@@ -350,6 +395,8 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
             map.put(SORT_GROUP_STRATEGY, getSortGroupStrategy());
         }
 
+        addAnalyticsParams(map);
+
         for (Map.Entry<String, String> entry : getFq().entrySet()) {
             map.put(FQ, entry.getKey() + COLON + entry.getValue());
         }
@@ -396,6 +443,14 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         }
 
         return map;
+    }
+
+    private void addAnalyticsParams(Multimap<String, String> map) {
+        if (vaUid.isPresent())
+            map.put(VA_UID, vaUid.get());
+
+        if (vaSid.isPresent())
+            map.put(VA_SID, vaSid.get());
     }
 
     private void updateMapParam(Multimap<String, String> paramMap, Optional<Map<String, String>> valueMapOptional, String key) {
