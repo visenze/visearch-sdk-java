@@ -1,9 +1,12 @@
 package com.visenze.productsearch.param;
 
-import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.*;
 
+import static com.visenze.common.util.MultimapUtil.putIfPresent;
+import static com.visenze.common.util.MultimapUtil.putList;
+import static com.visenze.common.util.MultimapUtil.putMap;
+import static com.visenze.common.util.MultimapUtil.setFilter;
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 
 import java.util.List;
@@ -13,16 +16,6 @@ import java.util.Map;
  * <h1> Common Request Parameters </h1>
  * This class holds all the common parameters required by the different search
  * APIs that we support.
- * <p>
- * The java class that wraps any search API should extend from this and only
- * define their own requirements. This class acts as an object that stores the
- * general parameters that is needed, whilst the derived class will store all
- * other specific API parameter requirements.
- * <p>
- * This class aims to be Json compatible by implementing Jackson annotation.
- * Since most variables are Optional<T>, we are going to use their getter method
- * to denote as JsonProperty. This class is only used for posting/sending param
- * and not loading/receiving it, hence no real need to prepare JsonSetters.
  *
  * @author Shannon Tan
  * @version 1.0
@@ -30,15 +23,11 @@ import java.util.Map;
  */
 public class BaseProductSearchParam {
 
-    /**
-     * The result page number. Default to 1. Max 50.
-     */
+    // The result page number. Default to 1. Max 50.
     protected Optional<Integer> page = Optional.absent();
 
     /**
-     * The number of results returned per page. The maximum number of results
-     * returned from the API is 100. (100 is chosen as this is also DynamoDB
-     * batch limit in 1 call)
+     * The number of results returned per page
      */
     protected Optional<Integer> limit = Optional.absent();
 
@@ -54,78 +43,32 @@ public class BaseProductSearchParam {
      */
     protected Optional<String> vaSid = Optional.absent();
 
-    /**
-     * For first release, can consider to narrow scope to only product_id,
-     * price, category, brand, original_price. Requires key to be in client's
-     * field name.
-     */
     protected Optional<Map<String, String>> filters = Optional.absent();
 
-    /**
-     * For fq for text search. Requires key to be in client's field name.
-     */
     protected Optional<Map<String, String>> textFilters = Optional.absent();
 
-    /**
-     * By default we should always show the common fields (title, product_id,
-     * main_image_url, title, price, product_url, brand). Requires to be in
-     * client's field name.
-     */
     protected Optional<List<String>> attrsToGet = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<List<String>> facets = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<Integer> facetsLimit = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<Boolean> facetsShowCount = Optional.absent();
 
-    /**
-     * Same as ViSearch. Requires to be in client's field name.
-     */
     protected Optional<String> sortBy = Optional.absent();
 
-    /**
-     * Same as ViSearch. Requires to be in client's field name.
-     */
     protected Optional<String> groupBy = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<Integer> groupLimit = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<String> sortGroupBy = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<String> sortGroupStrategy = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<Boolean> score = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<Float> scoreMin = Optional.absent();
 
-    /**
-     * Same as ViSearch
-     */
     protected Optional<Float> scoreMax = Optional.absent();
 
     /**
@@ -143,10 +86,6 @@ public class BaseProductSearchParam {
      */
     protected Optional<String> vaSdk = Optional.absent();
 
-    /**
-     * Store our tracking SDK’s version e.g. “1.0.2”. For debugging if there is
-     * a bug and also to measure SDK popularity/usage
-     */
     protected Optional<String> vaSdkVersion = Optional.absent();
 
     /**
@@ -154,79 +93,37 @@ public class BaseProductSearchParam {
      */
     protected Optional<Map<String, String>> customParams = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaOs = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaOsv = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaDeviceBrand = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaDeviceModel = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaAppBundleId = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaAppName = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaAppVersion = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaAaid = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaDidmd5 = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<Number> vaN1 = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<Number> vaN2 = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaS1 = Optional.absent();
 
-    /**
-     * Visenze Analytics fields
-     */
     protected Optional<String> vaS2 = Optional.absent();
-
 
     public Multimap<String, String> toMultimap() {
         Multimap<String, String> multimap = HashMultimap.create();
 
         putIfPresent(multimap, page, PAGE);
         putIfPresent(multimap, limit, LIMIT);
-        putIfPresent(multimap, vaUid, VA_UID);
-        putIfPresent(multimap, vaSid, VA_SID);
         putIfPresent(multimap, facetsLimit, FACETS_LIMIT);
         putIfPresent(multimap, facetsShowCount, FACETS_SHOW_COUNT);
         putIfPresent(multimap, sortBy, SORT_BY);
@@ -241,18 +138,30 @@ public class BaseProductSearchParam {
         putIfPresent(multimap, returnFieldsMapping, RETURN_FIELDS_MAPPING);
         putIfPresent(multimap, returnImageS3Url, RETURN_IMAGE_S3_URL);
 
+        setAnalyticsParams(multimap);
+
+        putList(multimap, attrsToGet, ATTRS_TO_GET);
+        putList(multimap, facets, FACETS);
+
+        setFilter(multimap, filters, FILTERS);
+        setFilter(multimap, textFilters, TEXT_FILTERS);
+
+        putMap(multimap, customParams);
+
+        return multimap;
+    }
+
+    private void setAnalyticsParams(Multimap<String, String> multimap) {
+        putIfPresent(multimap, vaUid, VA_UID);
+        putIfPresent(multimap, vaSid, VA_SID);
         putIfPresent(multimap, vaSdk, VA_SDK);
         putIfPresent(multimap, vaSdkVersion, VA_SDK_VERSION);
-
         putIfPresent(multimap, vaOs, VA_OS);
         putIfPresent(multimap, vaOsv, VA_OSV);
-
         putIfPresent(multimap, vaDeviceBrand, VA_DEVICE_BRAND);
         putIfPresent(multimap, vaDeviceModel, VA_DEVICE_MODEL);
-
         putIfPresent(multimap, vaAppBundleId, VA_APP_BUNDLE_ID);
         putIfPresent(multimap, vaAppName, VA_APP_NAME);
-
         putIfPresent(multimap, vaAppVersion, VA_APP_VERSION);
         putIfPresent(multimap, vaAaid, VA_AAID);
         putIfPresent(multimap, vaDidmd5, VA_DIDMD5);
@@ -260,45 +169,8 @@ public class BaseProductSearchParam {
         putIfPresent(multimap, vaN2, VA_N2);
         putIfPresent(multimap, vaS1, VA_S1);
         putIfPresent(multimap, vaS2, VA_S2);
-
-
-        if (attrsToGet.isPresent()) {
-            for (String val : attrsToGet.get())
-                multimap.put(ATTR_TO_GET, val);
-        }
-
-        if (facets.isPresent()) {
-            for (String val : facets.get())
-                multimap.put(FACETS, val);
-        }
-
-        setFilter(multimap, filters, FILTERS);
-        setFilter(multimap, textFilters, TEXT_FILTERS);
-
-        if (customParams.isPresent()) {
-            for (Map.Entry<String, String> entry : customParams.get().entrySet()) {
-                multimap.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        return multimap;
     }
 
-    private void putIfPresent(Multimap<String, String> multimap, Optional opt, String key) {
-        if (opt.isPresent())
-            multimap.put(key, String.valueOf(opt.get()));
-    }
-
-
-    private void setFilter(Multimap<String, String> mapToUpdate,
-                           Optional<Map<String,String>> data,
-                           String key) {
-        if (data.isPresent()) {
-            Map<String,String> map = data.get();
-            for (Map.Entry<String, String> entry : map.entrySet())
-                mapToUpdate.put(key, entry.getKey() + COLON + entry.getValue());
-        }
-    }
 
     /**
      * Get the result page number
