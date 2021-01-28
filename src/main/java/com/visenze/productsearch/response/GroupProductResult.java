@@ -1,8 +1,7 @@
 package com.visenze.productsearch.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by Hung on 28/1/21.
