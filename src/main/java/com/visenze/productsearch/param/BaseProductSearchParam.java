@@ -219,28 +219,48 @@ public class BaseProductSearchParam {
      */
     protected Optional<String> vaS2 = Optional.absent();
 
-    /**
-     * Convert this object into it's multimap representation.
-     *
-     * @return multimap of class variable to value
-     */
+
     public Multimap<String, String> toMultimap() {
         Multimap<String, String> multimap = HashMultimap.create();
 
-        if (page.isPresent())
-            multimap.put(PAGE, page.get().toString());
+        putIfPresent(multimap, page, PAGE);
+        putIfPresent(multimap, limit, LIMIT);
+        putIfPresent(multimap, vaUid, VA_UID);
+        putIfPresent(multimap, vaSid, VA_SID);
+        putIfPresent(multimap, facetsLimit, FACETS_LIMIT);
+        putIfPresent(multimap, facetsShowCount, FACETS_SHOW_COUNT);
+        putIfPresent(multimap, sortBy, SORT_BY);
+        putIfPresent(multimap, groupBy, GROUP_BY);
+        putIfPresent(multimap, groupLimit, GROUP_LIMIT);
+        putIfPresent(multimap, sortGroupBy, SORT_GROUP_BY);
+        putIfPresent(multimap, sortGroupStrategy, SORT_GROUP_STRATEGY);
 
-        if (limit.isPresent())
-            multimap.put(LIMIT, limit.get().toString());
+        putIfPresent(multimap, score, SCORE);
+        putIfPresent(multimap, scoreMin, SCORE_MIN);
+        putIfPresent(multimap, scoreMax, SCORE_MAX);
+        putIfPresent(multimap, returnFieldsMapping, RETURN_FIELDS_MAPPING);
+        putIfPresent(multimap, returnImageS3Url, RETURN_IMAGE_S3_URL);
 
-        if (vaUid.isPresent())
-            multimap.put(VA_UID, vaUid.get());
+        putIfPresent(multimap, vaSdk, VA_SDK);
+        putIfPresent(multimap, vaSdkVersion, VA_SDK_VERSION);
 
-        if (vaSid.isPresent())
-            multimap.put(VA_SID, vaSid.get());
+        putIfPresent(multimap, vaOs, VA_OS);
+        putIfPresent(multimap, vaOsv, VA_OSV);
 
-        putMap(multimap, filters, FILTERS);
-        putMap(multimap, textFilters, TEXT_FILTERS);
+        putIfPresent(multimap, vaDeviceBrand, VA_DEVICE_BRAND);
+        putIfPresent(multimap, vaDeviceModel, VA_DEVICE_MODEL);
+
+        putIfPresent(multimap, vaAppBundleId, VA_APP_BUNDLE_ID);
+        putIfPresent(multimap, vaAppName, VA_APP_NAME);
+
+        putIfPresent(multimap, vaAppVersion, VA_APP_VERSION);
+        putIfPresent(multimap, vaAaid, VA_AAID);
+        putIfPresent(multimap, vaDidmd5, VA_DIDMD5);
+        putIfPresent(multimap, vaN1, VA_N1);
+        putIfPresent(multimap, vaN2, VA_N2);
+        putIfPresent(multimap, vaS1, VA_S1);
+        putIfPresent(multimap, vaS2, VA_S2);
+
 
         if (attrsToGet.isPresent()) {
             for (String val : attrsToGet.get())
@@ -252,99 +272,30 @@ public class BaseProductSearchParam {
                 multimap.put(FACETS, val);
         }
 
-        if (facetsLimit.isPresent())
-            multimap.put(FACETS_LIMIT, facetsLimit.get().toString());
+        setFilter(multimap, filters, FILTERS);
+        setFilter(multimap, textFilters, TEXT_FILTERS);
 
-        if (facetsShowCount.isPresent())
-            multimap.put(FACETS_SHOW_COUNT, facetsShowCount.get().toString());
-
-        if (sortBy.isPresent())
-            multimap.put(SORT_BY, sortBy.get());
-
-        if (groupBy.isPresent())
-            multimap.put(GROUP_BY, groupBy.get());
-
-        if (groupLimit.isPresent())
-            multimap.put(GROUP_LIMIT, groupLimit.get().toString());
-
-        if (sortGroupBy.isPresent())
-            multimap.put(SORT_GROUP_BY, sortGroupBy.get());
-
-        if (sortGroupStrategy.isPresent())
-            multimap.put(SORT_GROUP_STRATEGY, sortGroupStrategy.get());
-
-        if (score.isPresent())
-            multimap.put(SCORE, score.get().toString());
-
-        if (scoreMin.isPresent())
-            multimap.put(SCORE_MIN, scoreMin.get().toString());
-
-        if (scoreMax.isPresent())
-            multimap.put(SCORE_MAX, scoreMax.get().toString());
-
-        if (returnFieldsMapping.isPresent())
-            multimap.put(RETURN_FIELDS_MAPPING, returnFieldsMapping.get().toString());
-
-        if (returnImageS3Url.isPresent())
-            multimap.put(RETURN_IMAGE_S3_URL, returnImageS3Url.get().toString());
-
-        if (vaSdk.isPresent())
-            multimap.put(VA_SDK, vaSdk.get());
-
-        if (vaSdkVersion.isPresent())
-            multimap.put(VA_SDK_VERSION, vaSdkVersion.get());
-
-        if (vaOs.isPresent())
-            multimap.put(VA_OS, vaOs.get());
-
-        if (vaOsv.isPresent())
-            multimap.put(VA_OSV, vaOsv.get());
-
-        if (vaDeviceBrand.isPresent())
-            multimap.put(VA_DEVICE_BRAND, vaDeviceBrand.get());
-
-        if (vaDeviceModel.isPresent())
-            multimap.put(VA_DEVICE_MODEL, vaDeviceModel.get());
-
-        if (vaAppBundleId.isPresent())
-            multimap.put(VA_APP_BUNDLE_ID, vaAppBundleId.get());
-
-        if (vaAppName.isPresent())
-            multimap.put(VA_APP_NAME, vaAppName.get());
-
-        if (vaAppVersion.isPresent())
-            multimap.put(VA_APP_VERSION, vaAppVersion.get());
-
-        if (vaAaid.isPresent())
-            multimap.put(VA_AAID, vaAaid.get());
-
-        if (vaDidmd5.isPresent())
-            multimap.put(VA_DIDMD5, vaDidmd5.get());
-
-        if (vaN1.isPresent())
-            multimap.put(VA_N1, vaN1.get().toString());
-
-        if (vaN2.isPresent())
-            multimap.put(VA_N2, vaN2.get().toString());
-
-        if (vaS1.isPresent())
-            multimap.put(VA_S1, vaS1.get());
-
-        if (vaS2.isPresent())
-            multimap.put(VA_S2, vaS2.get());
-
-        if (customParams.isPresent())
-            for (Map.Entry<String, String> entry : customParams.get().entrySet())
-                multimap.put(CUSTOM_MAP, entry.getKey() + COLON + entry.getValue());
+        if (customParams.isPresent()) {
+            for (Map.Entry<String, String> entry : customParams.get().entrySet()) {
+                multimap.put(entry.getKey(), entry.getValue());
+            }
+        }
 
         return multimap;
     }
 
-    private void putMap(Multimap<String, String> mapToUpdate,
-                        Optional<Map<String,String>> data,
-                        String key) {
+    private void putIfPresent(Multimap<String, String> multimap, Optional opt, String key) {
+        if (opt.isPresent())
+            multimap.put(key, String.valueOf(opt.get()));
+    }
+
+
+    private void setFilter(Multimap<String, String> mapToUpdate,
+                           Optional<Map<String,String>> data,
+                           String key) {
         if (data.isPresent()) {
-            for (Map.Entry<String, String> entry : data.get().entrySet())
+            Map<String,String> map = data.get();
+            for (Map.Entry<String, String> entry : map.entrySet())
                 mapToUpdate.put(key, entry.getKey() + COLON + entry.getValue());
         }
     }
@@ -354,7 +305,6 @@ public class BaseProductSearchParam {
      *
      * @return page number
      */
-    @JsonProperty("page")
     public Integer getPage() { return page.orNull(); }
 
     /**
@@ -372,7 +322,6 @@ public class BaseProductSearchParam {
      *
      * @return Number of results per page
      */
-    @JsonProperty("limit")
     public Integer getLimit() {
         return limit.orNull();
     }
@@ -391,7 +340,6 @@ public class BaseProductSearchParam {
      *
      * @return vaUid
      */
-    @JsonProperty("va_uid")
     public String getVaUid() {
         return vaUid.orNull();
     }
@@ -411,7 +359,6 @@ public class BaseProductSearchParam {
      *
      * @return va_sid
      */
-    @JsonProperty("va_sid")
     public String getVaSid() {
         return vaSid.orNull();
     }
@@ -431,7 +378,6 @@ public class BaseProductSearchParam {
      *
      * @return filters to use
      */
-    @JsonProperty("filters")
     public Map<String, String> getFilters() {
         return filters.orNull();
     }
@@ -462,7 +408,6 @@ public class BaseProductSearchParam {
      *
      * @return filters for text search
      */
-    @JsonProperty("text_filters")
     public Map<String, String> getTextFilters() {
         return textFilters.orNull();
     }
@@ -491,7 +436,6 @@ public class BaseProductSearchParam {
      *
      * @return list of attributes
      */
-    @JsonProperty("attrs_to_get")
     public List<String> getAttrsToGet() {
         return attrsToGet.orNull();
     }
@@ -518,7 +462,6 @@ public class BaseProductSearchParam {
      *
      * @return list of facets
      */
-    @JsonProperty("facets")
     public List<String> getFacets() {
         return facets.orNull();
     }
@@ -542,7 +485,6 @@ public class BaseProductSearchParam {
      *
      * @return facets' limit
      */
-    @JsonProperty("facets_limit")
     public Integer getFacetsLimit() {
         return facetsLimit.orNull();
     }
@@ -561,7 +503,6 @@ public class BaseProductSearchParam {
      *
      * @return should facet show count
      */
-    @JsonProperty("facets_show_count")
     public Boolean getFacetsShowCount() {
         return facetsShowCount.orNull();
     }
@@ -580,7 +521,6 @@ public class BaseProductSearchParam {
      *
      * @return criteria of 'sort by'
      */
-    @JsonProperty("sort_by")
     public String getSortBy() {
         return sortBy.orNull();
     }
@@ -599,7 +539,6 @@ public class BaseProductSearchParam {
      *
      * @return criteria of 'group by'
      */
-    @JsonProperty("group_by")
     public String getGroupBy() {
         return groupBy.orNull();
     }
@@ -618,7 +557,6 @@ public class BaseProductSearchParam {
      *
      * @return group limit
      */
-    @JsonProperty("group_limit")
     public Integer getGroupLimit() {
         return groupLimit.orNull();
     }
@@ -637,7 +575,6 @@ public class BaseProductSearchParam {
      *
      * @return criteria for 'sort group by'
      */
-    @JsonProperty("sort_group_by")
     public String getSortGroupBy() {
         return sortGroupBy.orNull();
     }
@@ -656,7 +593,6 @@ public class BaseProductSearchParam {
      *
      * @return strategy
      */
-    @JsonProperty("sort_group_strategy")
     public String getSortGroupStrategy() {
         return sortGroupStrategy.orNull();
     }
@@ -675,7 +611,6 @@ public class BaseProductSearchParam {
      *
      * @return score
      */
-    @JsonProperty("score")
     public Boolean getShowScore() {
         return score.orNull();
     }
@@ -694,7 +629,6 @@ public class BaseProductSearchParam {
      *
      * @return minimum score
      */
-    @JsonProperty("score_min")
     public Float getScoreMin() {
         return scoreMin.orNull();
     }
@@ -713,7 +647,6 @@ public class BaseProductSearchParam {
      *
      * @return maximum score
      */
-    @JsonProperty("score_max")
     public Float getScoreMax() {
         return scoreMax.orNull();
     }
@@ -732,7 +665,6 @@ public class BaseProductSearchParam {
      *
      * @return if result should return fields mapping
      */
-    @JsonProperty("return_fields_mapping")
     public Boolean getReturnFieldsMapping() {
         return returnFieldsMapping.orNull();
     }
@@ -754,7 +686,6 @@ public class BaseProductSearchParam {
      *
      * @return if result should return s3 url for images
      */
-    @JsonProperty("return_image_s3_url")
     public Boolean getReturnImageS3Url() {
         return returnImageS3Url.orNull();
     }
@@ -773,7 +704,6 @@ public class BaseProductSearchParam {
      *
      * @return which sdk is this
      */
-    @JsonProperty("va_sdk")
     public String getVaSdk() {
         return vaSdk.orNull();
     }
@@ -792,7 +722,6 @@ public class BaseProductSearchParam {
      *
      * @return sdk version
      */
-    @JsonProperty("va_sdk_version")
     public String getVaSdkVersion() {
         return vaSdkVersion.orNull();
     }
@@ -806,21 +735,10 @@ public class BaseProductSearchParam {
         this.vaSdkVersion = Optional.fromNullable(vaSdkVersion);
     }
 
-    /**
-     * Get the custom mapping data
-     *
-     * @return custom_map
-     */
-    @JsonProperty("custom_map")
     public Map<String, String> getCustomParams() {
         return customParams.orNull();
     }
 
-    /**
-     * Set the custom mapping data
-     *
-     * @param customParams custom data
-     */
     public void setCustomParams(Map<String, String> customParams) {
         this.customParams = Optional.fromNullable(customParams);
     }

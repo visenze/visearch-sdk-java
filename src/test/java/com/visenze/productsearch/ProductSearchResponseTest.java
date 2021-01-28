@@ -30,7 +30,7 @@ public class ProductSearchResponseTest {
     final ObjectMapper mapper = new ObjectMapper();
     final String JSON_STRING_FIELDS = "{\"reqid\":\"123REQ\",\"status\":\"OK\",\"im_id\":\"456IMAGE.jpg\"}";
     final String JSON_INT_FIELDS = "{\"page\":1,\"limit\":10,\"total\":100}";
-    final String JSON_LIST_FIELDS = "{\"product_types\":[{\"type\":\"top\",\"box\":[1,2,3,4]},{\"type\":\"bottom\",\"box\":[5,6,7,8]}],\"result\":[{\"product_id\":\"RESULT_PRODUCT_ID_1\"},{\"product_id\":\"RESULT_PRODUCT_ID_2\"}]}";
+    final String JSON_LIST_FIELDS = "{\"product_types\":[{\"type\":\"top\",\"score\":0.912,\"box\":[1,2,3,4]},{\"type\":\"bottom\",\"box\":[5,6,7,8],\"score\":0}],\"result\":[{\"product_id\":\"RESULT_PRODUCT_ID_1\"},{\"product_id\":\"RESULT_PRODUCT_ID_2\"}]}";
     final String JSON_MAP_FIELDS = "{\"catalog_fields_mapping\":{\"product_id\":\"sku\",\"title\":\"product_name\"}}";
     final String JSON_OTHER_FIELDS = "{\"error\":{\"code\": 100,\"message\":\"Parameter required\"}}";
 
@@ -125,11 +125,13 @@ public class ProductSearchResponseTest {
         assertEquals(2, types.get(0).getBox().get(1).intValue());
         assertEquals(3, types.get(0).getBox().get(2).intValue());
         assertEquals(4, types.get(0).getBox().get(3).intValue());
+        assertEquals(String.valueOf(types.get(0).getScore()) , "0.912");
         assertEquals("bottom", types.get(1).getType());
         assertEquals(5, types.get(1).getBox().get(0).intValue());
         assertEquals(6, types.get(1).getBox().get(1).intValue());
         assertEquals(7, types.get(1).getBox().get(2).intValue());
         assertEquals(8, types.get(1).getBox().get(3).intValue());
+        assertEquals(types.get(1).getScore() , Float.valueOf(0f));
 
         List<Product> info = response.getResult();
         assertEquals(2, info.size());

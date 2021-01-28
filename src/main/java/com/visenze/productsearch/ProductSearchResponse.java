@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.BOX;
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.SCORE;
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.TYPE;
+
 /**
  * <h1> ProductSearchResponse </h1>
  * This class acts as a parser to help determine and break down the response
@@ -245,25 +249,34 @@ public class ProductSearchResponse extends ViJsonMapper {
     public void setProductTypes(JsonNode node) {
         try {
             if (node.isArray()) {
-                productTypeList = new ArrayList<ProductType>();
+                ArrayList<ProductType> list = new ArrayList<ProductType>();
                 for (JsonNode n : node) {
-                    List<Integer> boxVals = null;
-                    String type = null;
-                    Float score = null;
-
-                    if (n.has("box")) {
-                        boxVals = mapper.convertValue(n.get("box"), new TypeReference<List<Integer>>() {});
-                    }
-                    if (n.has("type"))
-                        type = n.get("type").asText();
-                    if (n.has("score"))
-                        score = (float)n.get("score").asDouble();
-
-                    productTypeList.add(new ProductType(type, score, boxVals));
+                    ProductType productType = parseProductType(n);
+                    list.add(productType);
                 }
+
+                productTypeList = list;
             }
         } catch (IllegalArgumentException e) {
             throw new InternalViSearchException(e.getMessage());
         }
+    }
+
+    private ProductType parseProductType(JsonNode n) {
+        List<Integer> boxVals = null;
+        String type = null;
+        Float score = null;
+
+        if (n.has(BOX)) {
+            boxVals = mapper.convertValue(n.get(BOX), new TypeReference<List<Integer>>() {});
+        }
+
+        if (n.has(TYPE))
+            type = n.get(TYPE).asText();
+
+        if (n.has(SCORE))
+            score = (float)n.get(SCORE).asDouble();
+
+        return new ProductType(type, score, boxVals);
     }
 }

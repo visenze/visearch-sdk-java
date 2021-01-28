@@ -123,22 +123,32 @@ public class SearchByImageParam extends BaseProductSearchParam {
                     box.get().getY2()
             );
         }
+
         if (imUrl != null) {
             multimap.put(IM_URL, imUrl);
         }
+
         if (imId != null) {
             multimap.put(IM_ID, imId);
         }
+
+        setDetectionParams(multimap);
+
+        return multimap;
+    }
+
+    private void setDetectionParams(Multimap<String, String> multimap) {
         if (detection.isPresent()) {
             multimap.put(DETECTION, detection.get());
         }
+
         if (detectionLimit.isPresent()) {
             multimap.put(DETECTION_LIMIT, detectionLimit.get().toString());
         }
+
         if (detectionSensitivity.isPresent()) {
             multimap.put(DETECTION_SENSITIVITY, detectionSensitivity.get());
         }
-        return multimap;
     }
 
     /**

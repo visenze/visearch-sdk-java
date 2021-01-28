@@ -80,7 +80,6 @@ public abstract class ViSearchHttpConstants {
     public static final String VA_SDK_VERSION = "va_sdk_version";
     public static final String PLACEMENT_ID = "placement_id";
     public static final String APP_KEY = "app_key";
-    public static final String CUSTOM_MAP = "custom_map";
 
     // analytics
     public static final String VA_OS = "va_os";
@@ -96,5 +95,7 @@ public abstract class ViSearchHttpConstants {
     public static final String VA_N2 = "va_n2";
     public static final String VA_S1 = "va_s1";
     public static final String VA_S2 = "va_s2";
+
+    public static final String TYPE = "type";
 
 }
