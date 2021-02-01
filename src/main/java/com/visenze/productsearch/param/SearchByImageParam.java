@@ -73,6 +73,7 @@ public class SearchByImageParam extends BaseProductSearchParam {
      * Method to get constructor using image URL
      *
      * @param imageUrl url to the image
+     * @return image param
      */
     public static SearchByImageParam newFromImageUrl(String imageUrl) {
         SearchByImageParam param = new SearchByImageParam();
@@ -86,6 +87,7 @@ public class SearchByImageParam extends BaseProductSearchParam {
      * Method to get constructor using image ID
      *
      * @param imageId id of the image
+     * @return image param
      */
     public static SearchByImageParam newFromImageId(String imageId) {
         SearchByImageParam param = new SearchByImageParam();
@@ -99,6 +101,7 @@ public class SearchByImageParam extends BaseProductSearchParam {
      * Method to get constructor using an image file
      *
      * @param imageFile File of the Image
+     * @return image param
      */
     public static SearchByImageParam newFromImageFile(File imageFile) {
         SearchByImageParam param = new SearchByImageParam();

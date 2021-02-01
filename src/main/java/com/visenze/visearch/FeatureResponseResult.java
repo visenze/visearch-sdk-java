@@ -47,6 +47,7 @@ public class FeatureResponseResult extends ResponseBase {
 
     /**
      * Get the request id to identify this request.
+     * @return request ID
      */
     public String getReqId(){
         if(this.headers!=null && this.headers.containsKey(ViSearchHttpConstants.X_LOG_ID)){

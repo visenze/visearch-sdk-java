@@ -16,13 +16,13 @@ import java.util.Map;
  * This class is created to handle multiple typed JSON objects that do not have
  * nested/children json tree nodes. "Multiple typed JSON objects" are those that
  * hope to be deserialized as:
- *      Map<String, String OR List<String> OR Map<String, String>>
+ *      Map (String, String) OR List (String) OR Map (String, String)
  *
  * The statement above is only possible in Java if it is denoted as:
- *      Map<String, Object>, or with Json support, Map<String, JsonNode>
+ *      Map ( String, Object), or with Json support, Map(String, JsonNode)
  *
- * The initial intention is to be a replacement for Map<String, JsonNode>:
- *      Map<String, ViJsonAny>
+ * The initial intention is to be a replacement for Map(String, JsonNode):
+ *      Map(String, ViJsonAny)
  *
  * With this wrapper class, you could check if it is a definite value or an
  * array before extracting it as that type. The same functionality can be
@@ -125,50 +125,50 @@ public class ViJsonAny extends ViJsonMapper{
     }
 
     /**
-     * Get the node as List<String> value.
+     * Get the node as List of String value.
      *
-     * @return List<String>, else null if value cannot be converted from raw to
-     * List<String> or value was already converted from raw to something else.
+     * @return List (String), else null if value cannot be converted from raw to
+     * List String or value was already converted from raw to something else.
      */
     public List<String> asStringList() {
         return tryGetListAs(new TypeReference<List<String>>() {}, String.class);
     }
 
     /**
-     * Get the node as List<Integer> value.
+     * Get the node as List of Integer value.
      *
-     * @return List<Integer>, else null if value cannot be converted from raw to
-     * List<Integer> or value was already converted from raw to something else.
+     * @return List of Integer, else null if value cannot be converted from raw to
+     * List of Integer or value was already converted from raw to something else.
      */
     public List<Integer> asIntegerList() {
         return tryGetListAs(new TypeReference<List<Integer>>() {}, Integer.class);
     }
 
     /**
-     * Get the node as List<Float> value.
+     * Get the node as List of Float value.
      *
-     * @return List<Float>, else null if value cannot be converted from raw to
-     * List<Float> or value was already converted from raw to something else.
+     * @return Float list, else null if value cannot be converted from raw to
+     * float list or value was already converted from raw to something else.
      */
     public List<Float> asFloatList() {
         return tryGetListAs(new TypeReference<List<Float>>() {}, Float.class);
     }
 
     /**
-     * Get the node as List<Double> value.
+     * Get the node as List of Double value.
      *
-     * @return List<Double>, else null if value cannot be converted from raw to
-     * List<Double> or value was already converted from raw to something else.
+     * @return List of Double, else null if value cannot be converted from raw to
+     * Double list or value was already converted from raw to something else.
      */
     public List<Double> asDoubleList() {
         return tryGetListAs(new TypeReference<List<Double>>() {}, Double.class);
     }
 
     /**
-     * Get the node as Map<String,String>  value.
+     * Get the node as Map (String,String)  value.
      *
-     * @return Map<String,String> , else null if value cannot be converted from
-     * raw to Map<String,String> or value was already converted from raw to
+     * @return Map  , else null if value cannot be converted from
+     * raw to Map or value was already converted from raw to
      * something else.
      */
     public Map<String,String> asStringStringMap() {
@@ -176,10 +176,10 @@ public class ViJsonAny extends ViJsonMapper{
     }
 
     /**
-     * Get the node as Map<String,Integer>  value.
+     * Get the node as Map (String, Integer)  value.
      *
-     * @return Map<String,Integer> , else null if value cannot be converted from
-     * raw to Map<String,Integer> or value was already converted from raw to
+     * @return Map (String,Integer) , else null if value cannot be converted from
+     * raw to Map (String,Integer) or value was already converted from raw to
      * something else.
      */
     public Map<String,Integer> asStringIntegerMap() {

@@ -148,6 +148,7 @@ public class ProductSearchResponse extends ViJsonMapper {
      *
      * @param response The ViHttpResponse received by calling ViHttpClient
      *                 api functions.
+     * @return Product Search response
      */
     public static ProductSearchResponse fromResponse(ViSearchHttpResponse response) {
         try {
@@ -230,7 +231,7 @@ public class ProductSearchResponse extends ViJsonMapper {
     }
 
     /**
-     * Get the mapping of ViSenze to Client fields. ViSenze->Client.
+     * Get the mapping of ViSenze to Client fields.
      *
      * @return The, field name-to-field name, mapping
      */
@@ -255,8 +256,10 @@ public class ProductSearchResponse extends ViJsonMapper {
     }
 
     /**
-     * Json reqires JsonCreator or default ctors, but since we clash with
+     * Json requires JsonCreator or default ctors, but since we clash with
      * ViSearch's ProductTypes deserialization methods, we custom ours here.
+     * @param node Json node
+     *
      */
     @JsonSetter("product_types")
     public void setProductTypes(JsonNode node) {
