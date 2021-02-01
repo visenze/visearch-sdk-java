@@ -43,7 +43,11 @@ public enum ResponseMessages {
     DOWNLOAD_IMAGE_TIMEOUT(1106, "Timeout while downloading image, please try again later."),
     NO_IMAGE_INDEXED(1107, "App doesn't have any images."),
     INVALID_IMAGE_SOURCE(1108, "Must provide either an image File, InputStream of the image, " +
-            "or a valid image url to perform upload search")
+            "or a valid image url to perform upload search"),
+    PARSE_EXCEPTION(1109, "Invalid/Bad/Unsupported format for parsing."),
+    MISSING_IMAGE_ID(1110,"Missing im_id." ),
+    MISSING_IMAGE_FILE(1110,"Missing im_file." ),
+    MISSING_IMAGE_URL_OR_IMAGE_ID(1111,"Missing im_url or im_id." )
     ;
 
     private int code;

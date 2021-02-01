@@ -39,11 +39,10 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
 
     public static final Charset UTF8_CHARSET = Charset.forName("utf-8") ;
 
-    private final String endpoint;
+    protected final String endpoint;
     CloseableHttpClient httpClient;
-    private final ClientConfig clientConfig;
-    private final UsernamePasswordCredentials credentials;
-
+    protected final ClientConfig clientConfig;
+    protected final UsernamePasswordCredentials credentials;
 
     public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey, CloseableHttpClient httpClient) {
         this.endpoint = endpoint;
@@ -111,14 +110,14 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return getResponse(request);
     }
 
-    private HttpUriRequest buildGetRequest(String url, Multimap<String, String> params) {
+    protected HttpUriRequest buildGetRequest(String url, Multimap<String, String> params) {
         return RequestBuilder
                 .get()
                 .setUri(buildGetUri(url, mapToNameValuePair(params)))
                 .build();
     }
 
-    private static URI buildGetUri(String url, List<NameValuePair> nameValuePairList) {
+    protected static URI buildGetUri(String url, List<NameValuePair> nameValuePairList) {
         try {
             return new URIBuilder(url).addParameters(nameValuePairList).build();
         } catch (URISyntaxException e) {
@@ -128,7 +127,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private static URI buildPostUri(String url) {
+    protected static URI buildPostUri(String url) {
         try {
             return new URIBuilder(url).build();
         } catch (URISyntaxException e) {
@@ -138,7 +137,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private HttpUriRequest buildPostRequest(String url, Multimap<String, String> params) {
+    protected HttpUriRequest buildPostRequest(String url, Multimap<String, String> params) {
         return RequestBuilder
                 .post()
                 .setUri(buildPostUri(url))
@@ -147,13 +146,13 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                 .build();
     }
 
-    private static HttpUriRequest buildMultipartPostRequest(String url, HttpEntity entity) {
+    protected static HttpUriRequest buildMultipartPostRequest(String url, HttpEntity entity) {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(entity);
         return httpPost;
     }
 
-    private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
+    protected static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, File file) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setCharset(UTF8_CHARSET);
         for (Map.Entry<String, String> entry : params.entries()) {
@@ -164,7 +163,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
+    protected static HttpUriRequest buildPostRequestForImage(String url, Multimap<String, String> params, InputStream inputStream, String filename) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), UTF8_CHARSET);
         for (Map.Entry<String, String> entry : params.entries()) {
@@ -175,7 +174,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private HttpUriRequest buildPostRequestForImFeature(String url, Multimap<String, String> params, String imFeature) {
+    protected HttpUriRequest buildPostRequestForImFeature(String url, Multimap<String, String> params, String imFeature) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         ContentType contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), UTF8_CHARSET);
         for (Map.Entry<String, String> entry : params.entries()) {
@@ -187,9 +186,13 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         return buildMultipartPostRequest(url, entity);
     }
 
-    private ViSearchHttpResponse getResponse(HttpUriRequest request) {
+    protected ViSearchHttpResponse getResponse(HttpUriRequest request) {
         addAuthHeader(request);
         addOtherHeaders(request);
+        return getViSearchHttpResponse(request);
+    }
+
+    protected ViSearchHttpResponse getViSearchHttpResponse(HttpUriRequest request) {
         CloseableHttpResponse response = executeRequest(request);
         try {
             Map<String, String> headers = Maps.newHashMap();
@@ -199,9 +202,9 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
                     headers.put(header.getName(), header.getValue());
                 }
             }
-            ViSearchHttpResponse response1 = new ViSearchHttpResponse(response);
-            response1.setHeaders(headers);
-            return response1;
+            ViSearchHttpResponse viSearchHttpResponse = new ViSearchHttpResponse(response);
+            viSearchHttpResponse.setHeaders(headers);
+            return viSearchHttpResponse;
         } catch (IllegalArgumentException e) {
             throw new InternalViSearchException(ResponseMessages.SYSTEM_ERROR, e);
             // throw new NetworkException("A network error occurred when reading response from the ViSearch endpoint. " +
@@ -209,7 +212,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private void addAuthHeader(HttpUriRequest request) {
+    protected void addAuthHeader(HttpUriRequest request) {
         try {
             request.addHeader(new BasicScheme().authenticate(credentials, request, null));
         } catch (AuthenticationException e) {
@@ -219,7 +222,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private void addOtherHeaders(HttpUriRequest request) {
+    protected void addOtherHeaders(HttpUriRequest request) {
         // add user agent header
         String userAgent = clientConfig.getUserAgent();
         if (!userAgent.equals(ClientConfig.DEFAULT_USER_AGENT)) {
@@ -228,10 +231,10 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         request.addHeader(HttpHeaders.USER_AGENT, userAgent);
 
         // add x-request-with header
-        request.addHeader(ViSearchHttpConstants.X_REQUESTED_WITH, clientConfig.DEFAULT_XREQUEST_WITH);
+        request.addHeader(ViSearchHttpConstants.X_REQUESTED_WITH, ClientConfig.DEFAULT_XREQUEST_WITH);
     }
 
-    private CloseableHttpResponse executeRequest(HttpUriRequest request) {
+    protected CloseableHttpResponse executeRequest(HttpUriRequest request) {
         try {
             return httpClient.execute(request);
         } catch (IOException e) {
@@ -241,7 +244,7 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
         }
     }
 
-    private List<NameValuePair> mapToNameValuePair(Multimap<String, ?> params) {
+    public static List<NameValuePair> mapToNameValuePair(Multimap<String, ?> params) {
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         for (Map.Entry<String, ?> entry : params.entries()) {
             pairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));

@@ -23,14 +23,14 @@
       - 5.3 [Multiple Product Search](#53-multiple-product-search)
 	  - 5.4 [Search by Color](#54-search-by-color)
 	  - 5.5 [Visually Similar Recommendations In Multiple Objects Index Mode](#55-visually-similar-recommendations-in-multiple-objects-index-mode)
+	  - 5.6 [Product Search](#56-product-search)
  6. [Search Results](#6-search-results)
  7. [Advanced Search Parameters](#7-advanced-search-parameters)
 	  - 7.1 [Retrieving Metadata](#71-retrieving-metadata)
 	  - 7.2 [Filtering Results](#72-filtering-results)
 	  - 7.3 [Result Score](#73-result-score)
 	  - 7.4 [Deduplication](#74-deduplication)
- 8. [Event Tracking](#8-event-tracking)
-
+ 
 
 ---
 
@@ -359,7 +359,9 @@ MatchSearchParams params = new MatchSearchParams("im_name");
 PagedSearchResult searchResult = client.matchSearch(params);
 ```
 
+### 5.6 Product Search
 
+Refer to this [Product Search readme](src/main/java/com/visenze/productsearch/README.md).
 
 ## 6. Search Results
 
@@ -505,32 +507,3 @@ for (ImageResult imageResult : imageResults) {
 }
 ```
 
-## 8. Event Tracking
-
-ViSearch provides tracking solution to understand how your customer interact with the search results. In addition, to improve subsequent search quality, it is recommended to send user actions when they interact with the results.
-
-User action can be sent through our Java SDK as:
-
-```java
-Map<String,String> params = new HashMap<String,String>();
-params.put("action","click");
-params.put("reqid","543577997719293952");
-params.put("im_name","xyool-12-9");
-PagedSearchResult searchResult = client.sendEvent(params);
-```
-
-* `reqid` is the request id of the search request related with this action. This `reqid` can be obtained from the search response object.
-    ```java
-    SearchParams params = ....
-    // Conducting find similar
-    PagedSearchResult searchResult = client.search(params);
-    // Get reqid from previous solution result.
-    String reqId = searchResult.getReqId()
-    ```
-
-* `action` is the action type of this event. Below is the list of actions we currently support:
-    - "click" when user clicks to view the details of the product
-    - "add_to_cart" when user adds the product to cart
-    - "add_to_wishlist" when user addes the product to wishlist
-
-* `im_name` is the name of the image which the user has clicked on. im_name is the unique identifier of the indexed image, in this case the searched result.

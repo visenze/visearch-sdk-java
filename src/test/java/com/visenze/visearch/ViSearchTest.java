@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.visenze.visearch.internal.DataOperations;
 import com.visenze.visearch.internal.SearchOperations;
-import com.visenze.visearch.internal.TrackOperations;
 import com.visenze.visearch.internal.http.ViSearchHttpClientImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,14 +39,12 @@ public class ViSearchTest {
     private ViSearch visearch;
     private DataOperations dataOperations;
     private SearchOperations searchOperations;
-    private TrackOperations trackOperations;
 
     @Before
     public void setup() throws Exception {
         dataOperations = mock(DataOperations.class);
         searchOperations = mock(SearchOperations.class);
-        trackOperations = mock(TrackOperations.class);
-        visearch = new ViSearch(dataOperations, searchOperations, trackOperations);
+        visearch = new ViSearch(dataOperations, searchOperations);
     }
 
     @Test
@@ -157,15 +154,6 @@ public class ViSearchTest {
         verify(searchOperations).discoverSearch(similarProductsSearchParams);
     }
 
-    @Test
-    public void testSendEvent() {
-        Map<String,String> params = new HashMap<String,String>();
-        params.put("action","click");
-        params.put("reqid","543577997719293952");
-        params.put("im_name","xyool-12-9");
-        visearch.sendEvent(params);
-        verify(trackOperations).sendEvent(params);
-    }
 
     @Test
     public void testWithoutAutoSolutionAction() throws InterruptedException {
@@ -180,15 +168,10 @@ public class ViSearchTest {
                 return result;
             }
         });
+
         // with auto solution action
         visearch.uploadSearch(uploadSearchParams);
-        verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
-        visearch.setEnableAutoSolutionActionTrack(false);
 
-        // without auto solution action
-        reset(trackOperations);
-        visearch.uploadSearch(uploadSearchParams);
-        verify(trackOperations, new Times(0)).sendEvent(any(Map.class));
     }
 
     @Test
@@ -204,7 +187,6 @@ public class ViSearchTest {
         });
         // with auto solution action
         visearch.discoverSearch(uploadSearchParams);
-        verify(trackOperations, new Times(1)).sendEvent(any(Map.class));
     }
 
     @Test
