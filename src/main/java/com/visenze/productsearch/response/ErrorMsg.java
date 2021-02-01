@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ErrorMsg {
 
     /**
-     * Http status code, 200, 400, 404 etc.
+     * error code
      */
     @JsonProperty("code")
     private Integer code;
@@ -33,7 +33,7 @@ public class ErrorMsg {
     private String message;
 
     /**
-     * Get the http code.
+     * Get the error code.
      *
      * @return Http status code
      */

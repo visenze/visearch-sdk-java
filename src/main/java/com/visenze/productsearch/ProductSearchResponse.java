@@ -89,7 +89,7 @@ public class ProductSearchResponse extends ViJsonMapper {
 
     /**
      * Error message and code if the request was not successful
-     *      i.e. when status is “warning” or “fail”.
+     *      i.e. when status is “fail”.
      */
     @JsonProperty("error")
     private ErrorMsg error;
