@@ -35,7 +35,7 @@ public class ErrorMsg {
     /**
      * Get the error code.
      *
-     * @return Http status code
+     * @return error code
      */
     public Integer getCode() {
         return code;

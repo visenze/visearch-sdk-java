@@ -54,7 +54,7 @@ public class ProductSearchResponse extends ViJsonMapper {
     private String requestId;
 
     /**
-     * The request status, either “OK”, “warning”, or “fail”.
+     * The request status, either “OK”, or “fail”.
      */
     @JsonProperty("status")
     private String status;
@@ -167,7 +167,7 @@ public class ProductSearchResponse extends ViJsonMapper {
     }
 
     /**
-     * The request status, either “OK”, “warning”, or “fail”.
+     * The request status, either “OK”, or “fail”.
      *
      * @return String status of the request sent
      */
