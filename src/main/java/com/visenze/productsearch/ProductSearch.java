@@ -27,9 +27,9 @@ public class ProductSearch {
     /**
      * Default endpoint if none is set
      */
-    static final String DEFAULT_ENDPOINT = "https://search.visenze.com/v1";
-    static final String DEFAULT_IMAGE_SEARCH_PATH = "/similar-products";
-    static final String DEFAULT_VISUAL_SIMILAR_PATH = "/similar-products";
+    static final String DEFAULT_ENDPOINT = "https://search.visenze.com";
+    static final String DEFAULT_IMAGE_SEARCH_PATH = "/v1/product/search_by_image";
+    static final String DEFAULT_VISUAL_SIMILAR_PATH = "/v1/product/search_by_id";
     public static final String APP_KEY = "app_key";
     public static final String PLACEMENT_ID = "placement_id";
 
