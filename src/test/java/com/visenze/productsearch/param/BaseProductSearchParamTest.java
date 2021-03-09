@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  * @since 21 Jan 2021
  */
 public class BaseProductSearchParamTest {
-    final String END_POINT = "https://search-dev.visenze.com/v1/similar-products?";
+    final String END_POINT = "https://search-dev.visenze.com/v1/product/search_by_image?";
     final String PARAM_DESIRED_SIMPLE = "app_key=APP_KEY&placement_id=1";
     final String PARAM_DESIRED_COMPLEX = "app_key=APP_KEY&placement_id=1&return_fields_mapping=true&score=true&text_filters=filter_field_2:filter_field_2_value&text_filters=filter_field_1:filter_field_1_value";
 

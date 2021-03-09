@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  * @since 22 Jan 2021
  */
 public class ProductSearchTest {
-    final String END_POINT = "https://search-dev.visenze.com/v1";
+    final String END_POINT = "https://search-dev.visenze.com";
     final String APP_KEY = "";
     final Integer PLACEMENT_ID = 1000;
     final String IMG_URL = "https://img.ltwebstatic.com/images2_pi/2019/09/09/15679978193855617200_thumbnail_900x1199.jpg";
