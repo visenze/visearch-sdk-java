@@ -71,6 +71,8 @@ public class BaseProductSearchParam {
 
     protected Optional<Float> scoreMax = Optional.absent();
 
+    protected Optional<Float> colorRelWeight = Optional.absent();
+
     /**
      * Default to false, if set to true, will return catalog fields mappings
      */
@@ -80,6 +82,10 @@ public class BaseProductSearchParam {
      * Return S3 URL (the copy) of the main product image
      */
     protected Optional<Boolean> returnImageS3Url = Optional.absent();
+
+    protected Optional<Boolean> dedup = Optional.absent();
+
+    protected Optional<Float> dedupThreshold = Optional.absent();
 
     /**
      * Which SDK e.g. Javascript, Swift, Android, Java (for server side)
@@ -135,8 +141,11 @@ public class BaseProductSearchParam {
         putIfPresent(multimap, score, SCORE);
         putIfPresent(multimap, scoreMin, SCORE_MIN);
         putIfPresent(multimap, scoreMax, SCORE_MAX);
+        putIfPresent(multimap, colorRelWeight, COLOR_REL_WEIGHT);
         putIfPresent(multimap, returnFieldsMapping, RETURN_FIELDS_MAPPING);
         putIfPresent(multimap, returnImageS3Url, RETURN_IMAGE_S3_URL);
+        putIfPresent(multimap, dedup, DEDUP);
+        putIfPresent(multimap, dedupThreshold, DEDUP_SCORE_THRESHOLD);
 
         setAnalyticsParams(multimap);
 
@@ -185,7 +194,7 @@ public class BaseProductSearchParam {
      * @param page page number to use
      */
     public void setPage(int page) {
-        this.page = Optional.of(page < 1 ? 1 : page);
+        this.page = Optional.of(Math.max(page, 1));
     }
 
     /**
@@ -500,9 +509,21 @@ public class BaseProductSearchParam {
      *
      * @param scoreMax maximum score
      */
-    public void setScoreMax(Float scoreMax) {
-        this.scoreMax = Optional.fromNullable(scoreMax);
-    }
+    public void setScoreMax(Float scoreMax) { this.scoreMax = Optional.fromNullable(scoreMax); }
+
+    /**
+     * Get colorRelWeight
+     *
+     * @return colorRelWeight
+     */
+    public Float getColorRelWeight() { return colorRelWeight.orNull(); }
+
+    /**
+     * Set the coloRelWeight
+     *
+     * @param weight 0 to disable color relevance
+     */
+    public void setColorRelWeight(Float weight) { this.colorRelWeight = Optional.fromNullable(weight); }
 
     /**
      * Get if returns fields mapping
@@ -544,40 +565,60 @@ public class BaseProductSearchParam {
     }
 
     /**
+     * Get dedup
+     *
+     * @return dedup
+     */
+    public Boolean getDedup() { return dedup.orNull(); }
+
+    /**
+     * Set dedup
+     *
+     * @param b If dedup should be used
+     */
+    public void setDedup(Boolean b) { this.dedup = Optional.fromNullable(b); }
+
+    /**
+     * Get dedupThreshold
+     *
+     * @return dedupThreshold
+     */
+    public Float getDedupThreshold() { return dedupThreshold.orNull(); }
+
+    /**
+     * Set dedupThreshold
+     *
+     * @param thresh dedup threshold value
+     */
+    public void setDedupThreshold(Float thresh) { this.dedupThreshold = Optional.fromNullable(thresh); }
+
+    /**
      * Get sdk using the api
      *
      * @return which sdk is this
      */
-    public String getVaSdk() {
-        return vaSdk.orNull();
-    }
+    public String getVaSdk() { return vaSdk.orNull(); }
 
     /**
      * Set sdk using the api
      *
      * @param vaSdk which sdk is this
      */
-    public void setVaSdk(String vaSdk) {
-        this.vaSdk = Optional.fromNullable(vaSdk);
-    }
+    public void setVaSdk(String vaSdk) { this.vaSdk = Optional.fromNullable(vaSdk); }
 
     /**
      * Get sdk version
      *
      * @return sdk version
      */
-    public String getVaSdkVersion() {
-        return vaSdkVersion.orNull();
-    }
+    public String getVaSdkVersion() { return vaSdkVersion.orNull(); }
 
     /**
      * Set sdk version
      *
      * @param vaSdkVersion sdk version
      */
-    public void setVaSdkVersion(String vaSdkVersion) {
-        this.vaSdkVersion = Optional.fromNullable(vaSdkVersion);
-    }
+    public void setVaSdkVersion(String vaSdkVersion) { this.vaSdkVersion = Optional.fromNullable(vaSdkVersion); }
 
     public Map<String, String> getCustomParams() {
         return customParams.orNull();
@@ -591,7 +632,6 @@ public class BaseProductSearchParam {
         if (map == null || map.isEmpty()) {
             return Optional.absent();
         }
-
         return Optional.of(map);
     }
 
@@ -599,7 +639,6 @@ public class BaseProductSearchParam {
         if (list == null || list.isEmpty()) {
             return Optional.absent();
         }
-
         return Optional.of(list);
     }
 }

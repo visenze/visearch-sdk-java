@@ -10,6 +10,7 @@ import com.visenze.visearch.internal.InternalViSearchException;
 import java.io.File;
 
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
+import static com.visenze.common.util.MultimapUtil.putIfPresent;
 
 /**
  * <h1> SBI Parameters </h1>
@@ -61,6 +62,15 @@ public class SearchByImageParam extends BaseProductSearchParam {
      * Parameter to set the detection to more or less sensitive. Default is low.
      */
     protected Optional<String> detectionSensitivity = Optional.absent();
+
+    /**
+     * Defaulted to false, if this is set to true, API will return all objects
+     */
+    protected Optional<Boolean> searchAllObjects = Optional.absent();
+
+
+    // protected Optional<> point = Optional.absent();
+
 
     /**
      * Hide default constructor
@@ -136,6 +146,8 @@ public class SearchByImageParam extends BaseProductSearchParam {
         }
 
         setDetectionParams(multimap);
+
+        putIfPresent(multimap, searchAllObjects, SEARCH_ALL_OBJECTS);
 
         return multimap;
     }
@@ -262,7 +274,8 @@ public class SearchByImageParam extends BaseProductSearchParam {
         this.detectionLimit = Optional.fromNullable(detectionLimit);
     }
 
-    /** Get detection sensitivity, default is low.
+    /**
+     * Get detection sensitivity, default is low.
      *
      * @return detectionSensitivity
      */
@@ -270,7 +283,8 @@ public class SearchByImageParam extends BaseProductSearchParam {
         return detectionSensitivity.orNull();
     }
 
-    /** Sett detection sensitivity, default is low.
+    /**
+     * Set detection sensitivity, default is low.
      *
      * @param detectionSensitivity sensitivity of detection
      */
@@ -278,4 +292,17 @@ public class SearchByImageParam extends BaseProductSearchParam {
         this.detectionSensitivity = Optional.fromNullable(detectionSensitivity);
     }
 
+    /**
+     * Get searchAllObject
+     *
+     * @return If searchAllObject is turned on
+     */
+    public Boolean getSearchAllObjects() { return searchAllObjects.orNull(); }
+
+    /**
+     * Set searchAllObject
+     *
+     * @param b If searchAllObject should be used
+     */
+    public void setSearchAllObjects(Boolean b) { this.searchAllObjects = Optional.fromNullable(b); }
 }
