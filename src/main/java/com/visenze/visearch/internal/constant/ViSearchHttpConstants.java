@@ -76,7 +76,9 @@ public abstract class ViSearchHttpConstants {
     public static final String TEXT_FILTERS = "text_filters";
     public static final String ATTRS_TO_GET = "attrs_to_get";
     public static final String RETURN_FIELDS_MAPPING = "return_fields_mapping";
+    public static final String RETURN_QUERY_SYS_META = "return_query_sys_meta";
     public static final String RETURN_IMAGE_S3_URL = "return_image_s3_url";
+    public static final String DEBUG = "debug";
     public static final String VA_SDK = "va_sdk";
     public static final String VA_SDK_VERSION = "va_sdk_version";
     public static final String PLACEMENT_ID = "placement_id";

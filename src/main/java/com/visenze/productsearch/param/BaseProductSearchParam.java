@@ -2,6 +2,7 @@ package com.visenze.productsearch.param;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import static com.visenze.common.util.MultimapUtil.putIfPresent;
 import static com.visenze.common.util.MultimapUtil.putList;
@@ -78,14 +79,18 @@ public class BaseProductSearchParam {
      */
     protected Optional<Boolean> returnFieldsMapping = Optional.absent();
 
+    protected Optional<Boolean> returnQuerySysMeta = Optional.absent();
+
+    protected Optional<Boolean> dedup = Optional.absent();
+
+    protected Optional<Float> dedupThreshold = Optional.absent();
+
     /**
      * Return S3 URL (the copy) of the main product image
      */
     protected Optional<Boolean> returnImageS3Url = Optional.absent();
 
-    protected Optional<Boolean> dedup = Optional.absent();
-
-    protected Optional<Float> dedupThreshold = Optional.absent();
+    protected Optional<Boolean> debug = Optional.absent();
 
     /**
      * Which SDK e.g. Javascript, Swift, Android, Java (for server side)
@@ -143,9 +148,11 @@ public class BaseProductSearchParam {
         putIfPresent(multimap, scoreMax, SCORE_MAX);
         putIfPresent(multimap, colorRelWeight, COLOR_REL_WEIGHT);
         putIfPresent(multimap, returnFieldsMapping, RETURN_FIELDS_MAPPING);
-        putIfPresent(multimap, returnImageS3Url, RETURN_IMAGE_S3_URL);
+        putIfPresent(multimap, returnQuerySysMeta, RETURN_QUERY_SYS_META);
         putIfPresent(multimap, dedup, DEDUP);
         putIfPresent(multimap, dedupThreshold, DEDUP_SCORE_THRESHOLD);
+        putIfPresent(multimap, returnImageS3Url, RETURN_IMAGE_S3_URL);
+        putIfPresent(multimap, debug, DEBUG);
 
         setAnalyticsParams(multimap);
 
@@ -565,6 +572,24 @@ public class BaseProductSearchParam {
     }
 
     /**
+     * Get if result should return system metadata for query images
+     *
+     * @return Boolean
+     */
+    public Boolean getReturnQuerySysMeta() {
+        return returnQuerySysMeta.orNull();
+    }
+
+    /**
+     * Set if result should return system metadata for query images
+     *
+     * @param returnQuerySysMeta if set to true, system will return metadata
+     */
+    public void setReturnQuerySysMeta(Boolean returnQuerySysMeta) {
+        this.returnQuerySysMeta = Optional.fromNullable(returnQuerySysMeta);
+    }
+
+    /**
      * Get dedup
      *
      * @return dedup
@@ -591,6 +616,20 @@ public class BaseProductSearchParam {
      * @param thresh dedup threshold value
      */
     public void setDedupThreshold(Float thresh) { this.dedupThreshold = Optional.fromNullable(thresh); }
+
+    /**
+     * Get debug
+     *
+     * @return Boolean
+     */
+    public Boolean getDebug() { return debug.orNull(); }
+
+    /**
+     * Set debug
+     *
+     * @param debug Set true to see debug information
+     */
+    public void setDebug(Boolean debug) { this.debug = Optional.fromNullable(debug); }
 
     /**
      * Get sdk using the api

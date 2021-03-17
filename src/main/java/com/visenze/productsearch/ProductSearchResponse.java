@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.visenze.common.util.ViJsonMapper;
 import com.visenze.productsearch.response.ErrorMsg;
 import com.visenze.productsearch.response.GroupProductResult;
+import com.visenze.productsearch.response.ObjectProductResult;
 import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.Facet;
@@ -118,9 +119,6 @@ public class ProductSearchResponse extends ViJsonMapper {
     private List<Product> result;
 
 
-    @JsonProperty("group_results")
-    private List<GroupProductResult> groupProductResults;
-
     /**
      * A map of Key-to-Value pairs. The keys in  it represent ViSenze's keys
      * (our field names) and the values associated with it is the Client's keys
@@ -136,6 +134,22 @@ public class ProductSearchResponse extends ViJsonMapper {
      */
     @JsonProperty("facets")
     private List<Facet> facets;
+
+    //@JsonProperty("product_info")
+
+    @JsonProperty("objects")
+    private List<ObjectProductResult> objects;
+
+    @JsonProperty("group_results")
+    private List<GroupProductResult> groupProductResults;
+
+    @JsonProperty("group_by_key")
+    private String groupByKey;
+
+    @JsonProperty("query_sys_meta")
+    private Map<String, String> querySysMeta;
+
+    //private Map<String, String> querySysMeta;
 
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
@@ -254,6 +268,37 @@ public class ProductSearchResponse extends ViJsonMapper {
     public void setGroupProductResults(List<GroupProductResult> groupProductResults) {
         this.groupProductResults = groupProductResults;
     }
+
+    /**
+     * Get Facets if any was designated in the parameter when requesting API
+     *
+     * @return List of Facets used
+     * @see Facet
+     */
+    public List<Facet> getFacets() { return facets; }
+
+    /**
+     * Get Products detected in Object grouping/category
+     *
+     * @return List of Products categorized by "Object" type
+     * @see ObjectProductResult
+     */
+    public List<ObjectProductResult> getObjects() { return objects; }
+
+    /**
+     * Get Key that was used when using group_by functionality
+     *
+     * @return Grouping key
+     */
+    public String getGroupByKey() { return groupByKey; }
+
+    /**
+     * Get System query metadata
+     *
+     * @return Metadata
+     */
+    public Map<String, String> getQuerySysMeta() { return querySysMeta; }
+
 
     /**
      * Json requires JsonCreator or default ctors, but since we clash with
