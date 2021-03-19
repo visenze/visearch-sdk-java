@@ -87,8 +87,9 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     public static SearchByImageParam newFromImageUrl(String imageUrl) {
         SearchByImageParam param = new SearchByImageParam();
-        if (imageUrl == null || imageUrl.isEmpty())
+        if (imageUrl == null || imageUrl.isEmpty()) {
             throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_URL);
+        }
         param.setImageUrl(imageUrl);
         return param;
     }
@@ -101,8 +102,9 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     public static SearchByImageParam newFromImageId(String imageId) {
         SearchByImageParam param = new SearchByImageParam();
-        if (imageId == null || imageId.isEmpty())
+        if (imageId == null || imageId.isEmpty()) {
             throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_ID);
+        }
         param.setImageId(imageId);
         return param;
     }
@@ -115,8 +117,9 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     public static SearchByImageParam newFromImageFile(File imageFile) {
         SearchByImageParam param = new SearchByImageParam();
-        if (imageFile == null)
+        if (imageFile == null) {
             throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_FILE);
+        }
         param.setImage(imageFile);
         return param;
     }

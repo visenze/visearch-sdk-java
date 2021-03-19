@@ -34,4 +34,16 @@ public class ObjectProductResult {
 
     @JsonProperty("result")
     private List<Product> result;
+
+    public String getType() { return type; }
+
+    public Float getScore() { return score; }
+
+    public List<Integer> getBox() { return box; }
+
+    public Map<String,String> getAttributes() { return attributes; }
+
+    public Integer getTotal() { return total; }
+
+    public List<Product> getResult() { return result; }
 }
