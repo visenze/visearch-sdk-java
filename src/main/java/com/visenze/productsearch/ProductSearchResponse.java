@@ -135,7 +135,8 @@ public class ProductSearchResponse extends ViJsonMapper {
     @JsonProperty("facets")
     private List<Facet> facets;
 
-    //@JsonProperty("product_info")
+    @JsonProperty("product_info")
+    private Product product;
 
     @JsonProperty("objects")
     private List<ObjectProductResult> objects;
@@ -148,8 +149,6 @@ public class ProductSearchResponse extends ViJsonMapper {
 
     @JsonProperty("query_sys_meta")
     private Map<String, String> querySysMeta;
-
-    //private Map<String, String> querySysMeta;
 
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
@@ -299,6 +298,9 @@ public class ProductSearchResponse extends ViJsonMapper {
      */
     public Map<String, String> getQuerySysMeta() { return querySysMeta; }
 
+    public Product getProduct() {
+        return product;
+    }
 
     /**
      * Json requires JsonCreator or default ctors, but since we clash with

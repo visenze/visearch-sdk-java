@@ -273,4 +273,31 @@ public class ProductSearchTest {
             fail(e.getMessage());
         }
     }
+
+    @Test
+    public void testVsrReturnProduct() {
+        if (VSR_KEY.isEmpty()) return;
+
+        SearchByIdParam param = new SearchByIdParam("POMELO2-AF-SG_93383a6af75493ff78b7ccccf86b848d150c7d4f");
+        param.setShowScore(true);
+        param.setReturnFieldsMapping(true);
+        param.setReturnProductInfo(true);
+        param.setAttrsToGet(Arrays.asList("sku","brand_name","sale_date","merchant_category"));
+
+        // execute search and return response
+        ProductSearch sdk = getProductSearch(VSR_KEY, VSR_PLACEMENT);
+        ProductSearchResponse searchResponse = sdk.visualSimilarSearch(param);
+
+        Product product = searchResponse.getProduct();
+        System.out.println("product: ");
+        System.out.println("productId: " + product.getProductId());
+        System.out.println("main_image_url: " + product.getMainImageUrl());
+        System.out.println("data: " + product.getData());
+        System.out.println("sale_end_date: " + product.getData().get("sale_end_date").asString());
+        System.out.println("sale_price: " + product.getData().get("sale_price").asStringStringMap());
+        System.out.println("merchant_category: " + product.getData().get("merchant_category").asStringList());
+
+
+
+    }
 }
