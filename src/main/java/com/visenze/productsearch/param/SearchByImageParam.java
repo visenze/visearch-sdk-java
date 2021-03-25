@@ -8,8 +8,11 @@ import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
 
 import java.io.File;
+import java.util.List;
 
+import static com.visenze.common.util.MultimapUtil.putList;
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
+import static com.visenze.common.util.MultimapUtil.putIfPresent;
 
 /**
  * <h1> SBI Parameters </h1>
@@ -23,6 +26,7 @@ import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
  */
 public class SearchByImageParam extends BaseProductSearchParam {
 
+    public static final String POINT = "point";
     /**
      * Image URL
      */
@@ -63,6 +67,15 @@ public class SearchByImageParam extends BaseProductSearchParam {
     protected Optional<String> detectionSensitivity = Optional.absent();
 
     /**
+     * Defaulted to false, if this is set to true, API will return all objects
+     */
+    protected Optional<Boolean> searchAllObjects = Optional.absent();
+
+
+    protected Optional<List<String>> point = Optional.absent();
+
+
+    /**
      * Hide default constructor
      */
     private SearchByImageParam() {
@@ -77,8 +90,9 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     public static SearchByImageParam newFromImageUrl(String imageUrl) {
         SearchByImageParam param = new SearchByImageParam();
-        if (imageUrl == null || imageUrl.isEmpty())
+        if (imageUrl == null || imageUrl.isEmpty()) {
             throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_URL);
+        }
         param.setImageUrl(imageUrl);
         return param;
     }
@@ -91,8 +105,9 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     public static SearchByImageParam newFromImageId(String imageId) {
         SearchByImageParam param = new SearchByImageParam();
-        if (imageId == null || imageId.isEmpty())
+        if (imageId == null || imageId.isEmpty()) {
             throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_ID);
+        }
         param.setImageId(imageId);
         return param;
     }
@@ -105,8 +120,9 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     public static SearchByImageParam newFromImageFile(File imageFile) {
         SearchByImageParam param = new SearchByImageParam();
-        if (imageFile == null)
+        if (imageFile == null) {
             throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_FILE);
+        }
         param.setImage(imageFile);
         return param;
     }
@@ -119,6 +135,7 @@ public class SearchByImageParam extends BaseProductSearchParam {
     @Override
     public Multimap<String, String> toMultimap() {
         Multimap<String, String> multimap = super.toMultimap();
+
         if (box.isPresent()) {
             multimap.put(BOX, box.get().getX1() + COMMA +
                     box.get().getY1() + COMMA +
@@ -136,6 +153,9 @@ public class SearchByImageParam extends BaseProductSearchParam {
         }
 
         setDetectionParams(multimap);
+
+        putIfPresent(multimap, searchAllObjects, SEARCH_ALL_OBJECTS);
+        putList(multimap, point, POINT);
 
         return multimap;
     }
@@ -262,7 +282,8 @@ public class SearchByImageParam extends BaseProductSearchParam {
         this.detectionLimit = Optional.fromNullable(detectionLimit);
     }
 
-    /** Get detection sensitivity, default is low.
+    /**
+     * Get detection sensitivity, default is low.
      *
      * @return detectionSensitivity
      */
@@ -270,7 +291,8 @@ public class SearchByImageParam extends BaseProductSearchParam {
         return detectionSensitivity.orNull();
     }
 
-    /** Sett detection sensitivity, default is low.
+    /**
+     * Set detection sensitivity, default is low.
      *
      * @param detectionSensitivity sensitivity of detection
      */
@@ -278,4 +300,29 @@ public class SearchByImageParam extends BaseProductSearchParam {
         this.detectionSensitivity = Optional.fromNullable(detectionSensitivity);
     }
 
+    /**
+     * Get searchAllObject
+     *
+     * @return If searchAllObject is turned on
+     */
+    public Boolean getSearchAllObjects() { return searchAllObjects.orNull(); }
+
+    /**
+     * Set searchAllObject
+     *
+     * @param b If searchAllObject should be used
+     */
+    public void setSearchAllObjects(Boolean b) { this.searchAllObjects = Optional.fromNullable(b); }
+
+    public List<String> getPoint() {
+        return point.orNull();
+    }
+
+    public void setPoint(List<String> point) {
+        if (point == null || point.isEmpty()) {
+            this.point = Optional.absent();
+        } else {
+            this.point = Optional.of(point);
+        }
+    }
 }
