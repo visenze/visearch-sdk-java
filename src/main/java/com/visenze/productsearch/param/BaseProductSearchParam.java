@@ -2,7 +2,6 @@ package com.visenze.productsearch.param;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import static com.visenze.common.util.MultimapUtil.putIfPresent;
 import static com.visenze.common.util.MultimapUtil.putList;

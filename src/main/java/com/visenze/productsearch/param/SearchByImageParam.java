@@ -8,7 +8,9 @@ import com.visenze.visearch.ResponseMessages;
 import com.visenze.visearch.internal.InternalViSearchException;
 
 import java.io.File;
+import java.util.List;
 
+import static com.visenze.common.util.MultimapUtil.putList;
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 import static com.visenze.common.util.MultimapUtil.putIfPresent;
 
@@ -24,6 +26,7 @@ import static com.visenze.common.util.MultimapUtil.putIfPresent;
  */
 public class SearchByImageParam extends BaseProductSearchParam {
 
+    public static final String POINT = "point";
     /**
      * Image URL
      */
@@ -69,7 +72,7 @@ public class SearchByImageParam extends BaseProductSearchParam {
     protected Optional<Boolean> searchAllObjects = Optional.absent();
 
 
-    // protected Optional<> point = Optional.absent();
+    protected Optional<List<String>> point = Optional.absent();
 
 
     /**
@@ -132,6 +135,7 @@ public class SearchByImageParam extends BaseProductSearchParam {
     @Override
     public Multimap<String, String> toMultimap() {
         Multimap<String, String> multimap = super.toMultimap();
+
         if (box.isPresent()) {
             multimap.put(BOX, box.get().getX1() + COMMA +
                     box.get().getY1() + COMMA +
@@ -151,6 +155,7 @@ public class SearchByImageParam extends BaseProductSearchParam {
         setDetectionParams(multimap);
 
         putIfPresent(multimap, searchAllObjects, SEARCH_ALL_OBJECTS);
+        putList(multimap, point, POINT);
 
         return multimap;
     }
@@ -308,4 +313,16 @@ public class SearchByImageParam extends BaseProductSearchParam {
      * @param b If searchAllObject should be used
      */
     public void setSearchAllObjects(Boolean b) { this.searchAllObjects = Optional.fromNullable(b); }
+
+    public List<String> getPoint() {
+        return point.orNull();
+    }
+
+    public void setPoint(List<String> point) {
+        if (point == null || point.isEmpty()) {
+            this.point = Optional.absent();
+        } else {
+            this.point = Optional.of(point);
+        }
+    }
 }
