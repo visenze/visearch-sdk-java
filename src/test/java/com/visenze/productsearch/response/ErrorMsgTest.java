@@ -1,10 +1,11 @@
 package com.visenze.productsearch.response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.visenze.productsearch.ProductSearchResponse;
+import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 import org.junit.Test;
 
-import java.io.IOException;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * <h1> Error Type Test </h1>
@@ -14,20 +15,19 @@ import static org.junit.Assert.*;
  * @since 20 Jan 2021
  */
 public class ErrorMsgTest {
-    final String jsonFormat = "{\"code\": 100, \"message\": \"Parameter 'im_url' is required\"}";
+    final String jsonFormat = "{\"error\":{\"code\": 100, \"message\": \"Parameter 'im_url' is required\"}}";
     /**
      * Parsing JSON formatted string
      */
     @Test
     public void testJsonDeserializing() {
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
-            ErrorMsg err = mapper.readValue(jsonFormat, ErrorMsg.class);
-            assertEquals(100, err.getCode().intValue());
-            assertEquals("Parameter 'im_url' is required", err.getMessage());
-        }
-        catch (IOException e) {
-            fail("Failed to let JSON auto-deserialize");
-        }
+        ViSearchHttpResponse mockedHttpResponse = mock(ViSearchHttpResponse.class);
+        when(mockedHttpResponse.getBody()).thenReturn(jsonFormat);
+
+        ProductSearchResponse response = ProductSearchResponse.fromResponse(mockedHttpResponse);
+        ErrorMsg errorMsg = response.getError();
+
+        assertEquals(100, errorMsg.getCode().intValue());
+        assertEquals("Parameter 'im_url' is required", errorMsg.getMessage());
     }
 }
