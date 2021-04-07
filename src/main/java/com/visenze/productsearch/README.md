@@ -284,7 +284,7 @@ Here are some common and perhaps confusing ones to take note of:
     <td>Description</td>
   </tr>
   <tr>
-    <td rowspan="6">BaseProductSearchParam</td>
+    <td rowspan="8">BaseProductSearchParam</td>
     <td>returnFieldsMapping</td>
     <td>Set to true to get catalog_fields_mapping from API</td>
   </tr>
@@ -293,17 +293,25 @@ Here are some common and perhaps confusing ones to take note of:
   <tr> <td>attrsToGet</td> </tr>
   <tr> <td>sortBy</td> </tr>
   <tr> <td>groupBy</td> </tr>
+  <tr> <td>colorRelWeight</td> <td>Wrapper to vs_color_rel_weight parameter. To disable color relevance, set to 0
+If not set, will set to system default which means support color relevance for SBI fashion app type (sbi_fashion, vsr_fashion)</td> </tr>
+  <tr> <td>returnQuerySysMeta</td> <td>Default to false, if set to true will return system metadata for query image or product which include S3 URL copy, detect, keyword</td> </tr>
   <tr>
-    <td rowspan="3">SearchByImageParam</td>
+    <td rowspan="4">SearchByImageParam</td>
     <td>imUrl</td>
     <td rowspan="3">One of these must be valid, use one of the newFromImage...() static method to construct this class </td>
   </tr>
   <tr> <td>imId</td> </tr>
   <tr> <td>image</td> </tr>
+  <tr> <td>searchAllObjects</td> <td>Default to false. If set to true, query response will return all objects (same as ViSearch /discoversearch) </td>  </tr>
   <tr>
-    <td>SearchByIdParam</td>
+    <td rowspan="2">SearchByIdParam</td>
     <td>productId</td>
     <td>Must be a valid Product ID, it will be used to append to the GET request path </td>
+  </tr>
+  <tr>
+    <td> returnProductInfo </td>  
+    <td> If set to true, query response will return the query product's metadata </td> 
   </tr>
 </table>
 

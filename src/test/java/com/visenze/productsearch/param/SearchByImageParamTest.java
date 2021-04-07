@@ -21,20 +21,56 @@ import static org.junit.Assert.*;
  * @since 21 Jan 2021
  */
 public class SearchByImageParamTest {
-    final String PARAM_DESIRED = "box=1,1,5,5&im_url=SOME_URL";
+    final String PARAM_URL = "box=1,1,5,5&im_url=SOME_URL";
+    final String PARAM_ID = "box=2,3,4,5&im_id=SOME_ID";
+
+    @Test
+    public void setterGetter() {
+        SearchByImageParam param = SearchByImageParam.newFromImageId("IMAGE_ID");
+        assertEquals("IMAGE_ID", param.getImageId());
+
+        param.setImageId("IMAGE_ID_2");
+        assertEquals("IMAGE_ID_2", param.getImageId());
+
+        param.setImageUrl("IMAGE_URL");
+        assertEquals("IMAGE_URL", param.getImageUrl());
+
+        param.setDetection("all");
+        assertEquals("all", param.getDetection());
+
+        Integer limit = 15;
+        param.setDetectionLimit(limit);
+        assertEquals(limit, param.getDetectionLimit());
+
+        param.setDetectionSensitivity("high");
+        assertEquals("high", param.getDetectionSensitivity());
+
+        param.setSearchAllObjects(true);
+        assertEquals(true, param.getSearchAllObjects());
+    }
 
     @Test
     public void toMultimap() {
         SearchByImageParam param = SearchByImageParam.newFromImageUrl("SOME_URL");
         param.setBox(new Box(1,1,5,5));
+
         List<NameValuePair> paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
         try{
             URI uri = new URIBuilder("www.example.com").addParameters(paramUrl).build();
-            assertEquals(PARAM_DESIRED, uri.getQuery());
+            assertEquals(PARAM_URL, uri.getQuery());
         } catch (URISyntaxException e) {
             fail("Failed to create proper query");
         }
 
+        param = SearchByImageParam.newFromImageId("SOME_ID");
+        param.setBox(new Box(2,3,4,5));
+        paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
+        try{
+            URI uri = new URIBuilder("www.example.com").addParameters(paramUrl).build();
+            assertEquals(PARAM_ID, uri.getQuery());
+        } catch (URISyntaxException e) {
+            fail("Failed to create proper query");
+        }
     }
 
     /**
