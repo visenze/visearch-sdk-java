@@ -18,15 +18,7 @@ public class GroupProductResult {
         return groupByValue;
     }
 
-    public void setGroupByValue(String groupByValue) {
-        this.groupByValue = groupByValue;
-    }
-
     public List<Product> getProducts() {
         return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 }

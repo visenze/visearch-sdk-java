@@ -35,8 +35,6 @@ public abstract class ViSearchHttpConstants {
     public static final String VS_FL = "vs_fl";
     public static final String FL = "fl";
     public static final String GET_ALL_FL = "get_all_fl";
-    public static final String DEDUP = "dedup";
-    public static final String DEDUP_SCORE_THRESHOLD = "dedup_score_threshold";
 
 
     public static final String DIVERSITY = "diversity";
@@ -67,6 +65,9 @@ public abstract class ViSearchHttpConstants {
     public static final String DETECTION_SENSITIVITY = "detection_sensitivity";
     public static final String VS_CONFIG = "vs_config";
 
+    public static final String DEDUP = "dedup";
+    public static final String DEDUP_SCORE_THRESHOLD = "dedup_score_threshold";
+
     // product search
 
     public static final String VA_UID = "va_uid";
@@ -75,11 +76,17 @@ public abstract class ViSearchHttpConstants {
     public static final String TEXT_FILTERS = "text_filters";
     public static final String ATTRS_TO_GET = "attrs_to_get";
     public static final String RETURN_FIELDS_MAPPING = "return_fields_mapping";
+    public static final String RETURN_QUERY_SYS_META = "return_query_sys_meta";
     public static final String RETURN_IMAGE_S3_URL = "return_image_s3_url";
+    public static final String DEBUG = "debug";
     public static final String VA_SDK = "va_sdk";
     public static final String VA_SDK_VERSION = "va_sdk_version";
     public static final String PLACEMENT_ID = "placement_id";
     public static final String APP_KEY = "app_key";
+    public static final String COLOR_REL_WEIGHT = "color_rel_weight";
+
+    public static final String SEARCH_ALL_OBJECTS = "search_all_objects";
+    public static final String RETURN_PRODUCT_INFO = "return_product_info";
 
     // analytics
     public static final String VA_OS = "va_os";

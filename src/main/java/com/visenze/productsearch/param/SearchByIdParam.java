@@ -1,6 +1,10 @@
 package com.visenze.productsearch.param;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
+
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
+import static com.visenze.common.util.MultimapUtil.putIfPresent;
 
 /**
  *
@@ -21,6 +25,11 @@ public class SearchByIdParam extends BaseProductSearchParam {
     protected String productId;
 
     /**
+     * If set to true, API will return the query product's metadata
+     */
+    protected Optional<Boolean> returnProductInfo = Optional.absent();
+
+    /**
      * Constructor with the necessary parameters
      *
      * @param product_id product id to search against
@@ -37,7 +46,12 @@ public class SearchByIdParam extends BaseProductSearchParam {
      */
     @Override
     public Multimap<String, String> toMultimap() {
-        return super.toMultimap();
+
+        Multimap<String, String> multimap = super.toMultimap();
+
+        putIfPresent(multimap, returnProductInfo, RETURN_PRODUCT_INFO);
+
+        return multimap;
     }
 
     /**
@@ -59,4 +73,17 @@ public class SearchByIdParam extends BaseProductSearchParam {
         this.productId = productId;
     }
 
+    /**
+     * Get returnProductInfo
+     *
+     * @return returnProductInfo
+     */
+    public Boolean getReturnProductInfo() { return returnProductInfo.orNull(); }
+
+    /**
+     * Set returnProductInfo
+     *
+     * @param b If query should return product metadata
+     */
+    public void setReturnProductInfo(Boolean b) { this.returnProductInfo = Optional.fromNullable(b); }
 }
