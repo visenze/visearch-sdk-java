@@ -52,7 +52,7 @@ product's ID can be retrieved from a [Search Result](#3-search-results).
 
 ### 2.1 Search by Image
 
-POST /similar-products 
+POST /v1/product/search_by_image 
 
 This API allows you to search the Catalog for products that are similar to the 
 Image you provide. You can provide an Image to the API using the following 
@@ -123,7 +123,7 @@ searchResults = api.imageSearch(params);
 
 ### 2.2 Search by ID
 
-GET /similar-products/PRODUCT_ID
+GET /v1/product/search_by_id/PRODUCT_ID
 
 This API is **NOT** the same as [Search by Image using Image ID](#213-using-image-id). 
 The ID referred to in this API is the **product's ID** - a unique identifier 
@@ -297,14 +297,20 @@ Here are some common and perhaps confusing ones to take note of:
 If not set, will set to system default which means support color relevance for SBI fashion app type (sbi_fashion, vsr_fashion)</td> </tr>
   <tr> <td>returnQuerySysMeta</td> <td>Default to false, if set to true will return system metadata for query image or product which include S3 URL copy, detect, keyword</td> </tr>
   <tr>
-    <td rowspan="4">SearchByImageParam</td>
+    <td rowspan="10">SearchByImageParam</td>
     <td>imUrl</td>
     <td rowspan="3">One of these must be valid, use one of the newFromImage...() static method to construct this class </td>
   </tr>
   <tr> <td>imId</td> </tr>
   <tr> <td>image</td> </tr>
   <tr> <td>searchAllObjects</td> <td>Default to false. If set to true, query response will return all objects (same as ViSearch /discoversearch) </td>  </tr>
-  <tr>
+  <tr> <td>box</td> <td>Optional parameter for restricting the image area x1,y1,x2,y2. The upper-left corner of an image is (0,0) </td> </tr>
+  <tr> <td>detection</td> <td>Turn on automatic object detection so the algorithm will try to detect the object in the image and search</td> </tr>
+  <tr> <td>detectionLimit</td> <td>Maximum number of products could be detected for a given image, default value is 5. Values must range between 1-30. Returns the objects with higher confidence score first.</td> </tr> 
+  <tr> <td>detectionSensitivity</td> <td>Parameter to set the detection to more or less sensitive. Default is low</td> </tr>  
+  <tr> <td>searchAllObjects</td> <td>Defaulted to false, if this is set to true, API will return all objects</td> </tr>  
+  <tr> <td>point</td> <td> Levis support </td> </tr>   
+<tr>
     <td rowspan="2">SearchByIdParam</td>
     <td>productId</td>
     <td>Must be a valid Product ID, it will be used to append to the GET request path </td>
