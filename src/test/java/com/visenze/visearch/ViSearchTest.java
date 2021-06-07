@@ -211,4 +211,11 @@ public class ViSearchTest {
         visearch.matchSearch(searchParams);
         verify(searchOperations).matchSearch(searchParams);
     }
+
+    @Test
+    public void testRecommendation() {
+        RecommendSearchParams searchParams = new RecommendSearchParams("test_name");
+        visearch.recommendation(searchParams);
+        verify(searchOperations).recommendation(searchParams);
+    }
 }

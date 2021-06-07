@@ -209,11 +209,11 @@ public class ViSearch implements DataOperations, SearchOperations {
 
     /**
      * Recommendation for similar images from the ViSearch App given an existing image in the App.
-     * @param searchParams
+     * @param recommendSearchParams
      * @return
      */
-    public PagedSearchResult recommendation(SearchParams searchParams) {
-        PagedSearchResult result = searchOperations.recommendation(searchParams);
+    public PagedSearchResult recommendation(RecommendSearchParams recommendSearchParams) {
+        PagedSearchResult result = searchOperations.recommendation(recommendSearchParams);
         return result;
     }
 

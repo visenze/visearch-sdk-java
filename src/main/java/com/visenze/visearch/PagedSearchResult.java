@@ -25,6 +25,10 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<GroupSearchResult> groupSearchResults;
 
+    private String recommendationStrategy;
+
+    private String recommendBy;
+
     public PagedSearchResult(List<ImageResult> result) {
         this.result = result;
     }
@@ -124,4 +128,20 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
     public List<GroupSearchResult> getGroupSearchResults() { return groupSearchResults; }
 
     public void setGroupSearchResults(List<GroupSearchResult> groupSearchResults) { this.groupSearchResults = groupSearchResults; }
+
+    public String getRecommendationStrategy() {
+        return recommendationStrategy;
+    }
+
+    public void setRecommendationStrategy(String recommendationStrategy) {
+        this.recommendationStrategy = recommendationStrategy;
+    }
+
+    public String getRecommendBy() {
+        return recommendBy;
+    }
+
+    public void setRecommendBy(String recommendBy) {
+        this.recommendBy = recommendBy;
+    }
 }
