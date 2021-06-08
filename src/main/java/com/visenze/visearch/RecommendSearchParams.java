@@ -15,7 +15,7 @@ public class RecommendSearchParams extends SearchParams {
 
     private String recommendationStrategy;
 
-    private String recommendBy;
+    private Integer altLimit;
 
     protected Optional<List<String>> dedupBy = Optional.absent();
 
@@ -29,9 +29,13 @@ public class RecommendSearchParams extends SearchParams {
         if (recommendationStrategy != null) {
             map.put("recommendation_strategy", recommendationStrategy);
         }
-        if (recommendBy != null) {
-            map.put("recommend_by", recommendBy);
+
+        int altLimitValue = 5;
+        if (altLimit != null) {
+            altLimitValue = altLimit.intValue();
         }
+        map.put("alt_limit", String.valueOf(altLimitValue));
+
         if (dedupBy.isPresent()) {
             for (String value : dedupBy.get()) {
                 map.put("dedup_by", value);
@@ -48,12 +52,12 @@ public class RecommendSearchParams extends SearchParams {
         this.recommendationStrategy = recommendationStrategy;
     }
 
-    public String getRecommendBy() {
-        return recommendBy;
+    public Integer getAltLimit() {
+        return altLimit;
     }
 
-    public void setRecommendBy(String recommendBy) {
-        this.recommendBy = recommendBy;
+    public void setAltLimit(Integer altLimit) {
+        this.altLimit = altLimit;
     }
 
     public List<String> getDedupBy() {

@@ -1,5 +1,6 @@
 package com.visenze.visearch;
 
+import java.util.List;
 import java.util.Map;
 
 public class ImageResult {
@@ -9,6 +10,7 @@ public class ImageResult {
     private final Float score;
     private String s3Url;
     private Map<String, String> vsMetadata;
+    private List<ImageResult> alternatives;
 
     public ImageResult(String imName, Map<String, String> metadata, Float score) {
         this.imName = imName;
@@ -43,5 +45,13 @@ public class ImageResult {
 
     public void setVsMetadata(Map<String, String> vsMetadata) {
         this.vsMetadata = vsMetadata;
+    }
+
+    public List<ImageResult> getAlternatives() {
+        return alternatives;
+    }
+
+    public void setAlternatives(List<ImageResult> alternatives) {
+        this.alternatives = alternatives;
     }
 }
