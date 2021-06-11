@@ -11,6 +11,7 @@ public class ImageResult {
     private String s3Url;
     private Map<String, String> vsMetadata;
     private List<ImageResult> alternatives;
+    private Map<String, String> tags;
 
     public ImageResult(String imName, Map<String, String> metadata, Float score) {
         this.imName = imName;
@@ -53,5 +54,13 @@ public class ImageResult {
 
     public void setAlternatives(List<ImageResult> alternatives) {
         this.alternatives = alternatives;
+    }
+
+    public Map<String, String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
     }
 }

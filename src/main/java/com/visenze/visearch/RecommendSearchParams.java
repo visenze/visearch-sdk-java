@@ -13,7 +13,7 @@ public class RecommendSearchParams extends SearchParams {
 
     private static final List<String> DEFAULT_DEDUP_BY = Lists.newArrayList();
 
-    private String recommendationStrategy;
+    private String recommendationAlgorithm;
 
     private Integer altLimit;
 
@@ -26,8 +26,8 @@ public class RecommendSearchParams extends SearchParams {
     @Override
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
-        if (recommendationStrategy != null) {
-            map.put("recommendation_strategy", recommendationStrategy);
+        if (recommendationAlgorithm != null) {
+            map.put("recommendation_algorithm", recommendationAlgorithm);
         }
 
         int altLimitValue = 5;
@@ -44,12 +44,12 @@ public class RecommendSearchParams extends SearchParams {
         return map;
     }
 
-    public String getRecommendationStrategy() {
-        return recommendationStrategy;
+    public String getRecommendationAlgorithm() {
+        return recommendationAlgorithm;
     }
 
-    public void setRecommendationStrategy(String recommendationStrategy) {
-        this.recommendationStrategy = recommendationStrategy;
+    public void setRecommendationAlgorithm(String recommendationAlgorithm) {
+        this.recommendationAlgorithm = recommendationAlgorithm;
     }
 
     public Integer getAltLimit() {

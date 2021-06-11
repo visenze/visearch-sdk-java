@@ -23,6 +23,9 @@ abstract class ImageResultMixin {
     @JsonProperty("alternatives")
     protected List<ImageResult> alternatives;
 
+    @JsonProperty("tags")
+    protected Map<String, Object> tags;
+
 
     public ImageResultMixin(@JsonProperty("im_name") String imName,
                             @JsonProperty("value_map") Map<String, Object> metadata,
@@ -55,5 +58,13 @@ abstract class ImageResultMixin {
 
     public void setAlternatives(List<ImageResult> alternatives) {
         this.alternatives = alternatives;
+    }
+
+    public Map<String, Object> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, Object> tags) {
+        this.tags = tags;
     }
 }
