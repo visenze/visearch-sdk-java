@@ -11,13 +11,11 @@ import java.util.List;
  */
 public class RecommendSearchParams extends SearchParams {
 
-    private static final List<String> DEFAULT_DEDUP_BY = Lists.newArrayList();
-
     private String recommendationAlgorithm;
 
     private Integer altLimit;
 
-    protected Optional<List<String>> dedupBy = Optional.absent();
+    protected String dedupBy;
 
     public RecommendSearchParams(String imName) {
         super(imName);
@@ -30,16 +28,12 @@ public class RecommendSearchParams extends SearchParams {
             map.put("recommendation_algorithm", recommendationAlgorithm);
         }
 
-        int altLimitValue = 5;
         if (altLimit != null) {
-            altLimitValue = altLimit.intValue();
+            map.put("alt_limit", altLimit.toString());
         }
-        map.put("alt_limit", String.valueOf(altLimitValue));
 
-        if (dedupBy.isPresent()) {
-            for (String value : dedupBy.get()) {
-                map.put("dedup_by", value);
-            }
+        if (dedupBy != null) {
+            map.put("dedup_by", dedupBy);
         }
         return map;
     }
@@ -60,11 +54,11 @@ public class RecommendSearchParams extends SearchParams {
         this.altLimit = altLimit;
     }
 
-    public List<String> getDedupBy() {
-        return dedupBy.or(DEFAULT_DEDUP_BY);
+    public String getDedupBy() {
+        return dedupBy;
     }
 
-    public void setDedupBy(List<String> dedupBy) {
-        this.dedupBy = Optional.fromNullable(dedupBy);
+    public void setDedupBy(String dedupBy) {
+        this.dedupBy = dedupBy;
     }
 }

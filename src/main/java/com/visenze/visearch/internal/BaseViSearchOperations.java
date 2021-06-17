@@ -83,7 +83,7 @@ class BaseViSearchOperations {
         if(totalNode!=null) pagedResult.setTotal(totalNode.asInt());
         if(groupLimitNode!=null) pagedResult.setGroupLimit(groupLimitNode.asInt());
         if(groupByKeyNode!=null) pagedResult.setGroupByKey(groupByKeyNode.asText());
-        if(recommendationStrategyNode!=null) pagedResult.setRecommendationStrategy(recommendationStrategyNode.asText());
+        if(recommendationStrategyNode!=null) pagedResult.setRecommendationAlgorithm(recommendationStrategyNode.asText());
         if(recommendByNode!=null) pagedResult.setRecommendBy(recommendByNode.asText());
 
         pagedResult.setObjects(objects);
