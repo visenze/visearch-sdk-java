@@ -23,8 +23,7 @@ public abstract class ViSearchHttpConstants {
     public static final String IMAGE_STREAM = "image-stream";
     public static final String X_REQUESTED_WITH = "X-Requested-With";
     public static final String IMAGE = "image";
-    public static final String RECOMMENDATION_STRATEGY = "recommendation_strategy";
-    public static final String RECOMMEND_BY = "recommend_by";
+    public static final String RECOMMENDATION_ALGORITHM = "recommendation_algorithm";
 
     public static final String IM_FEATURE = "im_feature";
     public static final String TRANS_ID = "TRANS_ID";
