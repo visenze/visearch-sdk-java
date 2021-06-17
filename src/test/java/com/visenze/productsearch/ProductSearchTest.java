@@ -109,6 +109,24 @@ public class ProductSearchTest {
         return sdk.visualSimilarSearch(param);
     }
 
+    /**
+     * Calls the recommendation using product id (provided by a response)
+     *
+     * @param product_id ID of a product from search results
+     *
+     * @return Search response
+     */
+    public ProductSearchResponse recommendation(String product_id) {
+        // configure your dummy data here:
+        SearchByIdParam param = new SearchByIdParam(product_id);
+        param.setShowScore(true);
+        param.setReturnFieldsMapping(true);
+
+        // execute search and return response
+        ProductSearch sdk = getProductSearch(VSR_KEY, VSR_PLACEMENT);
+        return sdk.recomendation(param);
+    }
+
     @Test
     public void byUrl() {
         // cannot test without testing key
@@ -296,8 +314,29 @@ public class ProductSearchTest {
         System.out.println("sale_end_date: " + product.getData().get("sale_end_date").asString());
         System.out.println("sale_price: " + product.getData().get("sale_price").asStringStringMap());
         System.out.println("merchant_category: " + product.getData().get("merchant_category").asStringList());
+    }
 
+    @Test
+    public void testRecommendationReturnProduct() {
+        if (VSR_KEY.isEmpty()) return;
 
+        SearchByIdParam param = new SearchByIdParam("POMELO2-AF-SG_93383a6af75493ff78b7ccccf86b848d150c7d4f");
+        param.setShowScore(true);
+        param.setReturnFieldsMapping(true);
+        param.setReturnProductInfo(true);
+        param.setAttrsToGet(Arrays.asList("sku","brand_name","sale_date","merchant_category"));
 
+        // execute search and return response
+        ProductSearch sdk = getProductSearch(VSR_KEY, VSR_PLACEMENT);
+        ProductSearchResponse searchResponse = sdk.recomendation(param);
+
+        Product product = searchResponse.getProduct();
+        System.out.println("product: ");
+        System.out.println("productId: " + product.getProductId());
+        System.out.println("main_image_url: " + product.getMainImageUrl());
+        System.out.println("data: " + product.getData());
+        System.out.println("sale_end_date: " + product.getData().get("sale_end_date").asString());
+        System.out.println("sale_price: " + product.getData().get("sale_price").asStringStringMap());
+        System.out.println("merchant_category: " + product.getData().get("merchant_category").asStringList());
     }
 }
