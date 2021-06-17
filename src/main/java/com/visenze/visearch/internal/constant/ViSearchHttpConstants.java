@@ -87,6 +87,7 @@ public abstract class ViSearchHttpConstants {
 
     public static final String SEARCH_ALL_OBJECTS = "search_all_objects";
     public static final String RETURN_PRODUCT_INFO = "return_product_info";
+    public static final String ALT_LIMIT = "alt_limit";
 
     // analytics
     public static final String VA_OS = "va_os";
