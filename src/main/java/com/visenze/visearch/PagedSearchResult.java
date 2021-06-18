@@ -25,6 +25,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<GroupSearchResult> groupSearchResults;
 
+    private String algorithm;
+
     public PagedSearchResult(List<ImageResult> result) {
         this.result = result;
     }
@@ -124,4 +126,12 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
     public List<GroupSearchResult> getGroupSearchResults() { return groupSearchResults; }
 
     public void setGroupSearchResults(List<GroupSearchResult> groupSearchResults) { this.groupSearchResults = groupSearchResults; }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
 }
