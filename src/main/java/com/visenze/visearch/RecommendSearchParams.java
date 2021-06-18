@@ -1,17 +1,13 @@
 package com.visenze.visearch;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-
-import java.util.List;
 
 /**
  * Created by david.huang on 2021-06-04
  */
 public class RecommendSearchParams extends SearchParams {
 
-    private String recommendationAlgorithm;
+    private String algorithm;
 
     private Integer altLimit;
 
@@ -24,8 +20,8 @@ public class RecommendSearchParams extends SearchParams {
     @Override
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
-        if (recommendationAlgorithm != null) {
-            map.put("recommendation_algorithm", recommendationAlgorithm);
+        if (algorithm != null) {
+            map.put("algorithm", algorithm);
         }
 
         if (altLimit != null) {
@@ -38,12 +34,12 @@ public class RecommendSearchParams extends SearchParams {
         return map;
     }
 
-    public String getRecommendationAlgorithm() {
-        return recommendationAlgorithm;
+    public String getAlgorithm() {
+        return algorithm;
     }
 
-    public void setRecommendationAlgorithm(String recommendationAlgorithm) {
-        this.recommendationAlgorithm = recommendationAlgorithm;
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
 
     public Integer getAltLimit() {

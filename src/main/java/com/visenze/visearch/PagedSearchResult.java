@@ -25,7 +25,7 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<GroupSearchResult> groupSearchResults;
 
-    private String recommendationAlgorithm;
+    private String algorithm;
 
     public PagedSearchResult(List<ImageResult> result) {
         this.result = result;
@@ -127,11 +127,11 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public void setGroupSearchResults(List<GroupSearchResult> groupSearchResults) { this.groupSearchResults = groupSearchResults; }
 
-    public String getRecommendationAlgorithm() {
-        return recommendationAlgorithm;
+    public String getAlgorithm() {
+        return algorithm;
     }
 
-    public void setRecommendationAlgorithm(String recommendationAlgorithm) {
-        this.recommendationAlgorithm = recommendationAlgorithm;
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
 }

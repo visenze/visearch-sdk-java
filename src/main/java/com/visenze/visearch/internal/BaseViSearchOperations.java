@@ -74,7 +74,7 @@ class BaseViSearchOperations {
         JsonNode totalNode = node.get(ViSearchHttpConstants.TOTAL);
         JsonNode groupLimitNode = node.get(ViSearchHttpConstants.GROUP_LIMIT) ;
         JsonNode groupByKeyNode = node.get(ViSearchHttpConstants.GROUP_BY_KEY) ;
-        JsonNode recommendationAlgorithmNode = node.get(ViSearchHttpConstants.RECOMMENDATION_ALGORITHM);
+        JsonNode algorithmNode = node.get(ViSearchHttpConstants.ALGORITHM);
 
         PagedSearchResult pagedResult = new PagedSearchResult(result);
         if(pageNode!=null) pagedResult.setPage(pageNode.asInt());
@@ -82,7 +82,7 @@ class BaseViSearchOperations {
         if(totalNode!=null) pagedResult.setTotal(totalNode.asInt());
         if(groupLimitNode!=null) pagedResult.setGroupLimit(groupLimitNode.asInt());
         if(groupByKeyNode!=null) pagedResult.setGroupByKey(groupByKeyNode.asText());
-        if(recommendationAlgorithmNode!=null) pagedResult.setRecommendationAlgorithm(recommendationAlgorithmNode.asText());
+        if(algorithmNode!=null) pagedResult.setAlgorithm(algorithmNode.asText());
 
         pagedResult.setObjects(objects);
         pagedResult.setGroupSearchResults(groupResults);
