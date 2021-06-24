@@ -2,6 +2,7 @@ package com.visenze.productsearch;
 
 import com.google.common.collect.Multimap;
 import com.visenze.productsearch.http.ProductSearchHttpClientImpl;
+import com.visenze.productsearch.param.SearchByIdParam;
 import com.visenze.productsearch.param.SearchByImageParam;
 import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.Product;
@@ -86,6 +87,103 @@ public class ProductSearchResponseTest {
         assertEquals("Sustainable Cotton The New Later Graphic Tee White", g1.getProducts().get(0).getData().get("product_name").asString());
 
 
+    }
+
+    @Test
+    public void testRecommendationResponse() {
+        String json = "{\n" +
+                "    \"reqid\": \"017a3bb0a050fb56218beb28b9e5ec\",\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"product/recommendations\",\n" +
+                "    \"page\": 1,\n" +
+                "    \"limit\": 10,\n" +
+                "    \"total\": 2,\n" +
+                "    \"product_types\": [],\n" +
+                "    \"result\": [\n" +
+                "        {\n" +
+                "            \"product_id\": \"top-name-1\",\n" +
+                "            \"main_image_url\": \"https://localhost/top-name-1.jpg\",\n" +
+                "            \"data\": {\n" +
+                "                \"title\": \"top-name-001\"\n" +
+                "            },\n" +
+                "            \"tags\": {\n" +
+                "                \"category\": \"top\"\n" +
+                "            },\n" +
+                "            \"alternatives\": [\n" +
+                "                {\n" +
+                "                    \"product_id\": \"top-name-2\",\n" +
+                "                    \"main_image_url\": \"https://localhost/top-name-2.jpg\",\n" +
+                "                    \"data\": {\n" +
+                "                        \"title\": \"top-name-002\"\n" +
+                "                    }\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"product_id\": \"top-name-3\",\n" +
+                "                    \"main_image_url\": \"https://localhost/top-name-3.jpg\",\n" +
+                "                    \"data\": {\n" +
+                "                        \"title\": \"top-name-003\"\n" +
+                "                    }\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"product_id\": \"pants-name-1\",\n" +
+                "            \"main_image_url\": \"https://localhost/pants-name-1.jpg\",\n" +
+                "            \"data\": {\n" +
+                "                \"title\": \"pants-name-001\"\n" +
+                "            },\n" +
+                "            \"tags\": {\n" +
+                "                \"category\": \"pants\"\n" +
+                "            },\n" +
+                "            \"alternatives\": [\n" +
+                "                {\n" +
+                "                    \"product_id\": \"pants-name-2\",\n" +
+                "                    \"main_image_url\": \"https://localhost/pants-name-2.jpg\",\n" +
+                "                    \"data\": {\n" +
+                "                        \"title\": \"pants-name-002\"\n" +
+                "                    }\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"strategy\": {\n" +
+                "        \"id\": 1,\n" +
+                "        \"name\": \"Visually similar\",\n" +
+                "        \"algorithn\": \"VSR\"\n" +
+                "    },\n" +
+                "    \"alt_limit\": 5\n" +
+                "}";
+
+        ProductSearchResponse response = GetRecommendationMockedResponse(json);
+        assertEquals(1, response.getPage());
+        assertEquals(10, response.getLimit());
+        assertEquals(2, response.getTotal());
+        assertEquals(5, response.getAltLimit().intValue());
+        assertEquals(1, response.getStrategy().getId().intValue());
+        assertEquals("Visually similar", response.getStrategy().getName());
+        assertEquals("VSR", response.getStrategy().getAlgorithm());
+        assertEquals(2, response.getResult().size());
+
+        assertEquals("top-name-1", response.getResult().get(0).getProductId());
+        assertEquals("top", response.getResult().get(0).getTags().get("category").asString());
+        assertEquals("https://localhost/top-name-1.jpg", response.getResult().get(0).getMainImageUrl());
+        assertEquals("top-name-001", response.getResult().get(0).getData().get("title").asString());
+        assertEquals(2, response.getResult().get(0).getAlternatives().size());
+        assertEquals("top-name-2", response.getResult().get(0).getAlternatives().get(0).getProductId());
+        assertEquals("https://localhost/top-name-2.jpg", response.getResult().get(0).getAlternatives().get(0).getMainImageUrl());
+        assertEquals("top-name-002", response.getResult().get(0).getAlternatives().get(0).getData().get("title").asString());
+        assertEquals("top-name-3", response.getResult().get(0).getAlternatives().get(1).getProductId());
+        assertEquals("https://localhost/top-name-3.jpg", response.getResult().get(0).getAlternatives().get(1).getMainImageUrl());
+        assertEquals("top-name-003", response.getResult().get(0).getAlternatives().get(1).getData().get("title").asString());
+
+        assertEquals("pants-name-1", response.getResult().get(1).getProductId());
+        assertEquals("pants", response.getResult().get(1).getTags().get("category").asString());
+        assertEquals("https://localhost/pants-name-1.jpg", response.getResult().get(1).getMainImageUrl());
+        assertEquals("pants-name-001", response.getResult().get(1).getData().get("title").asString());
+        assertEquals(1, response.getResult().get(1).getAlternatives().size());
+        assertEquals("pants-name-2", response.getResult().get(1).getAlternatives().get(0).getProductId());
+        assertEquals("https://localhost/pants-name-2.jpg", response.getResult().get(1).getAlternatives().get(0).getMainImageUrl());
+        assertEquals("pants-name-002", response.getResult().get(1).getAlternatives().get(0).getData().get("title").asString());
     }
 
     @Test
@@ -231,5 +329,26 @@ public class ProductSearchResponseTest {
         ProductSearch sdk = new ProductSearch.Builder("dummy",0).setApiEndPoint("dummy").build();
         sdk.setHttpClient(mockClient);
         return sdk.imageSearch(dummyParams);
+    }
+
+    /**
+     * Get mocked response for recommendation api
+     *
+     * @param mockedBodyResponse JSON formatted response to be used as http body
+     * @return Mock response parsed
+     */
+    private ProductSearchResponse GetRecommendationMockedResponse(String mockedBodyResponse) {
+        // create mock response to return the desired body
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(mockedBodyResponse);
+        // create mock http client, to skip any actual http calls/operations,
+        // just jump straight to returning mocked response
+        ProductSearchHttpClientImpl mockClient = mock(ProductSearchHttpClientImpl.class);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        // set ProductSearch to use the mock client for mock responses
+        SearchByIdParam dummyParams = new SearchByIdParam("dummy_product_id");
+        ProductSearch sdk = new ProductSearch.Builder("dummy",0).setApiEndPoint("dummy").build();
+        sdk.setHttpClient(mockClient);
+        return sdk.recomendation(dummyParams);
     }
 }

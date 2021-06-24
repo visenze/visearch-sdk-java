@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.visenze.common.util.ViJsonAny;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +35,18 @@ public class Product {
      */
     @JsonProperty("score")
     private Float score;
+
+    /**
+     * Visenze assigned metadata depending on the recommendation algorithm.
+     */
+    @JsonProperty("tags")
+    private Map<String, ViJsonAny> tags;
+
+    /**
+     * A list of alternatives to the recommendation result.
+     */
+    @JsonProperty("alternatives")
+    private List<Product> alternatives;
 
     /**
      * Due to the possibility of non-standardized type of values, this variable
@@ -93,4 +106,19 @@ public class Product {
         return data;
     }
 
+    /**
+     * Visenze assigned metadata depending on the recommendation algorithm.
+     * @return tags
+     */
+    public Map<String, ViJsonAny> getTags() {
+        return tags;
+    }
+
+    /**
+     * A list of alternatives to the recommendation result.
+     * @return a list of alternatives
+     */
+    public List<Product> getAlternatives() {
+        return alternatives;
+    }
 }

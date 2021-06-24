@@ -3,11 +3,13 @@ package com.visenze.productsearch;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.visenze.common.util.ViJsonAny;
 import com.visenze.common.util.ViJsonMapper;
 import com.visenze.productsearch.response.ErrorMsg;
 import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.ObjectProductResult;
 import com.visenze.productsearch.response.Product;
+import com.visenze.productsearch.response.Strategy;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.Facet;
 import com.visenze.visearch.ResponseMessages;
@@ -149,6 +151,12 @@ public class ProductSearchResponse extends ViJsonMapper {
 
     @JsonProperty("query_sys_meta")
     private Map<String, String> querySysMeta;
+
+    @JsonProperty("strategy")
+    private Strategy strategy;
+
+    @JsonProperty("alt_limit")
+    private Integer altLimit;
 
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
@@ -300,6 +308,22 @@ public class ProductSearchResponse extends ViJsonMapper {
 
     public Product getProduct() {
         return product;
+    }
+
+    /**
+     * The recommendation strategy applied.
+     * @return Strategy information used in this query
+     */
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    /**
+     * The max number of alternatives following per recommendation results,
+     * @return the value of alt_limit
+     */
+    public Integer getAltLimit() {
+        return altLimit;
     }
 
     /**

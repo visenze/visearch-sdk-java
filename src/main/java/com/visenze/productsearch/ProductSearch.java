@@ -30,6 +30,7 @@ public class ProductSearch {
     static final String DEFAULT_ENDPOINT = "https://search.visenze.com";
     static final String DEFAULT_IMAGE_SEARCH_PATH = "/v1/product/search_by_image";
     static final String DEFAULT_VISUAL_SIMILAR_PATH = "/v1/product/search_by_id";
+    static final String DEFAULT_RECOMMENDATION_PATH = "/v1/product/recommendation";
     public static final String APP_KEY = "app_key";
     public static final String PLACEMENT_ID = "placement_id";
 
@@ -196,6 +197,20 @@ public class ProductSearch {
     public ProductSearchResponse visualSimilarSearch(SearchByIdParam params) {
         // append the product id after the visual similar path
         final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
+        Multimap<String, String> paramMap = addAuth2Map(params);
+        return ProductSearchResponse.fromResponse(httpClient.get(path, paramMap));
+    }
+
+    /**
+     * Calls the GET method for the API which appends the product_id to the path
+     *
+     * @param params VisualSimilarParam specific parameters to perform request
+     *
+     * @return ViSearchHttpResponse http response of search results
+     */
+    public ProductSearchResponse recomendation(SearchByIdParam params) {
+        // append the product id after the recommendation
+        final String path = DEFAULT_RECOMMENDATION_PATH + '/' + params.getProductId();
         Multimap<String, String> paramMap = addAuth2Map(params);
         return ProductSearchResponse.fromResponse(httpClient.get(path, paramMap));
     }

@@ -30,6 +30,13 @@ public class SearchByIdParam extends BaseProductSearchParam {
     protected Optional<Boolean> returnProductInfo = Optional.absent();
 
     /**
+     * For recommendation: The max number of alternatives following per recommendation results.
+     * Range: between 1 and 100.
+     * Default Value: 5
+     */
+    protected Optional<Integer> alt_limit = Optional.absent();
+
+    /**
      * Constructor with the necessary parameters
      *
      * @param product_id product id to search against
@@ -50,6 +57,7 @@ public class SearchByIdParam extends BaseProductSearchParam {
         Multimap<String, String> multimap = super.toMultimap();
 
         putIfPresent(multimap, returnProductInfo, RETURN_PRODUCT_INFO);
+        putIfPresent(multimap, alt_limit, ALT_LIMIT);
 
         return multimap;
     }
@@ -86,4 +94,20 @@ public class SearchByIdParam extends BaseProductSearchParam {
      * @param b If query should return product metadata
      */
     public void setReturnProductInfo(Boolean b) { this.returnProductInfo = Optional.fromNullable(b); }
+
+    /**
+     * Getter for alt_limit
+     * @return
+     */
+    public Integer getAlt_limit() {
+        return alt_limit.orNull();
+    }
+
+    /**
+     * Setter for alt_limit
+     * @param alt_limit
+     */
+    public void setAlt_limit(Integer alt_limit) {
+        this.alt_limit = Optional.fromNullable(alt_limit);
+    }
 }
