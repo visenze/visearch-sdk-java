@@ -152,10 +152,6 @@ public class ProductSearchResponse extends ViJsonMapper {
     @JsonProperty("query_sys_meta")
     private Map<String, String> querySysMeta;
 
-    @JsonProperty("explanation")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, ViJsonAny> explanation;
-
     @JsonProperty("strategy")
     private Strategy strategy;
 
@@ -312,14 +308,6 @@ public class ProductSearchResponse extends ViJsonMapper {
 
     public Product getProduct() {
         return product;
-    }
-
-    /**
-     * Reserved property. Explain the recommendation reason on the query level.
-     * @return Explanation
-     */
-    public Map<String, ViJsonAny> getExplanation() {
-        return explanation;
     }
 
     /**
