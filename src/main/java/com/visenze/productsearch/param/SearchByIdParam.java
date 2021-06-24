@@ -31,6 +31,8 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     /**
      * For recommendation: The max number of alternatives following per recommendation results.
+     * Range: between 1 and 100.
+     * Default Value: 5
      */
     protected Optional<Integer> alt_limit = Optional.absent();
 

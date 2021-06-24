@@ -325,6 +325,7 @@ public class ProductSearchTest {
         param.setReturnFieldsMapping(true);
         param.setReturnProductInfo(true);
         param.setAttrsToGet(Arrays.asList("sku","brand_name","sale_date","merchant_category"));
+        param.setAlt_limit(3);
 
         // execute search and return response
         ProductSearch sdk = getProductSearch(VSR_KEY, VSR_PLACEMENT);
