@@ -24,7 +24,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     private static final String ENDPOINT_DISCOVER_SEARCH = "/discoversearch";
     private static final String ENDPOINT_UPLOAD_SEARCH = "/uploadsearch";
     private static final String ENDPOINT_SEARCH = "/search";
-    private static final String ENDPOINT_RECOMMENDATION = "/recommendation";
+    private static final String ENDPOINT_RECOMMENDATION = "/recommendations";
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
     private static final String ENDPOINT_SIMILAR_PRODUCTS_SEARCH = "/similarproducts";
     private static final String ENDPOINT_EXTRACT_FEATURE= "/extractfeature";
