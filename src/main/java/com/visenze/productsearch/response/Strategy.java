@@ -12,7 +12,7 @@ public class Strategy {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("algorithn")
+    @JsonProperty("algorithm")
     private String algorithm;
 
     public Integer getId() {

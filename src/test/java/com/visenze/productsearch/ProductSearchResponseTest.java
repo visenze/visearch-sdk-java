@@ -149,7 +149,7 @@ public class ProductSearchResponseTest {
                 "    \"strategy\": {\n" +
                 "        \"id\": 1,\n" +
                 "        \"name\": \"Visually similar\",\n" +
-                "        \"algorithn\": \"VSR\"\n" +
+                "        \"algorithm\": \"VSR\"\n" +
                 "    },\n" +
                 "    \"alt_limit\": 5\n" +
                 "}";
