@@ -11,7 +11,11 @@ public class RecommendSearchParams extends SearchParams {
 
     private Integer altLimit;
 
-    protected String dedupBy;
+    private String dedupBy;
+
+    private String strategyId;
+
+    private String userContext;
 
     public RecommendSearchParams(String imName) {
         super(imName);
@@ -31,6 +35,15 @@ public class RecommendSearchParams extends SearchParams {
         if (dedupBy != null) {
             map.put("dedup_by", dedupBy);
         }
+
+        if (strategyId != null) {
+            map.put("strategy_id", strategyId);
+        }
+
+        if (userContext != null) {
+            map.put("user_context", userContext);
+        }
+
         return map;
     }
 
@@ -56,5 +69,21 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setDedupBy(String dedupBy) {
         this.dedupBy = dedupBy;
+    }
+
+    public String getStrategyId() {
+        return strategyId;
+    }
+
+    public void setStrategyId(String strategyId) {
+        this.strategyId = strategyId;
+    }
+
+    public String getUserContext() {
+        return userContext;
+    }
+
+    public void setUserContext(String userContext) {
+        this.userContext = userContext;
     }
 }
