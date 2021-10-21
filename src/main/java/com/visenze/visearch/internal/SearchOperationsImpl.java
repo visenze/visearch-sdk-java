@@ -47,7 +47,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     @Override
     public PagedSearchResult recommendation(RecommendSearchParams recommendSearchParams) {
         try {
-            ViSearchHttpResponse response = viSearchHttpClient.get(ENDPOINT_RECOMMENDATION, recommendSearchParams.toMap());
+            ViSearchHttpResponse response = viSearchHttpClient.post(ENDPOINT_RECOMMENDATION, recommendSearchParams.toMap());
             return getPagedResult(response);
         } catch (InternalViSearchException e) {
             return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
