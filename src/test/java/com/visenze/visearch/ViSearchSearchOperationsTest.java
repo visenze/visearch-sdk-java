@@ -1254,7 +1254,7 @@ public class ViSearchSearchOperationsTest {
         Multimap<String, String> expectedParams = HashMultimap.create();
         expectedParams.put("im_name", "im_name");
         expectedParams.put("score", "false");
-        given(mockClient.get(eq("/recommendations"), eq(expectedParams))).willReturn(response);
+        given(mockClient.post(eq("/recommendations"), eq(expectedParams))).willReturn(response);
 
         SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
         RecommendSearchParams searchParams = new RecommendSearchParams("im_name");
