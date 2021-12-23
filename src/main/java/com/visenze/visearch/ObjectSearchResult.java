@@ -1,5 +1,6 @@
 package com.visenze.visearch;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 /**
  * Created by dejun on 5/6/17.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ObjectSearchResult {
     private String type;
     private Float score;
@@ -19,6 +21,7 @@ public class ObjectSearchResult {
     private List<ImageResult> result;
     private List<Facet> facets;
     private List<GroupSearchResult> groupResults;
+    private List<Integer> point;
 
     public ObjectSearchResult() {
 
@@ -95,5 +98,13 @@ public class ObjectSearchResult {
     @JsonProperty(ViSearchHttpConstants.GROUP_RESULTS)
     public void setGroupResults(List<GroupSearchResult> groupResults) {
         this.groupResults = groupResults;
+    }
+
+    public List<Integer> getPoint() {
+        return point;
+    }
+
+    public void setPoint(List<Integer> point) {
+        this.point = point;
     }
 }

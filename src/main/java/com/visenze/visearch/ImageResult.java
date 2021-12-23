@@ -1,8 +1,11 @@
 package com.visenze.visearch;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ImageResult {
 
     private final String imName;

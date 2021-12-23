@@ -1,5 +1,7 @@
 package com.visenze.visearch;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,7 @@ import java.util.List;
  * Added grouped results for group_by parameter e.g. group by mpid
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GroupSearchResult {
 
     private List<ImageResult> result;
