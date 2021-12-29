@@ -1,5 +1,6 @@
 package com.visenze.visearch;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  *
  * @since 15 Jan 2021
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Facet {
 
     /**

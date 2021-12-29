@@ -1,10 +1,12 @@
 package com.visenze.visearch;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
 
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<ProductType> productTypes;
