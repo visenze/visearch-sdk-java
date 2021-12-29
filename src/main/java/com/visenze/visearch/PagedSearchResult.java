@@ -29,6 +29,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private String algorithm;
 
+    private String fallbackAlgorithm;
+
     public PagedSearchResult(List<ImageResult> result) {
         this.result = result;
     }
@@ -135,5 +137,13 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public String getFallbackAlgorithm() {
+        return fallbackAlgorithm;
+    }
+
+    public void setFallbackAlgorithm(String fallbackAlgorithm) {
+        this.fallbackAlgorithm = fallbackAlgorithm;
     }
 }

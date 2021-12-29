@@ -1275,4 +1275,40 @@ public class ViSearchSearchOperationsTest {
 
         assertNotNull(result.getReqId());
     }
+
+    @Test
+    public void testSBRRecommendationFallbackResponseParsing() {
+        // given
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        String responseBody = "{\"status\": \"OK\",\"method\": \"recommendations\",\"algorithm\": \"SBR\",\"fallback_algorithm\": \"VSR\",\"error\": [],\"page\": 1,\"limit\": 10," +
+                "\"total\": 10,\"result\": [{\"im_name\": \"top-name-1\",\"value_map\": {\"title\": \"top-name-001\"},\"tags\": {\"category\": \"top\"}," +
+                "\"alternatives\": [{\"im_name\": \"top-name-2\",\"value_map\": {\"title\": \"top-name-002\"}},{\"im_name\": \"top-name-3\",\"value_map\": {" +
+                "\"title\": \"top-name-003\"}}]}],\"reqid\": \"1156773933236717419\"}";
+        when(response.getBody()).thenReturn(responseBody);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "im_name");
+        expectedParams.put("score", "false");
+        given(mockClient.post(eq("/recommendations"), eq(expectedParams))).willReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        RecommendSearchParams searchParams = new RecommendSearchParams("im_name");
+        // then
+        PagedSearchResult result = searchOperations.recommendation(searchParams);
+        // should
+        assertEquals(1, result.getResult().size());
+        assertEquals("SBR", result.getAlgorithm());
+        assertEquals("VSR", result.getFallbackAlgorithm());
+        ImageResult imageResult = result.getResult().get(0);
+        assertEquals("top-name-1", imageResult.getImName());
+        assertEquals("top-name-001", imageResult.getMetadata().getOrDefault("title", null));
+        assertEquals("top", imageResult.getTags().getOrDefault("category", null));
+        assertEquals(2, imageResult.getAlternatives().size());
+        assertEquals("top-name-2", imageResult.getAlternatives().get(0).getImName());
+        assertEquals("top-name-002", imageResult.getAlternatives().get(0).getMetadata().getOrDefault("title", null));
+        assertEquals("top-name-3", imageResult.getAlternatives().get(1).getImName());
+        assertEquals("top-name-003", imageResult.getAlternatives().get(1).getMetadata().getOrDefault("title", null));
+
+        assertNotNull(result.getReqId());
+    }
 }

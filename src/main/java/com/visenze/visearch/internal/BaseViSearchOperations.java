@@ -75,6 +75,7 @@ class BaseViSearchOperations {
         JsonNode groupLimitNode = node.get(ViSearchHttpConstants.GROUP_LIMIT) ;
         JsonNode groupByKeyNode = node.get(ViSearchHttpConstants.GROUP_BY_KEY) ;
         JsonNode algorithmNode = node.get(ViSearchHttpConstants.ALGORITHM);
+        JsonNode fallbackAlgorithmNode = node.get(ViSearchHttpConstants.FALLBACK_ALGORITHM);
 
         PagedSearchResult pagedResult = new PagedSearchResult(result);
         if(pageNode!=null) pagedResult.setPage(pageNode.asInt());
@@ -83,6 +84,7 @@ class BaseViSearchOperations {
         if(groupLimitNode!=null) pagedResult.setGroupLimit(groupLimitNode.asInt());
         if(groupByKeyNode!=null) pagedResult.setGroupByKey(groupByKeyNode.asText());
         if(algorithmNode!=null) pagedResult.setAlgorithm(algorithmNode.asText());
+        if(fallbackAlgorithmNode!=null) pagedResult.setFallbackAlgorithm(fallbackAlgorithmNode.asText());
 
         pagedResult.setObjects(objects);
         pagedResult.setGroupSearchResults(groupResults);
