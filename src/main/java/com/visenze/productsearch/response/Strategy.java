@@ -15,6 +15,9 @@ public class Strategy {
     @JsonProperty("algorithm")
     private String algorithm;
 
+    @JsonProperty("fallback_algorithm")
+    private String fallback_algorithm;
+
     public Integer getId() {
         return id;
     }
@@ -37,5 +40,13 @@ public class Strategy {
 
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public String getFallback_algorithm() {
+        return fallback_algorithm;
+    }
+
+    public void setFallback_algorithm(String fallback_algorithm) {
+        this.fallback_algorithm = fallback_algorithm;
     }
 }

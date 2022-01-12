@@ -11,6 +11,7 @@ public class ImageResult {
     private final String imName;
     private final Map<String, String> metadata;
     private final Float score;
+    private Float rerankScore;
     private String s3Url;
     private Map<String, String> vsMetadata;
     private List<ImageResult> alternatives;
@@ -34,6 +35,14 @@ public class ImageResult {
         return score;
     }
 
+
+    public Float getRerankScore() {
+        return rerankScore;
+    }
+
+    public void setRerankScore(Float rerankScore) {
+        this.rerankScore = rerankScore;
+    }
 
     public String getS3Url() {
         return s3Url;

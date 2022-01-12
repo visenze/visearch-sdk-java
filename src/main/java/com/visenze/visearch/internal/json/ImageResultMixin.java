@@ -14,6 +14,9 @@ abstract class ImageResultMixin {
     protected Map<String, Object> metadata;
     protected Float score;
 
+    @JsonProperty("rerank_score")
+    protected Float rerankScore;
+
     @JsonProperty("s3_url")
     protected String s3Url;
 
@@ -66,5 +69,13 @@ abstract class ImageResultMixin {
 
     public void setTags(Map<String, Object> tags) {
         this.tags = tags;
+    }
+
+    public Float getRerankScore() {
+        return rerankScore;
+    }
+
+    public void setRerankScore(Float rerankScore) {
+        this.rerankScore = rerankScore;
     }
 }

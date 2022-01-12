@@ -37,6 +37,12 @@ public class Product {
     private Float score;
 
     /**
+     * The rerank score given to this product (rerank server output this score)
+     */
+    @JsonProperty("rerank_score")
+    private Float rerankScore;
+
+    /**
      * Visenze assigned metadata depending on the recommendation algorithm.
      */
     @JsonProperty("tags")
@@ -93,6 +99,15 @@ public class Product {
      */
     public Float getScore() {
         return score;
+    }
+
+    /**
+     * Get the rerank score that this product processed the rerank config
+     *
+     * @return rerankScore
+     */
+    public Float getRerankScore() {
+        return rerankScore;
     }
 
     /**
