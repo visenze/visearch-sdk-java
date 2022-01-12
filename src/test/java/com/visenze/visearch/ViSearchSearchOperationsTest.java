@@ -945,6 +945,41 @@ public class ViSearchSearchOperationsTest {
 
 
     @Test
+    public void testUploadSearchParamsURLUploadSearchWithRerankScore() {
+        String responseBody = "{\"status\":\"OK\",\"method\":\"upload\",\"error\":[],\"page\":1,\"limit\":10,\"total\":20,\"result\":[{\"im_name\":\"test_im_1\", \"score\":0.43719249963760376, \"rerank_score\":0.864217823,\"value_map\":{\"price\":\"67.500000\",\"title\":\"sdk test\"} }, {\"im_name\":\"test_im_2\", \"score\":0.56,\"value_map\":{\"price\":\"88.500000\",\"title\":\"sdk test 2\"} } ]}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/test_im.jpeg");
+        uploadSearchParams.setSortBy("price:asc");
+        assertEquals("http://www.example.com/test_im.jpeg", uploadSearchParams.getImageUrl());
+
+        PagedSearchResult result = searchOperations.uploadSearch(uploadSearchParams);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_url", "http://www.example.com/test_im.jpeg");
+        expectedParams.put("score", "false");
+        expectedParams.put("sort_by", "price:asc");
+
+        verify(mockClient).post("/uploadsearch", expectedParams);
+
+        assertEquals(2, result.getResult().size());
+        ImageResult r1 = result.getResult().get(0);
+        assertEquals("test_im_1", r1.getImName());
+        assertEquals(0.43719249963760376, r1.getScore(), 0.0001);
+        assertEquals(0.864217823, r1.getRerankScore(), 0.0001);
+        assertEquals("67.500000", r1.getMetadata().get("price"));
+
+        ImageResult r2 = result.getResult().get(1);
+        assertEquals("test_im_2", r2.getImName());
+        assertEquals(0.56, r2.getScore(), 0.0001);
+        assertNull(r2.getRerankScore());
+        assertEquals("88.500000", r2.getMetadata().get("price"));
+    }
+
+
+    @Test
     public void testSearchGroupedResponseSortBy() {
         String responseBody = "{\"status\":\"OK\",\"method\":\"search\",\"error\":[],\"page\":1,\"group_by_key\":\"mpid\",\"group_limit\":2,\"total\":1000,\"product_types\":[{\"type\":\"shoe\",\"attributes\":{},\"score\":0.9999181032180786,\"box\":[41,256,577,489]}],\"product_types_list\":[{\"type\":\"bag\",\"attributes_list\":{\"gender\":[\"men\",\"women\"]}},{\"type\":\"bottom\",\"attributes_list\":{\"gender\":[\"men\",\"women\"]}},{\"type\":\"dress\",\"attributes_list\":{\"gender\":[\"women\"]}},{\"type\":\"eyewear\",\"attributes_list\":{\"subcategory\":[\"sunglasses\",\"eyeglasses\"]}},{\"type\":\"jewelry\",\"attributes_list\":{}},{\"type\":\"outerwear\",\"attributes_list\":{}},{\"type\":\"shoe\",\"attributes_list\":{\"gender\":[\"men\",\"women\"]}},{\"type\":\"skirt\",\"attributes_list\":{\"gender\":[\"women\"]}},{\"type\":\"top\",\"attributes_list\":{\"gender\":[\"men\",\"women\"],\"subcategory\":[\"sweater\",\"top&tshirt\",\"shirt\"]}},{\"type\":\"watch\",\"attributes_list\":{}},{\"type\":\"other\",\"attributes_list\":{}}],\"group_results\":[{\"group_by_value\":\"321642abb52c014a0861c3264ebd3a04\",\"result\":[{\"im_name\":\"a46453f90a3a14bb574e43c7c51cb828\"}]},{\"group_by_value\":\"053028d324e736d02e1c9aa97d53dcf9\",\"result\":[{\"im_name\":\"053028d324e736d02e1c9aa97d53dcf9\"}]}],\"im_id\":\"2017062864e69285a9eb6940bc5089b7d39db6a52561269e.jpg\",\"reqid\":\"647331357030156285\"}";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);

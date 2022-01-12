@@ -5,7 +5,7 @@
     <groupId>com.visenze</groupId>
     <artifactId>visearch-java-sdk</artifactId>
     <name>ViSearch Java SDK</name>
-    <version>1.11.6</version>
+    <version>1.11.7</version>
     <packaging>jar</packaging>
     <url>https://github.com/visenze/visearch-sdk-java</url>
     <description>ViSearch Java SDK</description>
@@ -120,8 +120,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
+                    <source>8</source>
+                    <target>8</target>
                     <meminitial>128m</meminitial>
                     <maxmem>512m</maxmem>
                 </configuration>

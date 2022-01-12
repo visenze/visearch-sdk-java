@@ -14,6 +14,7 @@ import java.util.Map;
 public class ObjectSearchResult {
     private String type;
     private Float score;
+    private Float rerankScore;
     private List<Integer> box;
     private Map<String, List<String>> attributes;
     private Map<String, List<String>> attributesList;
@@ -106,5 +107,13 @@ public class ObjectSearchResult {
 
     public void setPoint(List<Integer> point) {
         this.point = point;
+    }
+
+    public Float getRerankScore() {
+        return rerankScore;
+    }
+
+    public void setRerankScore(Float rerankScore) {
+        this.rerankScore = rerankScore;
     }
 }
