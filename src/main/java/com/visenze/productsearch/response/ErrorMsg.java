@@ -1,5 +1,6 @@
 package com.visenze.productsearch.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1.0
  * @since 12 Jan 2021
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorMsg {
 
     /**
