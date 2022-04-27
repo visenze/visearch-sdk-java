@@ -36,6 +36,8 @@ public class SearchByIdParam extends BaseProductSearchParam {
      */
     protected Optional<Integer> alt_limit = Optional.absent();
 
+    protected Optional<Integer> strategyId = Optional.absent();
+
     /**
      * Constructor with the necessary parameters
      *
@@ -58,6 +60,7 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
         putIfPresent(multimap, returnProductInfo, RETURN_PRODUCT_INFO);
         putIfPresent(multimap, alt_limit, ALT_LIMIT);
+        putIfPresent(multimap, strategyId, STRATEGY_ID);
 
         return multimap;
     }

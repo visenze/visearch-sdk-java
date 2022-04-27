@@ -109,5 +109,7 @@ public abstract class ViSearchHttpConstants {
     public static final String VA_S2 = "va_s2";
 
     public static final String TYPE = "type";
+    public static final String STRATEGY_ID = "strategy_id";
+
 
 }
