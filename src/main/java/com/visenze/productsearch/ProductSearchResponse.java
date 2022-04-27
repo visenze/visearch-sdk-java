@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.visenze.common.util.ViJsonAny;
 import com.visenze.common.util.ViJsonMapper;
 import com.visenze.productsearch.response.ErrorMsg;
+import com.visenze.productsearch.response.Experiment;
 import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.ObjectProductResult;
 import com.visenze.productsearch.response.Product;
@@ -120,6 +121,8 @@ public class ProductSearchResponse extends ViJsonMapper {
     @JsonProperty("result")
     private List<Product> result;
 
+    @JsonProperty("experiment")
+    private Experiment experiment;
 
     /**
      * A map of Key-to-Value pairs. The keys in  it represent ViSenze's keys
@@ -324,6 +327,20 @@ public class ProductSearchResponse extends ViJsonMapper {
      */
     public Integer getAltLimit() {
         return altLimit;
+    }
+
+    public Experiment getExperiment() {
+        return experiment;
+    }
+
+    /**
+     * return whether the results are empty due to A/B test setting of returning no recommendations
+     *
+     * @return
+     */
+    public boolean experimentNoRecommendation() {
+        if (experiment != null && experiment.isExpNoRecommendation()) return true;
+        return false;
     }
 
     /**
