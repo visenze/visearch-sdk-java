@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import com.visenze.productsearch.http.ProductSearchHttpClientImpl;
 import com.visenze.productsearch.param.SearchByIdParam;
 import com.visenze.productsearch.param.SearchByImageParam;
+import com.visenze.productsearch.response.Experiment;
 import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
@@ -184,6 +185,51 @@ public class ProductSearchResponseTest {
         assertEquals("pants-name-2", response.getResult().get(1).getAlternatives().get(0).getProductId());
         assertEquals("https://localhost/pants-name-2.jpg", response.getResult().get(1).getAlternatives().get(0).getMainImageUrl());
         assertEquals("pants-name-002", response.getResult().get(1).getAlternatives().get(0).getData().get("title").asString());
+        assertNull(response.getExperiment());
+    }
+
+    @Test
+    public void testRecommendationExperimentResponse() {
+        String json = "{\n" +
+                "    \"reqid\": \"01806a667776c6f8a31c28105fd99b\",\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"product/recommendations\",\n" +
+                "    \"page\": 1,\n" +
+                "    \"limit\": 10,\n" +
+                "    \"total\": 2,\n" +
+                "    \"product_types\": [],\n" +
+                "    \"result\": [\n" +
+                "    ],\n" +
+                "    \"strategy\": {\n" +
+                "        \"id\": 3,\n" +
+                "        \"name\": \"test\",\n" +
+                "        \"algorithm\": \"VSR\"\n" +
+                "    },\n" +
+                "   \"experiment\": {\n" +
+                "        \"experiment_id\": 522,\n" +
+                "        \"variant_id\": 2019,\n" +
+                "        \"strategy_id\": 3,\n" +
+                "        \"experiment_no_recommendation\": false,\n" +
+                "        \"debug\": {\n" +
+                "            \"experimentDebugLogs\": [\n" +
+                "                {\n" +
+                "                    \"experimentID\": 522,\n" +
+                "                    \"msg\": \"matched all constraints. rollout yes. {BucketNum:260 DistributionArray:{VariantIDs:[2019 2020] PercentsAccumulated:[500 1000]} VariantID:2019 RolloutPercent:100}\"\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    }," +
+                "    \"alt_limit\": 5\n" +
+                "}";
+
+
+        ProductSearchResponse response = GetRecommendationMockedResponse(json);
+        Experiment experiment = response.getExperiment();
+        assertEquals(522, experiment.getExperimentId());
+        assertEquals(2019, experiment.getVariantId());
+        assertFalse(experiment.isExpNoRecommendation());
+        assertTrue(3 == experiment.getStrategyId());
+        assertNotNull(experiment.getDebug());
     }
 
     @Test

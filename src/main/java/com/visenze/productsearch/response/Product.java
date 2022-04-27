@@ -1,5 +1,6 @@
 package com.visenze.productsearch.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.visenze.common.util.ViJsonAny;
 
@@ -16,6 +17,7 @@ import java.util.Map;
  * @version 1.0
  * @since 15 Jan 2021
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
 
     /**

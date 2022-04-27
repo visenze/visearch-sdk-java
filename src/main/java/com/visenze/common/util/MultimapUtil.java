@@ -33,9 +33,9 @@ public abstract class MultimapUtil {
         }
     }
 
-    public static void setFilter(Multimap<String, String> mapToUpdate,
-                           Optional<Map<String,String>> data,
-                           String key) {
+    public static void setValueMap(Multimap<String, String> mapToUpdate,
+                                 Optional<Map<String,String>> data,
+                                 String key) {
         if (data.isPresent()) {
             Map<String,String> map = data.get();
             for (Map.Entry<String, String> entry : map.entrySet())

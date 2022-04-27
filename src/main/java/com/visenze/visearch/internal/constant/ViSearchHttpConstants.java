@@ -77,6 +77,8 @@ public abstract class ViSearchHttpConstants {
     public static final String FILTERS = "filters";
     public static final String TEXT_FILTERS = "text_filters";
     public static final String ATTRS_TO_GET = "attrs_to_get";
+    public static final String VS_ATTRS_TO_GET = "vs_attrs_to_get";
+
     public static final String RETURN_FIELDS_MAPPING = "return_fields_mapping";
     public static final String RETURN_QUERY_SYS_META = "return_query_sys_meta";
     public static final String RETURN_IMAGE_S3_URL = "return_image_s3_url";
@@ -107,5 +109,7 @@ public abstract class ViSearchHttpConstants {
     public static final String VA_S2 = "va_s2";
 
     public static final String TYPE = "type";
+    public static final String STRATEGY_ID = "strategy_id";
+
 
 }

@@ -6,7 +6,7 @@ import com.google.common.collect.*;
 import static com.visenze.common.util.MultimapUtil.putIfPresent;
 import static com.visenze.common.util.MultimapUtil.putList;
 import static com.visenze.common.util.MultimapUtil.putMap;
-import static com.visenze.common.util.MultimapUtil.setFilter;
+import static com.visenze.common.util.MultimapUtil.setValueMap;
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 
 import java.util.List;
@@ -129,6 +129,10 @@ public class BaseProductSearchParam {
 
     protected Optional<String> vaS2 = Optional.absent();
 
+    protected Optional<Map<String, String>> vsConfig = Optional.absent();
+    protected Optional<List<String>> vsAttrsToGet = Optional.absent();
+
+
     public Multimap<String, String> toMultimap() {
         Multimap<String, String> multimap = HashMultimap.create();
 
@@ -156,10 +160,12 @@ public class BaseProductSearchParam {
         setAnalyticsParams(multimap);
 
         putList(multimap, attrsToGet, ATTRS_TO_GET);
+        putList(multimap, vsAttrsToGet, VS_ATTRS_TO_GET);
         putList(multimap, facets, FACETS);
 
-        setFilter(multimap, filters, FILTERS);
-        setFilter(multimap, textFilters, TEXT_FILTERS);
+        setValueMap(multimap, filters, FILTERS);
+        setValueMap(multimap, textFilters, TEXT_FILTERS);
+        setValueMap(multimap, vsConfig, VS_CONFIG);
 
         putMap(multimap, customParams);
 
@@ -319,6 +325,14 @@ public class BaseProductSearchParam {
      */
     public void setAttrsToGet(List<String> attrsToGet) {
         this.attrsToGet = getOptionalList(attrsToGet);
+    }
+
+    public List<String> getVsAttrsToGet() {
+        return vsAttrsToGet.orNull();
+    }
+
+    public void setVsAttrsToGet(List<String> vsAttrsToGet) {
+        this.vsAttrsToGet = getOptionalList(vsAttrsToGet);
     }
 
     /**
@@ -664,6 +678,14 @@ public class BaseProductSearchParam {
 
     public void setCustomParams(Map<String, String> customParams) {
         this.customParams = Optional.fromNullable(customParams);
+    }
+
+    public Map<String, String> getVsConfig() {
+        return vsConfig.orNull();
+    }
+
+    public void setVsConfig(Map<String, String> vsConfig) {
+        this.vsConfig = Optional.fromNullable(vsConfig);
     }
 
     private Optional<Map<String, String>> getOptionalMap(Map<String, String> map){

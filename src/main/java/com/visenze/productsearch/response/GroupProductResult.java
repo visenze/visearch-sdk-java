@@ -1,11 +1,14 @@
 package com.visenze.productsearch.response;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by Hung on 28/1/21.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GroupProductResult {
 
     @JsonProperty("group_by_value")
