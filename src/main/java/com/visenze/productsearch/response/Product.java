@@ -76,6 +76,11 @@ public class Product {
     @JsonProperty("data")
     private Map<String, ViJsonAny> data = new HashMap<String, ViJsonAny>();
 
+
+    // system data
+    @JsonProperty("vs_data")
+    private Map<String, ViJsonAny> vsData = new HashMap<String, ViJsonAny>();
+
     /**
      * Get the unique identifier of this product
      *
@@ -121,6 +126,10 @@ public class Product {
      */
     public Map<String, ViJsonAny> getData() {
         return data;
+    }
+
+    public Map<String, ViJsonAny> getVsData() {
+        return vsData;
     }
 
     /**
