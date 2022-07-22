@@ -56,6 +56,9 @@ public class Product {
     @JsonProperty("alternatives")
     private List<Product> alternatives;
 
+    @JsonProperty("pinned")
+    private Boolean pinned;
+
     /**
      * Due to the possibility of non-standardized type of values, this variable
      * will be holding the information as-it-is. The only thing we know about
@@ -146,5 +149,13 @@ public class Product {
      */
     public List<Product> getAlternatives() {
         return alternatives;
+    }
+
+    public Boolean getPinned() {
+        return pinned;
+    }
+
+    public void setPinned(Boolean pinned) {
+        this.pinned = pinned;
     }
 }

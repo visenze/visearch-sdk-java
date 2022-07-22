@@ -161,6 +161,9 @@ public class ProductSearchResponse extends ViJsonMapper {
     @JsonProperty("alt_limit")
     private Integer altLimit;
 
+    @JsonProperty("excluded_pids")
+    private List<String> excludedPids;
+
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
      * response into data members.
@@ -341,6 +344,14 @@ public class ProductSearchResponse extends ViJsonMapper {
     public boolean experimentNoRecommendation() {
         if (experiment != null && experiment.isExpNoRecommendation()) return true;
         return false;
+    }
+
+    public List<String> getExcludedPids() {
+        return excludedPids;
+    }
+
+    public void setExcludedPids(List<String> excludedPids) {
+        this.excludedPids = excludedPids;
     }
 
     /**

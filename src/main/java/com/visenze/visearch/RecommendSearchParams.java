@@ -17,6 +17,9 @@ public class RecommendSearchParams extends SearchParams {
 
     private String userContext;
 
+    private Boolean showPinnedImNames;
+    private Boolean showExcludedImNames;
+
     public RecommendSearchParams(String imName) {
         super(imName);
     }
@@ -42,6 +45,14 @@ public class RecommendSearchParams extends SearchParams {
 
         if (userContext != null) {
             map.put("user_context", userContext);
+        }
+
+        if (showPinnedImNames != null) {
+            map.put("show_pinned_im_names", showPinnedImNames.toString());
+        }
+
+        if (showExcludedImNames != null) {
+            map.put("show_excluded_im_names", showExcludedImNames.toString());
         }
 
         return map;
@@ -85,5 +96,21 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setUserContext(String userContext) {
         this.userContext = userContext;
+    }
+
+    public Boolean getShowPinnedImNames() {
+        return showPinnedImNames;
+    }
+
+    public void setShowPinnedImNames(Boolean showPinnedImNames) {
+        this.showPinnedImNames = showPinnedImNames;
+    }
+
+    public Boolean getShowExcludedImNames() {
+        return showExcludedImNames;
+    }
+
+    public void setShowExcludedImNames(Boolean showExcludedImNames) {
+        this.showExcludedImNames = showExcludedImNames;
     }
 }

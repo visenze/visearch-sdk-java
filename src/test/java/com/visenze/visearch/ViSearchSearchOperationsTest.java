@@ -26,6 +26,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -1307,9 +1308,79 @@ public class ViSearchSearchOperationsTest {
         assertEquals("top-name-002", imageResult.getAlternatives().get(0).getMetadata().getOrDefault("title", null));
         assertEquals("top-name-3", imageResult.getAlternatives().get(1).getImName());
         assertEquals("top-name-003", imageResult.getAlternatives().get(1).getMetadata().getOrDefault("title", null));
+        assertNull(imageResult.getPinned());
 
         assertNotNull(result.getReqId());
+        assertNull(result.getExcludedImNames());
     }
+
+    @Test
+    public void testRecommendationResponsePinExcludedParsing() {
+        // given
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        String responseBody = "{\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"recommendations\",\n" +
+                "    \"algorithm\": \"STL\",\n" +
+                "    \"error\": [],\n" +
+                "    \"page\": 1,\n" +
+                "    \"limit\": 3,\n" +
+                "    \"total\": 1,\n" +
+                "    \"result\": [\n" +
+                "        {\n" +
+                "            \"im_name\": \"image_F01\",\n" +
+                "            \"score\": 0.6613727807998657,\n" +
+                "            \"alternatives\": [\n" +
+                "                {\n" +
+                "                    \"im_name\": \"image_bag_3\",\n" +
+                "                    \"score\": 0.6613727807998657\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"pinned\" : \"true\",\n" +
+                "            \"tags\": {\n" +
+                "                \"query_product_id\": \"image_bag_5\",\n" +
+                "                \"category\": \"bag\",\n" +
+                "                \"query_image_url\": \"https://test.jpg\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"excluded_im_names\" : [\"im1\", \"im2\"],\n" +
+                "    \"reqid\": \"1317439821672620035\"\n" +
+                "}";
+        when(response.getBody()).thenReturn(responseBody);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "im_name");
+        expectedParams.put("score", "false");
+        expectedParams.put("show_pinned_im_names", "true");
+        expectedParams.put("show_excluded_im_names", "true");
+
+        given(mockClient.post(eq("/recommendations"), eq(expectedParams))).willReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        RecommendSearchParams searchParams = new RecommendSearchParams("im_name");
+        searchParams.setShowExcludedImNames(true);
+        searchParams.setShowPinnedImNames(true);
+
+        // then
+        PagedSearchResult result = searchOperations.recommendation(searchParams);
+        // should
+        assertEquals(1, result.getResult().size());
+        assertEquals("STL", result.getAlgorithm());
+        ImageResult imageResult = result.getResult().get(0);
+        assertEquals("image_F01", imageResult.getImName());
+        assertEquals("bag", imageResult.getTags().getOrDefault("category", null));
+        assertEquals(1, imageResult.getAlternatives().size());
+        assertEquals("image_bag_3", imageResult.getAlternatives().get(0).getImName());
+        assertTrue(imageResult.getPinned());
+
+        assertEquals("1317439821672620035", result.getReqId());
+        assertEquals(2, result.getExcludedImNames().size());
+        assertEquals("im1" , result.getExcludedImNames().get(0));
+        assertEquals("im2" , result.getExcludedImNames().get(1));
+
+    }
+
 
     @Test
     public void testSBRRecommendationFallbackResponseParsing() {
