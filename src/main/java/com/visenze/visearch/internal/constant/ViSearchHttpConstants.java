@@ -4,8 +4,6 @@ package com.visenze.visearch.internal.constant;
  * Created by Hung on 10/7/17.
  */
 public abstract class ViSearchHttpConstants {
-    public static final String X_LOG_ID = "X-Log-ID";
-    public static final String X_LOG_ID_EMPTY = "";
     public static final String RESULT = "result";
     public static final String OBJECTS = "objects";
     public static final String METHOD = "method";
@@ -61,6 +59,7 @@ public abstract class ViSearchHttpConstants {
     public static final String BOX = "box";
     public static final String IM_URL = "im_url";
     public static final String IM_ID = "im_id";
+    public static final String REQID = "reqid";
     public static final String DETECTION = "detection";
     public static final String DETECTION_LIMIT = "detection_limit";
     public static final String RESULT_LIMIT = "result_limit";
@@ -112,6 +111,7 @@ public abstract class ViSearchHttpConstants {
     public static final String STRATEGY_ID = "strategy_id";
     public static final String SHOW_EXCLUDED_PIDS = "show_excluded_pids";
     public static final String SHOW_PINNED_PIDS = "show_pinned_pids";
+    public static final String EXCLUDED_IM_NAMES = "excluded_im_names";
 
 
 }

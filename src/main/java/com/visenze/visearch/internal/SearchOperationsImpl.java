@@ -188,6 +188,10 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         if (imIdNode != null) {
             result.setImId(imIdNode.asText());
         }
+        JsonNode reqidNode = node.get(ViSearchHttpConstants.REQID);
+        if (reqidNode != null) {
+            result.setReqId(reqidNode.asText());
+        }
         result.setRawJson(node.toString());
         result.setHeaders(headers);
         return result;
@@ -229,6 +233,10 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         if (imIdNode != null) {
             result.setImId(imIdNode.asText());
         }
+        JsonNode reqidNode = node.get(ViSearchHttpConstants.REQID);
+        if (reqidNode != null) {
+            result.setReqId(reqidNode.asText());
+        }
         JsonNode facetsNode = node.get(ViSearchHttpConstants.FACETS);
         if (facetsNode != null) {
             List<Facet> facets = deserializeListResult(response, facetsNode, Facet.class);
@@ -239,6 +247,13 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             Map<String, String> qinfo = deserializeMapResult(response, qinfoNode, String.class, String.class);
             result.setQueryInfo(qinfo);
         }
+
+        JsonNode excludedImNamesNode = node.get(ViSearchHttpConstants.EXCLUDED_IM_NAMES);
+        if (excludedImNamesNode != null) {
+            List<String> excludedImNames = deserializeListResult(response, excludedImNamesNode, String.class);
+            result.setExcludedImNames(excludedImNames);
+        }
+
         // For similarproducts search, try to cover it's result into discoversearch result.
         JsonNode groupResult = node.get(ViSearchHttpConstants.GROUP_RESULT);
         if (groupResult != null && groupResult instanceof ArrayNode) {

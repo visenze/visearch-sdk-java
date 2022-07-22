@@ -19,6 +19,8 @@ public class FeatureResponseResult extends ResponseBase {
 
     private List<ProductType> productTypes;
 
+    private String reqId;
+
     public FeatureResponseResult(List<String> result) {
         this.result = result;
     }
@@ -50,10 +52,11 @@ public class FeatureResponseResult extends ResponseBase {
      * @return request ID
      */
     public String getReqId(){
-        if(this.headers!=null && this.headers.containsKey(ViSearchHttpConstants.X_LOG_ID)){
-            return headers.get(ViSearchHttpConstants.X_LOG_ID);
-        }
-        return ViSearchHttpConstants.X_LOG_ID_EMPTY;
+        return reqId;
+    }
+
+    public void setReqId(String reqId) {
+        this.reqId = reqId;
     }
 
     public void setResult(List<String> result) {

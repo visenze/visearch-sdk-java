@@ -33,6 +33,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<String> excludedImNames;
 
+    private String reqId;
+
     public PagedSearchResult(List<ImageResult> result) {
         this.result = result;
     }
@@ -95,10 +97,11 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
      * Get the request id to identify this request.
      */
     public String getReqId(){
-        if(this.headers!=null && this.headers.containsKey(ViSearchHttpConstants.X_LOG_ID)){
-            return headers.get(ViSearchHttpConstants.X_LOG_ID);
-        }
-        return ViSearchHttpConstants.X_LOG_ID_EMPTY;
+        return reqId;
+    }
+
+    public void setReqId(String reqId) {
+        this.reqId = reqId;
     }
 
     /**
