@@ -289,6 +289,10 @@ public class ProductSearchResponseTest {
         assertEquals("p1" , response.getExcludedPids().get(0));
         assertEquals("p2" , response.getExcludedPids().get(1));
 
+        json = json.replace("\"pinned\": \"true\"","\"pinned\": \"false\"");
+        response = GetRecommendationMockedResponse(json);
+        assertFalse(response.getResult().get(0).getPinned());
+
     }
 
     @Test
