@@ -31,6 +31,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private String fallbackAlgorithm;
 
+    private List<String> excludedImNames;
+
     public PagedSearchResult(List<ImageResult> result) {
         this.result = result;
     }
@@ -145,5 +147,13 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public void setFallbackAlgorithm(String fallbackAlgorithm) {
         this.fallbackAlgorithm = fallbackAlgorithm;
+    }
+
+    public List<String> getExcludedImNames() {
+        return excludedImNames;
+    }
+
+    public void setExcludedImNames(List<String> excludedImNames) {
+        this.excludedImNames = excludedImNames;
     }
 }

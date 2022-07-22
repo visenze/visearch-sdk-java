@@ -16,6 +16,7 @@ public class ImageResult {
     private Map<String, String> vsMetadata;
     private List<ImageResult> alternatives;
     private Map<String, Object> tags;
+    private Boolean pinned;
 
     public ImageResult(String imName, Map<String, String> metadata, Float score) {
         this.imName = imName;
@@ -74,5 +75,13 @@ public class ImageResult {
 
     public void setTags(Map<String, Object> tags) {
         this.tags = tags;
+    }
+
+    public Boolean getPinned() {
+        return pinned;
+    }
+
+    public void setPinned(Boolean pinned) {
+        this.pinned = pinned;
     }
 }
