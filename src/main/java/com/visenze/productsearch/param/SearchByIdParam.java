@@ -38,6 +38,10 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     protected Optional<Integer> strategyId = Optional.absent();
 
+    protected Optional<Boolean> showPinnedPids = Optional.absent();
+
+    protected Optional<Boolean> showExcludedPids = Optional.absent();
+
     /**
      * Constructor with the necessary parameters
      *
@@ -61,6 +65,8 @@ public class SearchByIdParam extends BaseProductSearchParam {
         putIfPresent(multimap, returnProductInfo, RETURN_PRODUCT_INFO);
         putIfPresent(multimap, alt_limit, ALT_LIMIT);
         putIfPresent(multimap, strategyId, STRATEGY_ID);
+        putIfPresent(multimap, showExcludedPids, SHOW_EXCLUDED_PIDS);
+        putIfPresent(multimap, showPinnedPids, SHOW_PINNED_PIDS);
 
         return multimap;
     }
@@ -112,5 +118,21 @@ public class SearchByIdParam extends BaseProductSearchParam {
      */
     public void setAlt_limit(Integer alt_limit) {
         this.alt_limit = Optional.fromNullable(alt_limit);
+    }
+
+    public Boolean getShowPinnedPids() {
+        return showPinnedPids.orNull();
+    }
+
+    public void setShowPinnedPids(Boolean showPinnedPids) {
+        this.showPinnedPids =  Optional.fromNullable(showPinnedPids);
+    }
+
+    public Boolean getShowExcludedPids() {
+        return showExcludedPids.orNull();
+    }
+
+    public void setShowExcludedPids(Boolean showExcludedPids) {
+        this.showExcludedPids =  Optional.fromNullable(showExcludedPids);
     }
 }

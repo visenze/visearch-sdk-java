@@ -110,6 +110,8 @@ public abstract class ViSearchHttpConstants {
 
     public static final String TYPE = "type";
     public static final String STRATEGY_ID = "strategy_id";
+    public static final String SHOW_EXCLUDED_PIDS = "show_excluded_pids";
+    public static final String SHOW_PINNED_PIDS = "show_pinned_pids";
 
 
 }
