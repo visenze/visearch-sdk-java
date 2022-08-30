@@ -2,7 +2,6 @@
 
 [![Build Status](https://api.travis-ci.org/visenze/visearch-sdk-java.svg?branch=master)](https://travis-ci.org/visenze/visearch-sdk-java)
 [![Coverage Status](https://coveralls.io/repos/visenze/visearch-sdk-java/badge.svg)](https://coveralls.io/r/visenze/visearch-sdk-java)
-[![CodeFactor](https://www.codefactor.io/repository/github/visenze/visearch-sdk-java/badge)](https://www.codefactor.io/repository/github/visenze/visearch-sdk-java)
 
 ---
 
@@ -36,9 +35,11 @@
 
 ## 1. Overview
 
+ViSenze latest [Product Search & Recommendations API](src/main/java/com/visenze/productsearch/README.md) is included in this [SDK](src/main/java/com/visenze/productsearch/README.md). Please refer to [online docs](https://ref-docs.visenze.com/reference/introduction-to-search-and-recommendation-api) for more information.
+
 ViSearch is an API that provides accurate, reliable and scalable image search. ViSearch API provides endpoints that let developers index their images and perform image searches efficiently. ViSearch API can be easily integrated into your web and mobile applications. For more details, see [ViSearch API Documentation](http://www.visenze.com/docs).
 
-The ViSearch Java SDK is an open source software for easy integration with your Java back-end applications and services. For source code and references, visit the [Github Repository](https://github.com/visenze/visearch-sdk-java).
+The ViSearch Java SDK is an open source software for easy integration with your Java server back-end applications and services. For source code and references, visit the [Github Repository](https://github.com/visenze/visearch-sdk-java).
 
  * Current stable version: 1.12.3
  * Minimum JDK version: 1.6
@@ -50,7 +51,7 @@ For Maven projects, include the dependency in ```pom.xml```:
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.12.2</version>
+  <version>1.12.3</version>
 </dependency>
 ```
 

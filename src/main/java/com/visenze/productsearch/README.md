@@ -10,7 +10,7 @@
       - 2.1.1 [Using Image URL](#211-using-image-url)
       - 2.1.2 [Using Image File](#212-using-image-file)
       - 2.1.3 [Using Image ID](#213-using-image-id)
-    - 2.2 [Search by ID](#22-search-by-id)
+    - 2.2 [Recommendations](#22-recommendations)
 3. [Search Results](#3-search-results)
     - 3.1 [Product](#31-product)
 4. [Basic Search Parameters](#4-basic-search-parameters)
@@ -23,8 +23,7 @@
 
 ## 1. Introduction
 
-With the release of ViSenze's Catalog system, ViSearch Java SDK will now include
-the Product Search API suite - an additional set of APIs that ideally can:
+With the release of ViSenze's Catalog system, ViSearch Java SDK will now include the Product Search API suite - an additional set of APIs that ideally can:
 
 - Select the right product image for indexing for best search performance
 - Aggregate search results on a product level instead of image level
@@ -47,7 +46,7 @@ Each placement has to be associated with an integration type: API, SDK or widget
 ## 2. APIs
 
 There are two main APIs provided in this suite, one allows searching for 
-products based on an image input, the other searches using a product's ID. A 
+products based on an image input, the other searches using a product's ID (Recommendations API). A 
 product's ID can be retrieved from a [Search Result](#3-search-results).
 
 ### 2.1 Search by Image
@@ -121,23 +120,16 @@ searchResults = api.imageSearch(params);
 > More parameters can be provided for further customization - see [Basic](#4-basic-search-parameters) 
 > and [Advanced](#5-advanced-search-parameters) search parameters.
 
-### 2.2 Search by ID
+### 2.2 Recommendations
 
-GET /v1/product/search_by_id/PRODUCT_ID
+GET /v1/product/recommendations/{product\_id}
 
-This API is **NOT** the same as [Search by Image using Image ID](#213-using-image-id). 
 The ID referred to in this API is the **product's ID** - a unique identifier 
 tied to each product in the Catalog.
 
-In [Search Results](#3-search-results) section, you will learn how to retrieve
-a product's ID after performing a search. That ID can then be used in this API
-method:
-
 ```
-// Assuming you know the product ID of a desired product to be searched against
-String productID = PRODUCT_ID;
 
-// Create the parameter object with the image file 
+// Create the parameter object with a product ID
 SearchByIdParam params = new SearchByIdParam(productID);
 
 // Create the ProductSearch object
@@ -147,7 +139,7 @@ ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
                      
 // Use the ProductSearch object to perform searches, it will return a
 // ProductSearchResponse object that contains all the searched results info 
-ProductSearchResponse searchResults = api.visualSimilarSearch(params);  
+ProductSearchResponse searchResults = api.recomendation(params);  
 ```
 
 > pseudo steps:
