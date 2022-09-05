@@ -42,6 +42,10 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     protected Optional<Boolean> showExcludedPids = Optional.absent();
 
+    protected Optional<Integer> setLimit = Optional.absent();
+    protected Optional<Boolean> useSetBasedCtl = Optional.absent();
+
+
     /**
      * Constructor with the necessary parameters
      *
@@ -67,6 +71,10 @@ public class SearchByIdParam extends BaseProductSearchParam {
         putIfPresent(multimap, strategyId, STRATEGY_ID);
         putIfPresent(multimap, showExcludedPids, SHOW_EXCLUDED_PIDS);
         putIfPresent(multimap, showPinnedPids, SHOW_PINNED_PIDS);
+
+        putIfPresent(multimap, useSetBasedCtl, USE_SET_BASED_CTL);
+        putIfPresent(multimap, setLimit, SET_LIMIT);
+
 
         return multimap;
     }
@@ -134,5 +142,21 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     public void setShowExcludedPids(Boolean showExcludedPids) {
         this.showExcludedPids =  Optional.fromNullable(showExcludedPids);
+    }
+
+    public Integer getSetLimit() {
+        return setLimit.orNull();
+    }
+
+    public void setSetLimit(Integer setLimit) {
+        this.setLimit = Optional.fromNullable(setLimit);
+    }
+
+    public Boolean getUseSetBasedCtl() {
+        return useSetBasedCtl.orNull();
+    }
+
+    public void setUseSetBasedCtl(Boolean useSetBasedCtl) {
+        this.useSetBasedCtl =  Optional.fromNullable(useSetBasedCtl);
     }
 }

@@ -20,6 +20,9 @@ public class RecommendSearchParams extends SearchParams {
     private Boolean showPinnedImNames;
     private Boolean showExcludedImNames;
 
+    private Integer setLimit;
+    private Boolean useSetBasedCtl;
+
     public RecommendSearchParams(String imName) {
         super(imName);
     }
@@ -53,6 +56,14 @@ public class RecommendSearchParams extends SearchParams {
 
         if (showExcludedImNames != null) {
             map.put("show_excluded_im_names", showExcludedImNames.toString());
+        }
+
+        if (useSetBasedCtl != null) {
+            map.put("use_set_based_ctl", useSetBasedCtl.toString());
+        }
+
+        if (setLimit != null) {
+            map.put("set_limit", setLimit.toString());
         }
 
         return map;
@@ -112,5 +123,21 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setShowExcludedImNames(Boolean showExcludedImNames) {
         this.showExcludedImNames = showExcludedImNames;
+    }
+
+    public Integer getSetLimit() {
+        return setLimit;
+    }
+
+    public void setSetLimit(Integer setLimit) {
+        this.setLimit = setLimit;
+    }
+
+    public Boolean getUseSetBasedCtl() {
+        return useSetBasedCtl;
+    }
+
+    public void setUseSetBasedCtl(Boolean useSetBasedCtl) {
+        this.useSetBasedCtl = useSetBasedCtl;
     }
 }
