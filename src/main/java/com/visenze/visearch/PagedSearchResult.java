@@ -33,6 +33,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<String> excludedImNames;
 
+    private List<SetInfo> setInfoList;
+
     private String reqId;
 
     public PagedSearchResult(List<ImageResult> result) {
@@ -158,5 +160,13 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public void setExcludedImNames(List<String> excludedImNames) {
         this.excludedImNames = excludedImNames;
+    }
+
+    public List<SetInfo> getSetInfoList() {
+        return setInfoList;
+    }
+
+    public void setSetInfoList(List<SetInfo> setInfoList) {
+        this.setInfoList = setInfoList;
     }
 }

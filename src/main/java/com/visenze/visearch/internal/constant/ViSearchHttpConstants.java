@@ -115,4 +115,5 @@ public abstract class ViSearchHttpConstants {
     public static final String USE_SET_BASED_CTL = "use_set_based_ctl";
     public static final String SET_LIMIT = "set_limit";
 
+    public static final String SET_INFO = "set_info";
 }

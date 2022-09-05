@@ -8,6 +8,7 @@ import com.visenze.productsearch.response.Experiment;
 import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.Product;
 import com.visenze.visearch.ProductType;
+import com.visenze.visearch.SetInfo;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -292,6 +293,87 @@ public class ProductSearchResponseTest {
         json = json.replace("\"pinned\": \"true\"","\"pinned\": \"false\"");
         response = GetRecommendationMockedResponse(json);
         assertFalse(response.getResult().get(0).getPinned());
+
+    }
+
+    @Test
+    public void testRecommendationCtlSetResponse() {
+        String json = "{\n" +
+                "    \"reqid\": \"01806a667776c6f8a31c28105fd99e\",\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"product/recommendations\",\n" +
+                "    \"page\": 1,\n" +
+                "    \"limit\": 10,\n" +
+                "    \"total\": 1,\n" +
+                "    \"product_types\": [],\n" +
+                "    \"result\": [\n" +
+                        "{\n" +
+                        "      \"product_id\": \"dress1\",\n" +
+                        "      \"main_image_url\": \"http://test.com/img1.jpg\",\n" +
+                        "      \"tags\": {\n" +
+                        "        \"category\": \"dress\",\n" +
+                        "        \"set_id\": \"set1\"\n" +
+                        "      },\n" +
+                        "      \"score\": 0.9\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"product_id\": \"shirt1\",\n" +
+                        "      \"main_image_url\": \"http://test.com/img2.jpg\",\n" +
+                        "      \"tags\": {\n" +
+                        "        \"category\": \"shirt\",\n" +
+                        "        \"set_id\": \"set1\"\n" +
+                        "      },\n" +
+                        "      \"score\": 0.7\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"product_id\": \"shoe2\",\n" +
+                        "      \"main_image_url\": \"http://test.com/img2.jpg\",\n" +
+                        "      \"tags\": {\n" +
+                        "        \"category\": \"shoes\",\n" +
+                        "        \"set_id\": \"set2\"\n" +
+                        "      },\n" +
+                        "      \"score\": 0.8\n" +
+                        "    }" +
+                "    ],\n" +
+                    "\"set_info\": [\n" +
+                    "    {\n" +
+                    "      \"set_id\": \"set1\",\n" +
+                    "      \"set_score\": 1000\n" +
+                    "    },\n" +
+                    "    {\n" +
+                    "      \"set_id\": \"set2\",\n" +
+                    "      \"set_score\": 900\n" +
+                    "    }\n" +
+                    "  ]," +
+                "    \"strategy\": {\n" +
+                "        \"id\": 3,\n" +
+                "        \"name\": \"test\",\n" +
+                "        \"algorithm\": \"CTL\"\n" +
+                "    }\n" +
+                "}";
+
+
+        ProductSearchResponse response = GetRecommendationMockedResponse(json);
+        List<Product> result = response.getResult();
+        assertEquals(3, result.size());
+
+        assertEquals("set1", result.get(0).getTags().get("set_id").asString());
+        assertEquals("dress", result.get(0).getTags().get("category").asString());
+
+        assertEquals("set1", result.get(1).getTags().get("set_id").asString());
+        assertEquals("shirt", result.get(1).getTags().get("category").asString());
+
+        assertEquals("set2", result.get(2).getTags().get("set_id").asString());
+        assertEquals("shoes", result.get(2).getTags().get("category").asString());
+
+        List<SetInfo> setInfoList = response.getSetInfoList();
+        assertEquals(2, setInfoList.size());
+
+        assertEquals("set1", setInfoList.get(0).getSetId());
+        assertTrue(1000 == setInfoList.get(0).getSetScore());
+
+        assertEquals("set2", setInfoList.get(1).getSetId());
+        assertTrue(900 == setInfoList.get(1).getSetScore());
 
     }
 
