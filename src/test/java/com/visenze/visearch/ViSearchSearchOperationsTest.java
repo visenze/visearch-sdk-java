@@ -1354,6 +1354,7 @@ public class ViSearchSearchOperationsTest {
         expectedParams.put("score", "false");
         expectedParams.put("show_pinned_im_names", "true");
         expectedParams.put("show_excluded_im_names", "true");
+        expectedParams.put("use_set_based_ctl", "false");
 
         given(mockClient.post(eq("/recommendations"), eq(expectedParams))).willReturn(response);
 
@@ -1361,6 +1362,7 @@ public class ViSearchSearchOperationsTest {
         RecommendSearchParams searchParams = new RecommendSearchParams("im_name");
         searchParams.setShowExcludedImNames(true);
         searchParams.setShowPinnedImNames(true);
+        searchParams.setUseSetBasedCtl(false);
 
         // then
         PagedSearchResult result = searchOperations.recommendation(searchParams);
@@ -1407,14 +1409,85 @@ public class ViSearchSearchOperationsTest {
         assertEquals("VSR", result.getFallbackAlgorithm());
         ImageResult imageResult = result.getResult().get(0);
         assertEquals("top-name-1", imageResult.getImName());
-        assertEquals("top-name-001", imageResult.getMetadata().getOrDefault("title", null));
-        assertEquals("top", imageResult.getTags().getOrDefault("category", null));
+        assertEquals("top-name-001", imageResult.getMetadata().get("title"));
+        assertEquals("top", imageResult.getTags().get("category"));
         assertEquals(2, imageResult.getAlternatives().size());
         assertEquals("top-name-2", imageResult.getAlternatives().get(0).getImName());
-        assertEquals("top-name-002", imageResult.getAlternatives().get(0).getMetadata().getOrDefault("title", null));
+        assertEquals("top-name-002", imageResult.getAlternatives().get(0).getMetadata().get("title"));
         assertEquals("top-name-3", imageResult.getAlternatives().get(1).getImName());
-        assertEquals("top-name-003", imageResult.getAlternatives().get(1).getMetadata().getOrDefault("title", null));
+        assertEquals("top-name-003", imageResult.getAlternatives().get(1).getMetadata().get("title"));
 
         assertNotNull(result.getReqId());
+    }
+
+    @Test
+    public void testParseCtlSetBasedResponse() {
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        String responseBody = "{\n" +
+                "  \"status\": \"OK\",\n" +
+                "  \"method\": \"recommendations\",\n" +
+                "  \"algorithm\": \"CTL\",\n" +
+                "  \"error\": [],\n" +
+                "  \"page\": 1,\n" +
+                "  \"limit\": 2,\n" +
+                "  \"total\": 1000,\n" +
+                "  \"result\": [\n" +
+                "    {\n" +
+                "      \"im_name\": \"image-name-1\",\n" +
+                "      \"tags\": {\n" +
+                "        \"category\": \"top\",\n" +
+                "        \"set_id\": \"set1\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"im_name\": \"image-name-2\",\n" +
+                "      \"tags\": {\n" +
+                "        \"category\": \"bottom\",\n" +
+                "        \"set_id\": \"set1\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"set_info\": [\n" +
+                "    {\n" +
+                "      \"set_id\": \"set1\",\n" +
+                "      \"set_score\": 1000.0\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"reqid\": \"1156773933236717419\"\n" +
+                "}";
+
+        when(response.getBody()).thenReturn(responseBody);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "im_name1");
+        expectedParams.put("score", "false");
+        given(mockClient.post(eq("/recommendations"), eq(expectedParams))).willReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        RecommendSearchParams searchParams = new RecommendSearchParams("im_name1");
+        // then
+        PagedSearchResult result = searchOperations.recommendation(searchParams);
+
+        // should
+        assertEquals(2, result.getResult().size());
+        assertEquals("CTL", result.getAlgorithm());
+
+        ImageResult imageResult = result.getResult().get(0);
+        assertEquals("image-name-1", imageResult.getImName());
+        assertEquals("top", imageResult.getTags().get("category"));
+        assertEquals("set1", imageResult.getTags().get("set_id"));
+
+        ImageResult imageResult2 = result.getResult().get(1);
+        assertEquals("image-name-2", imageResult2.getImName());
+        assertEquals("bottom", imageResult2.getTags().get("category"));
+        assertEquals("set1", imageResult2.getTags().get("set_id"));
+
+        List<SetInfo> setInfoList = result.getSetInfoList();
+        assertEquals(1, setInfoList.size());
+        assertEquals("set1", setInfoList.get(0).getSetId());
+        assertTrue(1000.0 == setInfoList.get(0).getSetScore());
+
+        assertEquals("1156773933236717419", result.getReqId());
+
     }
 }

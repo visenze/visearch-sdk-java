@@ -14,6 +14,7 @@ import com.visenze.productsearch.response.Strategy;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.Facet;
 import com.visenze.visearch.ResponseMessages;
+import com.visenze.visearch.SetInfo;
 import com.visenze.visearch.internal.InternalViSearchException;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 
@@ -163,6 +164,9 @@ public class ProductSearchResponse extends ViJsonMapper {
 
     @JsonProperty("excluded_pids")
     private List<String> excludedPids;
+
+    @JsonProperty("set_info")
+    private List<SetInfo> setInfoList;
 
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
@@ -352,6 +356,14 @@ public class ProductSearchResponse extends ViJsonMapper {
 
     public void setExcludedPids(List<String> excludedPids) {
         this.excludedPids = excludedPids;
+    }
+
+    public List<SetInfo> getSetInfoList() {
+        return setInfoList;
+    }
+
+    public void setSetInfoList(List<SetInfo> setInfoList) {
+        this.setInfoList = setInfoList;
     }
 
     /**

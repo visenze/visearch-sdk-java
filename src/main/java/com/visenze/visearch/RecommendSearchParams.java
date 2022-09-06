@@ -20,6 +20,9 @@ public class RecommendSearchParams extends SearchParams {
     private Boolean showPinnedImNames;
     private Boolean showExcludedImNames;
 
+    private Integer setLimit;
+    private Boolean useSetBasedCtl;
+
     public RecommendSearchParams(String imName) {
         super(imName);
     }
@@ -27,35 +30,25 @@ public class RecommendSearchParams extends SearchParams {
     @Override
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
-        if (algorithm != null) {
-            map.put("algorithm", algorithm);
-        }
 
-        if (altLimit != null) {
-            map.put("alt_limit", altLimit.toString());
-        }
+        putIfNotNull(map, "algorithm", algorithm);
+        putIfNotNull(map, "alt_limit", altLimit);
+        putIfNotNull(map, "dedup_by", dedupBy);
+        putIfNotNull(map, "strategy_id", strategyId);
+        putIfNotNull(map, "user_context", userContext);
 
-        if (dedupBy != null) {
-            map.put("dedup_by", dedupBy);
-        }
-
-        if (strategyId != null) {
-            map.put("strategy_id", strategyId);
-        }
-
-        if (userContext != null) {
-            map.put("user_context", userContext);
-        }
-
-        if (showPinnedImNames != null) {
-            map.put("show_pinned_im_names", showPinnedImNames.toString());
-        }
-
-        if (showExcludedImNames != null) {
-            map.put("show_excluded_im_names", showExcludedImNames.toString());
-        }
+        putIfNotNull(map, "show_pinned_im_names", showPinnedImNames);
+        putIfNotNull(map, "show_excluded_im_names", showExcludedImNames);
+        putIfNotNull(map, "use_set_based_ctl", useSetBasedCtl);
+        putIfNotNull(map, "set_limit", setLimit);
 
         return map;
+    }
+
+    private void putIfNotNull(Multimap<String, String> map, String paramName, Object paramValue) {
+        if (paramValue != null) {
+            map.put(paramName, paramValue.toString());
+        }
     }
 
     public String getAlgorithm() {
@@ -112,5 +105,21 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setShowExcludedImNames(Boolean showExcludedImNames) {
         this.showExcludedImNames = showExcludedImNames;
+    }
+
+    public Integer getSetLimit() {
+        return setLimit;
+    }
+
+    public void setSetLimit(Integer setLimit) {
+        this.setLimit = setLimit;
+    }
+
+    public Boolean getUseSetBasedCtl() {
+        return useSetBasedCtl;
+    }
+
+    public void setUseSetBasedCtl(Boolean useSetBasedCtl) {
+        this.useSetBasedCtl = useSetBasedCtl;
     }
 }

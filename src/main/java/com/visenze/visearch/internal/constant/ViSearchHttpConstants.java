@@ -112,6 +112,8 @@ public abstract class ViSearchHttpConstants {
     public static final String SHOW_EXCLUDED_PIDS = "show_excluded_pids";
     public static final String SHOW_PINNED_PIDS = "show_pinned_pids";
     public static final String EXCLUDED_IM_NAMES = "excluded_im_names";
+    public static final String USE_SET_BASED_CTL = "use_set_based_ctl";
+    public static final String SET_LIMIT = "set_limit";
 
-
+    public static final String SET_INFO = "set_info";
 }

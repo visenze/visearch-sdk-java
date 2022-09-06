@@ -5,7 +5,7 @@
     <groupId>com.visenze</groupId>
     <artifactId>visearch-java-sdk</artifactId>
     <name>ViSearch Java SDK</name>
-    <version>1.12.3</version>
+    <version>1.12.4</version>
     <packaging>jar</packaging>
     <url>https://github.com/visenze/visearch-sdk-java</url>
     <description>ViSearch Java SDK</description>

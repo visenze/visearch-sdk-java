@@ -254,6 +254,12 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setExcludedImNames(excludedImNames);
         }
 
+        JsonNode setInfoListNode = node.get(ViSearchHttpConstants.SET_INFO);
+        if (setInfoListNode != null) {
+            List<SetInfo> setInfoList = deserializeListResult(response, setInfoListNode, SetInfo.class);
+            result.setSetInfoList(setInfoList);
+        }
+
         // For similarproducts search, try to cover it's result into discoversearch result.
         JsonNode groupResult = node.get(ViSearchHttpConstants.GROUP_RESULT);
         if (groupResult != null && groupResult instanceof ArrayNode) {

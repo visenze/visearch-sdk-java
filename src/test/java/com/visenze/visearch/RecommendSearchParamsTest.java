@@ -20,6 +20,8 @@ public class RecommendSearchParamsTest {
         recommendSearchParams.setDedupBy("parent_id");
         recommendSearchParams.setStrategyId("test_strategy");
         recommendSearchParams.setUserContext(fakeUserContext);
+        recommendSearchParams.setSetLimit(20);
+        recommendSearchParams.setUseSetBasedCtl(false);
         Multimap<String, String> params = recommendSearchParams.toMap();
         assertArrayEquals(new String[]{"im_name"}, params.get("im_name").toArray(new String[0]));
         assertArrayEquals(new String[]{"STL"}, params.get("algorithm").toArray(new String[0]));
@@ -27,6 +29,10 @@ public class RecommendSearchParamsTest {
         assertArrayEquals(new String[]{"parent_id"}, params.get("dedup_by").toArray(new String[0]));
         assertArrayEquals(new String[]{"test_strategy"}, params.get("strategy_id").toArray(new String[0]));
         assertArrayEquals(new String[]{fakeUserContext}, params.get("user_context").toArray(new String[0]));
+
+        assertArrayEquals(new String[]{"20"}, params.get("set_limit").toArray(new String[0]));
+        assertArrayEquals(new String[]{"false"}, params.get("use_set_based_ctl").toArray(new String[0]));
+
     }
 
     @Test
