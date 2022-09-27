@@ -13,6 +13,8 @@ public class SetInfo {
 
     private double setScore;
 
+    private int itemCount;
+
     @JsonProperty("set_id")
     public String getSetId() {
         return setId;
@@ -29,5 +31,14 @@ public class SetInfo {
 
     public void setSetScore(double setScore) {
         this.setScore = setScore;
+    }
+
+    @JsonProperty("item_count")
+    public int getItemCount() {
+        return itemCount;
+    }
+
+    public void setItemCount(int itemCount) {
+        this.itemCount = itemCount;
     }
 }

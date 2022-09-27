@@ -13,6 +13,8 @@ public abstract class ViSearchHttpConstants {
     public static final String PRODUCT_TYPES = "product_types";
     public static final String PRODUCT_TYPES_LIST = "product_types_list";
     public static final String QINFO = "qinfo";
+    public static final String Q_VS_META_INFO = "q_vs_meta_info";
+
     public static final String OBJECT_TYPES_LIST = "object_types_list";
     public static final String GROUP_RESULT = "group_result";
     public static final String STATUS = "status";

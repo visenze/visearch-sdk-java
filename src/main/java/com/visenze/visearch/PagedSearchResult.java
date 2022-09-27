@@ -1,6 +1,7 @@
 package com.visenze.visearch;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.visenze.visearch.internal.constant.ViSearchHttpConstants;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
     private List<Facet> facets;
 
     private Map<String, String> queryInfo;
+
+    private Map<String, String> sysQueryInfo;
 
     private String rawJson;
 
@@ -85,6 +88,14 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public Map<String, String> getQueryInfo() {
         return queryInfo;
+    }
+
+    public Map<String, String> getSysQueryInfo() {
+        return sysQueryInfo;
+    }
+
+    public void setSysQueryInfo(Map<String, String> sysQueryInfo) {
+        this.sysQueryInfo = sysQueryInfo;
     }
 
     public void setRawJson(String rawJson) {
