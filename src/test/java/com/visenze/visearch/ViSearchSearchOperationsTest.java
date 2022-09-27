@@ -249,6 +249,36 @@ public class ViSearchSearchOperationsTest {
     }
 
     @Test
+    public void testSearchResponseSysInfo() {
+        String responseBody = "{\n" +
+                "  \"status\": \"OK\",\n" +
+                "  \"method\": \"recommendations\",\n" +
+                "  \"algorithm\": \"CTL\",\n" +
+                "  \"error\": [],\n" +
+                "  \"page\": 1,\n" +
+                "  \"limit\": 10,\n" +
+                "  \"total\": 0,\n" +
+                "  \"result\": [],\n" +
+                "  \"reqid\": \"1341876544213098510\",\n" +
+                "  \"q_vs_meta_info\": {\n" +
+                "    \"s3_url\": \"test.jpg\",\n" +
+                "    \"category_type\": \"upper_body\"\n" +
+                "  }\n" +
+                "}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.get(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        SearchParams searchParams = new SearchParams("test_im");
+        PagedSearchResult pagedResult = searchOperations.search(searchParams);
+
+        Map<String, String> sysQueryInfo = pagedResult.getSysQueryInfo();
+        assertEquals(2, sysQueryInfo.size());
+        assertEquals("test.jpg", sysQueryInfo.get("s3_url"));
+        assertEquals("upper_body", sysQueryInfo.get("category_type"));
+    }
+
+    @Test
     public void testSearchResponseUnknownError() {
         String responseBody = "{\"status\":\"fail\",\"method\":\"search\",\"page\":1,\"limit\":10,\"total\":0}";
         ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);

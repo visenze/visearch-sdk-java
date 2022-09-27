@@ -248,6 +248,12 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setQueryInfo(qinfo);
         }
 
+        JsonNode sysInfoNode = node.get(ViSearchHttpConstants.Q_VS_META_INFO);
+        if (sysInfoNode != null) {
+            Map<String, String> sysInfo = deserializeMapResult(response, sysInfoNode, String.class, String.class);
+            result.setSysQueryInfo(sysInfo);
+        }
+
         JsonNode excludedImNamesNode = node.get(ViSearchHttpConstants.EXCLUDED_IM_NAMES);
         if (excludedImNamesNode != null) {
             List<String> excludedImNames = deserializeListResult(response, excludedImNamesNode, String.class);
