@@ -35,23 +35,29 @@
 
 ## 1. Overview
 
-ViSenze latest [Product Search & Recommendations API](src/main/java/com/visenze/productsearch/README.md) is included in this [SDK](src/main/java/com/visenze/productsearch/README.md). Please refer to [online docs](https://ref-docs.visenze.com/reference/introduction-to-search-and-recommendation-api) for more information.
-
-ViSearch is an API that provides accurate, reliable and scalable image search. ViSearch API provides endpoints that let developers index their images and perform image searches efficiently. ViSearch API can be easily integrated into your web and mobile applications. For more details, see [ViSearch API Documentation](http://www.visenze.com/docs).
-
-The ViSearch Java SDK is an open source software for easy integration with your Java server back-end applications and services. For source code and references, visit the [Github Repository](https://github.com/visenze/visearch-sdk-java).
+This SDK contains two sets of APIs that provide accurate, reliable and scalable search. It is an open source software to provide easy integration of ViSearch APIs and ProductSearch APIs. 
 
  * Current stable version: 1.12.5
  * Minimum JDK version: 1.6
 
+Please refer to [Product Search & Recommendations API](src/main/java/com/visenze/productsearch/README.md) if you are using ViSenze Console ([https://console.visenze.com](https://console.visenze.com))
+
+|API|Description|
+|---|---|
+|**ViSearch**| ViSearch API is a legacy API in old ViSenze dashboard ([https://dashboard.visenze.com/](https://dashboard.visenze.com/)) that provides accurate, reliable and scalable image search. ViSearch API provides endpoints that let developers index their images and perform image searches efficiently. ViSearch API can be easily integrated into your web and mobile applications. For more details, see [ViSearch API Documentation](https://developers.visenze.com/api/).|
+|**ProductSearch**| ViSenze Discovery Suite ([https://console.visenze.com](https://console.visenze.com)) provides your customers a better and more intuitive product search and discovery experience by helping them search, navigate and interact with products more easily. ViSenze latest [Product Search & Recommendations API](src/main/java/com/visenze/productsearch/README.md) is included in this [SDK](src/main/java/com/visenze/productsearch/README.md). Please refer to [online docs](https://ref-docs.visenze.com/reference/introduction-to-search-and-recommendation-api) for more information. | 
+ 
+
 ## 2. Setup
+
+Note: please change the version to latest available version.
 
 For Maven projects, include the dependency in ```pom.xml```:
 ```
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.12.4</version>
+  <version>1.12.5</version>
 </dependency>
 ```
 
@@ -62,12 +68,14 @@ compile 'com.visenze:visearch-java-sdk:1.12.5'
 
 For SBT projects, add the following line to ```build.sbt```:
 ```
-libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.12.4"
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.12.5"
 ```
 
 ## 3. Initialization
 
+## 3.1 ViSearch API 
 To start using ViSearch API, initialize ViSearch client with your ViSearch API credentials. Your credentials can be found in [ViSearch Dashboard](https://dashboard.visenze.com):
+
 ```java
 
 // Init ViSearch client with access and secret key
@@ -81,7 +89,25 @@ Please init ViSearch client in this way if you connect to another endpoint rathe
 ViSearch client = new ViSearch("https://custom-visearch.yourdomain.com" ,"access_key", "secret_key");
 ```
 
+## 3.2 Product Search API 
+
+`ProductSearch` **must** be initialized with an `appKey` and `placementId` **before** it can be used. The app Key and placement ID can be found in [https://console.visenze.com](ViSenze Console) under Search / Recommendations apps' Integration section.
+For searches in China, please set the endpoint to `https://search.visenze.com.cn`.
+
+// Replace `APP_KEY`, `PLACEMENT_ID` with your App's key and Placement ID as seen in Console:
+
+```
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+                     .build();
+                      
+// set CN API endpoint for searches in China
+new ProductSearch.Builder(APP_KEY, PLACEMENT_ID).setApiEndPoint("https://search.visenze.com.cn")
+                     .build()
+```
+
 ## 4. Indexing Images
+
+Please note that Indexing APIs only apply for ViSearch API in old ViSenze dashboard. If you are creating an app in ViSenze Console, you need to call Catalog API to insert the products into Catalog which then pushes the data into downstream search or recommendations app.
 
 ### 4.1 Indexing Your First Images
 
@@ -248,6 +274,8 @@ if (status.getFailCount() > 0) {
 ```
 
 ## 5. Solution APIs
+
+Please note that section 5.1 to 5.5 refer to ViSearch API in old ViSenze dashboard. For Console apps, refer to Product Search README link in section 5.6.
 
 ### 5.1 Visually Similar Recommendations 
 
