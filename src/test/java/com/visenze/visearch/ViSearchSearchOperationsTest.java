@@ -1520,4 +1520,111 @@ public class ViSearchSearchOperationsTest {
         assertEquals("1156773933236717419", result.getReqId());
 
     }
+
+    @Test
+    public void testParseBestImagesResponse() {
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        String responseBody = "{\n" +
+                "  \"status\": \"OK\",\n" +
+                "  \"method\": \"recommendations\",\n" +
+                "  \"algorithm\": \"VSR\",\n" +
+                "  \"error\": [],\n" +
+                "  \"page\": 1,\n" +
+                "  \"limit\": 12,\n" +
+                "  \"total\": 100,\n" +
+                "  \"result\": [\n" +
+                "    {\n" +
+                "      \"im_name\": \"i1\",\n" +
+
+                "       \"best_images\": [\n" +
+                "           {\n" +
+                "                \"type\": \"product\",\n" +
+                "                \"url\": \"url1\",\n" +
+                "                \"index\": \"2\"\n" +
+                "           },\n" +
+                "           {\n" +
+                "                \"type\": \"outfit\",\n" +
+                "                \"url\": \"url2\",\n" +
+                "                \"index\": \"4\"\n" +
+                "           }\n" +
+                "       ],\n" +
+
+                "       \"alternatives\": [\n" +
+                "           {\n" +
+                "                \"im_name\": \"i22\",\n" +
+                "                \"score\": 0.678\n," +
+                "               \"best_images\": [\n" +
+                "                   {\n" +
+                "                       \"type\": \"product\",\n" +
+                "                       \"url\": \"url12\",\n" +
+                "                       \"index\": \"0\"\n" +
+                "                   },\n" +
+                "                   {\n" +
+                "                       \"type\": \"outfit\",\n" +
+                "                       \"url\": \"url22\",\n" +
+                "                       \"index\": \"3\"\n" +
+                "                   }\n" +
+                "               ]\n" +
+                "           }\n" +
+                "       ],\n" +
+
+                "      \"tags\": {\n" +
+                "        \"category\": \"top\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"reqid\": \"1156773933236717418\"\n" +
+                "}";
+
+        when(response.getBody()).thenReturn(responseBody);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_name", "im_name3");
+        expectedParams.put("score", "false");
+        expectedParams.put("show_best_product_images", "true");
+        given(mockClient.post(eq("/recommendations"), eq(expectedParams))).willReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        RecommendSearchParams searchParams = new RecommendSearchParams("im_name3");
+        searchParams.setShowBestProductImages(true);
+        // then
+        PagedSearchResult result = searchOperations.recommendation(searchParams);
+
+        // should
+        assertEquals(1, result.getResult().size());
+        assertEquals("VSR", result.getAlgorithm());
+
+        ImageResult imageResult = result.getResult().get(0);
+        assertEquals("i1", imageResult.getImName());
+        assertEquals("top", imageResult.getTags().get("category"));
+
+        List<BestImage> bestImages = imageResult.getBestImages();
+        assertEquals(2, bestImages.size());
+
+        BestImage b1 = bestImages.get(0);
+        assertEquals("2", b1.getIndex());
+        assertEquals(BestImage.ImageType.PRODUCT, b1.getType());
+        assertEquals("url1", b1.getUrl());
+
+        BestImage b2 = bestImages.get(1);
+        assertEquals("4", b2.getIndex());
+        assertEquals(BestImage.ImageType.OUTFIT, b2.getType());
+        assertEquals("url2", b2.getUrl());
+
+        assertEquals("1156773933236717418", result.getReqId());
+
+        bestImages = imageResult.getAlternatives().get(0).getBestImages();
+        assertEquals(2, bestImages.size());
+
+        b1 = bestImages.get(0);
+        assertEquals("0", b1.getIndex());
+        assertEquals(BestImage.ImageType.PRODUCT, b1.getType());
+        assertEquals("url12", b1.getUrl());
+
+        b2 = bestImages.get(1);
+        assertEquals("3", b2.getIndex());
+        assertEquals(BestImage.ImageType.OUTFIT, b2.getType());
+        assertEquals("url22", b2.getUrl());
+
+    }
 }

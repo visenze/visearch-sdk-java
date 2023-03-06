@@ -2,6 +2,8 @@ package com.visenze.visearch;
 
 import com.google.common.collect.Multimap;
 
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.SHOW_BEST_PRODUCT_IMAGES;
+
 /**
  * Created by david.huang on 2021-06-04
  */
@@ -22,6 +24,7 @@ public class RecommendSearchParams extends SearchParams {
 
     private Integer setLimit;
     private Boolean useSetBasedCtl;
+    private Boolean showBestProductImages;
 
     public RecommendSearchParams(String imName) {
         super(imName);
@@ -41,6 +44,7 @@ public class RecommendSearchParams extends SearchParams {
         putIfNotNull(map, "show_excluded_im_names", showExcludedImNames);
         putIfNotNull(map, "use_set_based_ctl", useSetBasedCtl);
         putIfNotNull(map, "set_limit", setLimit);
+        putIfNotNull(map, SHOW_BEST_PRODUCT_IMAGES, showBestProductImages );
 
         return map;
     }
@@ -105,6 +109,14 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setShowExcludedImNames(Boolean showExcludedImNames) {
         this.showExcludedImNames = showExcludedImNames;
+    }
+
+    public Boolean getShowBestProductImages() {
+        return showBestProductImages;
+    }
+
+    public void setShowBestProductImages(Boolean showBestProductImages) {
+        this.showBestProductImages = showBestProductImages;
     }
 
     public Integer getSetLimit() {
