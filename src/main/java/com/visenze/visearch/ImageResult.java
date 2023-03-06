@@ -17,6 +17,7 @@ public class ImageResult {
     private List<ImageResult> alternatives;
     private Map<String, Object> tags;
     private Boolean pinned;
+    private List<BestImage> bestImages;
 
     public ImageResult(String imName, Map<String, String> metadata, Float score) {
         this.imName = imName;
@@ -83,5 +84,13 @@ public class ImageResult {
 
     public void setPinned(Boolean pinned) {
         this.pinned = pinned;
+    }
+
+    public List<BestImage> getBestImages() {
+        return bestImages;
+    }
+
+    public void setBestImages(List<BestImage> bestImages) {
+        this.bestImages = bestImages;
     }
 }

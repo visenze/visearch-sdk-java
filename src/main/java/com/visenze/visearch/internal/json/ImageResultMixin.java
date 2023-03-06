@@ -2,6 +2,7 @@ package com.visenze.visearch.internal.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.visenze.visearch.BestImage;
 import com.visenze.visearch.ImageResult;
 
 import java.util.List;
@@ -28,6 +29,9 @@ abstract class ImageResultMixin {
 
     @JsonProperty("tags")
     protected Map<String, Object> tags;
+
+    @JsonProperty("best_images")
+    protected List<BestImage> bestImages;
 
 
     public ImageResultMixin(@JsonProperty("im_name") String imName,
@@ -77,5 +81,13 @@ abstract class ImageResultMixin {
 
     public void setRerankScore(Float rerankScore) {
         this.rerankScore = rerankScore;
+    }
+
+    public List<BestImage> getBestImages() {
+        return bestImages;
+    }
+
+    public void setBestImages(List<BestImage> bestImages) {
+        this.bestImages = bestImages;
     }
 }

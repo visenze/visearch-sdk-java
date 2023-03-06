@@ -3,6 +3,7 @@ package com.visenze.productsearch.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.visenze.common.util.ViJsonAny;
+import com.visenze.visearch.BestImage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +85,9 @@ public class Product {
     @JsonProperty("vs_data")
     private Map<String, ViJsonAny> vsData = new HashMap<String, ViJsonAny>();
 
+    @JsonProperty("best_images")
+    protected List<BestImage> bestImages;
+
     /**
      * Get the unique identifier of this product
      *
@@ -157,5 +161,13 @@ public class Product {
 
     public void setPinned(Boolean pinned) {
         this.pinned = pinned;
+    }
+
+    public List<BestImage> getBestImages() {
+        return bestImages;
+    }
+
+    public void setBestImages(List<BestImage> bestImages) {
+        this.bestImages = bestImages;
     }
 }
