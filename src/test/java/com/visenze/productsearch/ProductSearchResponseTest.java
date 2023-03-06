@@ -7,6 +7,7 @@ import com.visenze.productsearch.param.SearchByImageParam;
 import com.visenze.productsearch.response.Experiment;
 import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.Product;
+import com.visenze.visearch.BestImage;
 import com.visenze.visearch.ProductType;
 import com.visenze.visearch.SetInfo;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
@@ -374,6 +375,79 @@ public class ProductSearchResponseTest {
 
         assertEquals("set2", setInfoList.get(1).getSetId());
         assertTrue(900 == setInfoList.get(1).getSetScore());
+
+    }
+
+    @Test
+    public void testRecommendationBestImagesResponse() {
+        String json = "{\n" +
+                "    \"reqid\": \"01806a667776c6f8a31c28105fd99f\",\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"method\": \"product/recommendations\",\n" +
+                "    \"page\": 1,\n" +
+                "    \"limit\": 20,\n" +
+                "    \"total\": 200,\n" +
+                "    \"product_types\": [],\n" +
+                "    \"result\": [\n" +
+                "{\n" +
+                "      \"product_id\": \"dress1\",\n" +
+                "      \"main_image_url\": \"http://test.com/img1.jpg\",\n" +
+
+                "       \"best_images\": [\n" +
+                "           {\n" +
+                "                \"type\": \"product\",\n" +
+                "                \"url\": \"url11\",\n" +
+                "                \"index\": \"0\"\n" +
+                "           },\n" +
+                "           {\n" +
+                "                \"type\": \"outfit\",\n" +
+                "                \"url\": \"url21\",\n" +
+                "                \"index\": \"3\"\n" +
+                "           }\n" +
+                "       ],\n" +
+
+                "      \"tags\": {\n" +
+                "        \"category\": \"dress\",\n" +
+                "        \"set_id\": \"set1\"\n" +
+                "      },\n" +
+                "      \"score\": 0.9\n" +
+                "    }\n" +
+
+                "    ],\n" +
+                "\"set_info\": [\n" +
+                "    {\n" +
+                "      \"set_id\": \"set1\",\n" +
+                "      \"set_score\": 1000\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"set_id\": \"set2\",\n" +
+                "      \"set_score\": 900\n" +
+                "    }\n" +
+                "  ]," +
+                "    \"strategy\": {\n" +
+                "        \"id\": 3,\n" +
+                "        \"name\": \"test\",\n" +
+                "        \"algorithm\": \"CTL\"\n" +
+                "    }\n" +
+                "}";
+
+
+        ProductSearchResponse response = GetRecommendationMockedResponse(json);
+        List<Product> result = response.getResult();
+        assertEquals(1, result.size());
+
+        List<BestImage> bestImages = result.get(0).getBestImages();
+        assertEquals(2, bestImages.size());
+
+        BestImage b1 = bestImages.get(0);
+        assertEquals("0", b1.getIndex());
+        assertEquals(BestImage.ImageType.PRODUCT, b1.getType());
+        assertEquals("url11", b1.getUrl());
+
+        BestImage b2 = bestImages.get(1);
+        assertEquals("3", b2.getIndex());
+        assertEquals(BestImage.ImageType.OUTFIT, b2.getType());
+        assertEquals("url21", b2.getUrl());
 
     }
 
