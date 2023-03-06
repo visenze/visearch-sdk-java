@@ -118,4 +118,6 @@ public abstract class ViSearchHttpConstants {
     public static final String SET_LIMIT = "set_limit";
 
     public static final String SET_INFO = "set_info";
+    public static final String SHOW_BEST_PRODUCT_IMAGES = "show_best_product_images";
+
 }

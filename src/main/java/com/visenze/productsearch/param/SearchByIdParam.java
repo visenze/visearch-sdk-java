@@ -45,6 +45,8 @@ public class SearchByIdParam extends BaseProductSearchParam {
     protected Optional<Integer> setLimit = Optional.absent();
     protected Optional<Boolean> useSetBasedCtl = Optional.absent();
 
+    protected Optional<Boolean> showBestProductImages = Optional.absent();
+
 
     /**
      * Constructor with the necessary parameters
@@ -75,6 +77,7 @@ public class SearchByIdParam extends BaseProductSearchParam {
         putIfPresent(multimap, useSetBasedCtl, USE_SET_BASED_CTL);
         putIfPresent(multimap, setLimit, SET_LIMIT);
 
+        putIfPresent(multimap, showBestProductImages, SHOW_BEST_PRODUCT_IMAGES);
 
         return multimap;
     }
@@ -142,6 +145,14 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     public void setShowExcludedPids(Boolean showExcludedPids) {
         this.showExcludedPids =  Optional.fromNullable(showExcludedPids);
+    }
+
+    public Boolean getShowBestProductImages() {
+        return showBestProductImages.orNull();
+    }
+
+    public void setShowBestProductImages(Boolean showBestProductImages) {
+        this.showBestProductImages = Optional.fromNullable(showBestProductImages);
     }
 
     public Integer getSetLimit() {
