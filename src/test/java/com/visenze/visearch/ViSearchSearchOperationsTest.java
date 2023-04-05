@@ -1641,8 +1641,10 @@ public class ViSearchSearchOperationsTest {
                 "  \"total\": 2,\n" +
                 "  \"result\": [],\n" +
                 "  \"reqid\": \"1410109129615216662\",\n" +
+
                 "  \"objects\": [\n" +
                 "    {\n" +
+                "      \"id\": \"b0eedf870030ebb7ec637cd2641d0591\",\n" +
                 "      \"category\": \"eyewear\",\n" +
                 "      \"box\": [\n" +
                 "        54,\n" +
@@ -1722,6 +1724,7 @@ public class ViSearchSearchOperationsTest {
                 "      ]\n" +
                 "    },\n" +
                 "    {\n" +
+                "      \"id\": \"b0eedf870030ebb7ec637cd2641d0592\",\n" +
                 "      \"category\": \"sunglasses\",\n" +
                 "      \"box\": [\n" +
                 "        52,\n" +
@@ -1825,12 +1828,15 @@ public class ViSearchSearchOperationsTest {
         assertEquals(2, result.getObjects().size());
 
         ObjectSearchResult o1 = result.getObjects().get(0);
+        assertEquals("b0eedf870030ebb7ec637cd2641d0591", o1.getId());
+
         assertEquals("eyewear" , o1.getCategory());
         assertEquals("54,1568,1765,2189", Joiner.on(",").join(o1.getBox()));
         assertEquals(745, o1.getTotal());
         assertEquals(5, o1.getResult().size());
 
         ImageResult i1 = o1.getResult().get(0);
+
         assertEquals("4081895", i1.getImName());
         assertEquals("Versace VE4281 Women's Square Sunglasses, Black/Brown Gradient", i1.getMetadata().get("title"));
         assertEquals("others", i1.getVsMetadata().get("index_filter.product_tagging"));
@@ -1845,6 +1851,7 @@ public class ViSearchSearchOperationsTest {
 
 
         ObjectSearchResult o2 = result.getObjects().get(1);
+        assertEquals("b0eedf870030ebb7ec637cd2641d0592", o2.getId());
         assertEquals("sunglasses" , o2.getCategory());
         assertEquals("52,1589,1753,2210", Joiner.on(",").join(o2.getBox()));
         assertEquals(689, o2.getTotal());
