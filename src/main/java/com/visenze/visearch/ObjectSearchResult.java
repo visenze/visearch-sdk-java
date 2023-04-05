@@ -24,6 +24,14 @@ public class ObjectSearchResult {
     private List<GroupSearchResult> groupResults;
     private List<Integer> point;
 
+    // API-9128 add new STI fields
+    private String id;
+    private String category;
+    private String name;
+
+    @JsonProperty("excluded_im_names")
+    private List<String> excludedImNames;
+
     public ObjectSearchResult() {
 
     }
@@ -115,5 +123,37 @@ public class ObjectSearchResult {
 
     public void setRerankScore(Float rerankScore) {
         this.rerankScore = rerankScore;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<String> getExcludedImNames() {
+        return excludedImNames;
+    }
+
+    public void setExcludedImNames(List<String> excludedImNames) {
+        this.excludedImNames = excludedImNames;
     }
 }

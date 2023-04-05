@@ -1627,4 +1627,236 @@ public class ViSearchSearchOperationsTest {
         assertEquals("url22", b2.getUrl());
 
     }
+
+    @Test
+    public void testParseStiResponse() {
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        String responseBody = "{\n" +
+                "  \"status\": \"OK\",\n" +
+                "  \"method\": \"recommendations\",\n" +
+                "  \"algorithm\": \"STI\",\n" +
+                "  \"error\": [],\n" +
+                "  \"page\": 1,\n" +
+                "  \"limit\": 5,\n" +
+                "  \"total\": 2,\n" +
+                "  \"result\": [],\n" +
+                "  \"reqid\": \"1410109129615216662\",\n" +
+                "  \"objects\": [\n" +
+                "    {\n" +
+                "      \"category\": \"eyewear\",\n" +
+                "      \"box\": [\n" +
+                "        54,\n" +
+                "        1568,\n" +
+                "        1765,\n" +
+                "        2189\n" +
+                "      ],\n" +
+                "      \"total\": 745,\n" +
+                "      \"result\": [\n" +
+                "        {\n" +
+                "          \"im_name\": \"4081895\",\n" +
+                "          \"pinned\" : \"true\",\n" +
+                "          \"score\": 1,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Versace VE4281 Women's Square Sunglasses, Black/Brown Gradient\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"4047149\",\n" +
+                "          \"score\": 0.711370050907135,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Prada PR 02VS Women's Cat's Eye Sunglasses\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"3839024\",\n" +
+                "          \"score\": 0.692736804485321,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Polo Ralph Lauren RA5160 Women's Cat's Eye Sunglasses, Black/Grey\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"4299829\",\n" +
+                "          \"score\": 0.6816573143005371,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Ralph RA5257 Women's Square Sunglasses\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"4894399\",\n" +
+                "          \"score\": 0.6687576174736023,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Michael Kors MK2023 Women's Polarised Round Sunglasses, Tortoise/Brown Gradient\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      ],\n" +
+                "      \"excluded_im_names\": [\"pid1\",\"pid2\"] , \n" +
+                "      \"facets\": [\n" +
+                "        {\n" +
+                "          \"key\": \"category\",\n" +
+                "          \"items\": [\n" +
+                "            {\n" +
+                "              \"value\": \"Women > Women's Dresses\"\n" +
+                "            }\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"category\": \"sunglasses\",\n" +
+                "      \"box\": [\n" +
+                "        52,\n" +
+                "        1589,\n" +
+                "        1753,\n" +
+                "        2210\n" +
+                "      ],\n" +
+                "      \"total\": 689,\n" +
+                "      \"result\": [\n" +
+                "        {\n" +
+                "          \"im_name\": \"4081895\",\n" +
+                "          \"score\": 1,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Versace VE4281 Women's Square Sunglasses, Black/Brown Gradient\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"4047149\",\n" +
+                "          \"score\": 0.7817856073379517,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Prada PR 02VS Women's Cat's Eye Sunglasses\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"3839024\",\n" +
+                "          \"score\": 0.7810016870498657,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Polo Ralph Lauren RA5160 Women's Cat's Eye Sunglasses, Black/Grey\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"4299829\",\n" +
+                "          \"score\": 0.7412603497505188,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Ralph RA5257 Women's Square Sunglasses\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        {\n" +
+                "          \"im_name\": \"4894399\",\n" +
+                "          \"score\": 0.7388582825660706,\n" +
+                "          \"value_map\": {\n" +
+                "            \"title\": \"Michael Kors MK2023 Women's Polarised Round Sunglasses, Tortoise/Brown Gradient\"\n" +
+                "          },\n" +
+                "          \"vs_value_map\": {\n" +
+                "            \"index_filter.product_tagging\": \"others\",\n" +
+                "            \"detect\": \"eyewear\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      ],\n" +
+                "      \"facets\": [\n" +
+                "        {\n" +
+                "          \"key\": \"category\",\n" +
+                "          \"items\": [\n" +
+                "            {\n" +
+                "              \"value\": \"Women > Women's Sunglasses\"\n" +
+                "            }\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+
+        when(response.getBody()).thenReturn(responseBody);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        String testImName = "query_im_name";
+        expectedParams.put("im_name", testImName);
+        expectedParams.put("score", "true");
+        given(mockClient.post(eq("/recommendations"), eq(expectedParams))).willReturn(response);
+
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        RecommendSearchParams searchParams = new RecommendSearchParams(testImName);
+        searchParams.setScore(true);
+
+        PagedSearchResult result = searchOperations.recommendation(searchParams);
+
+        assertEquals(0, result.getResult().size());
+        assertEquals("STI", result.getAlgorithm());
+        assertEquals(Integer.valueOf(1), result.getPage());
+        assertEquals(Integer.valueOf(5), result.getLimit());
+        assertEquals(Integer.valueOf(2), result.getTotal());
+        assertEquals("1410109129615216662", result.getReqId());
+
+        assertEquals(2, result.getObjects().size());
+
+        ObjectSearchResult o1 = result.getObjects().get(0);
+        assertEquals("eyewear" , o1.getCategory());
+        assertEquals("54,1568,1765,2189", Joiner.on(",").join(o1.getBox()));
+        assertEquals(745, o1.getTotal());
+        assertEquals(5, o1.getResult().size());
+
+        ImageResult i1 = o1.getResult().get(0);
+        assertEquals("4081895", i1.getImName());
+        assertEquals("Versace VE4281 Women's Square Sunglasses, Black/Brown Gradient", i1.getMetadata().get("title"));
+        assertEquals("others", i1.getVsMetadata().get("index_filter.product_tagging"));
+        assertTrue(i1.getPinned());
+
+        assertEquals("pid1,pid2", Joiner.on(",").join(o1.getExcludedImNames()));
+
+        Facet facet1 = o1.getFacets().get(0);
+        assertEquals("category", facet1.getKey());
+        assertEquals(1, facet1.getFacetItems().size());
+        assertEquals("Women > Women's Dresses", facet1.getFacetItems().get(0).getValue());
+
+
+        ObjectSearchResult o2 = result.getObjects().get(1);
+        assertEquals("sunglasses" , o2.getCategory());
+        assertEquals("52,1589,1753,2210", Joiner.on(",").join(o2.getBox()));
+        assertEquals(689, o2.getTotal());
+        assertEquals(5, o2.getResult().size());
+
+        assertEquals(1, o2.getFacets().size());
+
+        Facet facet = o2.getFacets().get(0);
+        assertEquals("category", facet.getKey());
+        assertEquals(1, facet.getFacetItems().size());
+        assertEquals("Women > Women's Sunglasses", facet.getFacetItems().get(0).getValue());
+
+
+    }
 }
