@@ -38,6 +38,9 @@ public class ObjectProductResult {
     @JsonProperty("result")
     private List<Product> result;
 
+    @JsonProperty("group_results")
+    private List<GroupProductResult> groupProductResults;
+
     // API-9128 add new STI fields
     @JsonProperty("id")
     private String id;
@@ -104,5 +107,13 @@ public class ObjectProductResult {
 
     public void setFacets(List<Facet> facets) {
         this.facets = facets;
+    }
+
+    public List<GroupProductResult> getGroupProductResults() {
+        return groupProductResults;
+    }
+
+    public void setGroupProductResults(List<GroupProductResult> groupProductResults) {
+        this.groupProductResults = groupProductResults;
     }
 }

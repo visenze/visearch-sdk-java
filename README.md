@@ -37,7 +37,7 @@
 
 This SDK contains two sets of APIs that provide accurate, reliable and scalable search. It is an open source software to provide easy integration of ViSearch APIs and ProductSearch APIs. 
 
- * Current stable version: 1.13.1
+ * Current stable version: 1.13.2
  * Minimum JDK version: 1.6
 
 Please refer to [Product Search & Recommendations API](src/main/java/com/visenze/productsearch/README.md) if you are using ViSenze Console ([https://console.visenze.com](https://console.visenze.com))
@@ -57,13 +57,13 @@ For Maven projects, include the dependency in ```pom.xml```:
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.13.1</version>
+  <version>1.13.2</version>
 </dependency>
 ```
 
 For Gradle projects, include this line in your ```build.gradle``` dependencies block:
 ```
-compile 'com.visenze:visearch-java-sdk:1.13.1'
+compile 'com.visenze:visearch-java-sdk:1.13.2'
 ```
 
 For SBT projects, add the following line to ```build.sbt```:

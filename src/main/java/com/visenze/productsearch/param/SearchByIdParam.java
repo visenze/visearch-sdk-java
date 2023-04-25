@@ -3,6 +3,9 @@ package com.visenze.productsearch.param;
 import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 
+import java.util.List;
+
+import static com.visenze.common.util.MultimapUtil.putList;
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 import static com.visenze.common.util.MultimapUtil.putIfPresent;
 
@@ -47,6 +50,7 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     protected Optional<Boolean> showBestProductImages = Optional.absent();
 
+    protected Optional<List<String>> boxList = Optional.absent();
 
     /**
      * Constructor with the necessary parameters
@@ -78,6 +82,7 @@ public class SearchByIdParam extends BaseProductSearchParam {
         putIfPresent(multimap, setLimit, SET_LIMIT);
 
         putIfPresent(multimap, showBestProductImages, SHOW_BEST_PRODUCT_IMAGES);
+        putList(multimap, boxList, BOX);
 
         return multimap;
     }
@@ -129,6 +134,14 @@ public class SearchByIdParam extends BaseProductSearchParam {
      */
     public void setAlt_limit(Integer alt_limit) {
         this.alt_limit = Optional.fromNullable(alt_limit);
+    }
+
+    public List<String> getBoxList() {
+        return boxList.orNull();
+    }
+
+    public void setBoxList(List<String> boxList) {
+        this.boxList = Optional.fromNullable(boxList);
     }
 
     public Boolean getShowPinnedPids() {
