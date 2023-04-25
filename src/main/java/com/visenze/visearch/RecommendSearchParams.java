@@ -2,7 +2,9 @@ package com.visenze.visearch;
 
 import com.google.common.collect.Multimap;
 
-import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.SHOW_BEST_PRODUCT_IMAGES;
+import java.util.List;
+
+import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 
 /**
  * Created by david.huang on 2021-06-04
@@ -26,6 +28,8 @@ public class RecommendSearchParams extends SearchParams {
     private Boolean useSetBasedCtl;
     private Boolean showBestProductImages;
 
+    private List<String> boxList;
+
     public RecommendSearchParams(String imName) {
         super(imName);
     }
@@ -45,6 +49,12 @@ public class RecommendSearchParams extends SearchParams {
         putIfNotNull(map, "use_set_based_ctl", useSetBasedCtl);
         putIfNotNull(map, "set_limit", setLimit);
         putIfNotNull(map, SHOW_BEST_PRODUCT_IMAGES, showBestProductImages );
+
+        if (boxList != null) {
+            for(String box: boxList) {
+                map.put(BOX, box);
+            }
+        }
 
         return map;
     }
@@ -133,5 +143,13 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setUseSetBasedCtl(Boolean useSetBasedCtl) {
         this.useSetBasedCtl = useSetBasedCtl;
+    }
+
+    public List<String> getBoxList() {
+        return boxList;
+    }
+
+    public void setBoxList(List<String> boxList) {
+        this.boxList = boxList;
     }
 }
