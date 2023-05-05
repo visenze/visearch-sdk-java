@@ -20,6 +20,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private Map<String, String> queryInfo;
 
+    private List<BestImage> queryBestImages;
+
     private Map<String, String> sysQueryInfo;
 
     private String rawJson;
@@ -179,5 +181,13 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public void setSetInfoList(List<SetInfo> setInfoList) {
         this.setInfoList = setInfoList;
+    }
+
+    public List<BestImage> getQueryBestImages() {
+        return queryBestImages;
+    }
+
+    public void setQueryBestImages(List<BestImage> queryBestImages) {
+        this.queryBestImages = queryBestImages;
     }
 }

@@ -254,6 +254,12 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setSysQueryInfo(sysInfo);
         }
 
+        JsonNode queryBestImagesNode = node.get(ViSearchHttpConstants.Q_BEST_IMAGES);
+        if (queryBestImagesNode != null) {
+            List<BestImage> bestImageList = deserializeListResult(response, queryBestImagesNode, BestImage.class);
+            result.setQueryBestImages(bestImageList);
+        }
+
         JsonNode excludedImNamesNode = node.get(ViSearchHttpConstants.EXCLUDED_IM_NAMES);
         if (excludedImNamesNode != null) {
             List<String> excludedImNames = deserializeListResult(response, excludedImNamesNode, String.class);
