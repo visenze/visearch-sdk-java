@@ -359,7 +359,6 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         putIfPresent(map, facetsShowCount, FACETS_SHOW_COUNT);
 
         putIfPresent(map, score, SCORE);
-        putIfPresent(map, score, SCORE);
         putIfPresent(map, scoreMin, SCORE_MIN);
         putIfPresent(map, scoreMax, SCORE_MAX);
         putIfPresent(map, sortBy, SORT_BY);
