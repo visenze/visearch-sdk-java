@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.visenze.common.util.MultimapUtil.putIfPresent;
 import static com.visenze.visearch.internal.constant.ViSearchHttpConstants.*;
 
 /**
@@ -346,54 +347,23 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = LinkedHashMultimap.create();
 
-        if (getPage() != null) {
-            map.put(PAGE, getPage().toString());
-        }
-        if (getLimit() != null) {
-            map.put(LIMIT, getLimit().toString());
-        }
-
-        if (groupBy.isPresent()){
-            map.put(GROUP_BY, getGroupBy() );
-        }
-
-        if (groupLimit.isPresent()){
-            map.put(GROUP_LIMIT, getGroupLimit().toString() );
-        }
+        putIfPresent(map, page, PAGE);
+        putIfPresent(map, limit, LIMIT);
+        putIfPresent(map, groupBy, GROUP_BY);
+        putIfPresent(map, groupLimit, GROUP_LIMIT);
 
         if (!getFacets().isEmpty()) {
             map.put(FACETS, Joiner.on(COMMA).join(getFacets()));
         }
-        if (facetsLimit.isPresent()) {
-            map.put(FACETS_LIMIT, facetsLimit.get().toString());
-        }
-        if (facetsShowCount.isPresent()) {
-            map.put(FACETS_SHOW_COUNT, facetsShowCount.get().toString());
-        }
-        if (isScore()) {
-            map.put(SCORE, TRUE);
-        } else {
-            map.put(SCORE, FALSE);
-        }
+        putIfPresent(map, facetsLimit, FACETS_LIMIT);
+        putIfPresent(map, facetsShowCount, FACETS_SHOW_COUNT);
 
-        if (getScoreMin() != null) {
-            map.put(SCORE_MIN, getScoreMin().toString());
-        }
-        if (getScoreMax() != null) {
-            map.put(SCORE_MAX, getScoreMax().toString());
-        }
-
-        if (sortBy.isPresent()) {
-            map.put(SORT_BY, getSortBy() );
-        }
-
-        if (sortGroupBy.isPresent()) {
-            map.put(SORT_GROUP_BY, getSortGroupBy());
-        }
-
-        if (sortGroupStrategy.isPresent()) {
-            map.put(SORT_GROUP_STRATEGY, getSortGroupStrategy());
-        }
+        putIfPresent(map, score, SCORE);
+        putIfPresent(map, scoreMin, SCORE_MIN);
+        putIfPresent(map, scoreMax, SCORE_MAX);
+        putIfPresent(map, sortBy, SORT_BY);
+        putIfPresent(map, sortGroupBy, SORT_GROUP_BY);
+        putIfPresent(map, sortGroupStrategy, SORT_GROUP_STRATEGY);
 
         addAnalyticsParams(map);
 
@@ -414,21 +384,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
             map.put(FL, filter);
         }
 
-        if (isGetAllFl()) {
-            map.put(GET_ALL_FL, TRUE);
-        }
-
-        if (isQInfo()) {
-            map.put(QINFO, TRUE);
-        }
-
-        if (isDedup()) {
-            map.put(DEDUP, TRUE);
-        }
-
-        if (getDedupThreshold() != null) {
-            map.put(DEDUP_SCORE_THRESHOLD, getDedupThreshold().toString());
-        }
+        putIfPresent(map, getAllFl, GET_ALL_FL);
+        putIfPresent(map, qInfo, QINFO);
+        putIfPresent(map, dedup, DEDUP);
+        putIfPresent(map, dedupThreshold, DEDUP_SCORE_THRESHOLD);
 
         for (DiversityQuery diversityQuery : getDiversityQueries()) {
             map.put(DIVERSITY, diversityQuery.toParamValue());
