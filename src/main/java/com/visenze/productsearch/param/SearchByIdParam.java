@@ -52,6 +52,8 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     protected Optional<List<String>> boxList = Optional.absent();
 
+    protected Optional<List<String>> categoryList = Optional.absent();
+
     /**
      * Constructor with the necessary parameters
      *
@@ -83,6 +85,7 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
         putIfPresent(multimap, showBestProductImages, SHOW_BEST_PRODUCT_IMAGES);
         putList(multimap, boxList, BOX);
+        putList(multimap, categoryList, CATEGORY);
 
         return multimap;
     }
@@ -142,6 +145,14 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     public void setBoxList(List<String> boxList) {
         this.boxList = Optional.fromNullable(boxList);
+    }
+
+    public List<String> getCategoryList() {
+        return categoryList.orNull();
+    }
+
+    public void setCategoryList(List<String> categoryList) {
+        this.categoryList = Optional.fromNullable(categoryList);
     }
 
     public Boolean getShowPinnedPids() {
