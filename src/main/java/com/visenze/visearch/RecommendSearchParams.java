@@ -29,6 +29,7 @@ public class RecommendSearchParams extends SearchParams {
     private Boolean showBestProductImages;
 
     private List<String> boxList;
+    private List<String> categoryList;
 
     public RecommendSearchParams(String imName) {
         super(imName);
@@ -53,6 +54,12 @@ public class RecommendSearchParams extends SearchParams {
         if (boxList != null) {
             for(String box: boxList) {
                 map.put(BOX, box);
+            }
+        }
+
+        if (categoryList != null) {
+            for (String category: categoryList) {
+                map.put(CATEGORY, category);
             }
         }
 
@@ -151,5 +158,13 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setBoxList(List<String> boxList) {
         this.boxList = boxList;
+    }
+
+    public List<String> getCategoryList() {
+        return categoryList;
+    }
+
+    public void setCategoryList(List<String> categoryList) {
+        this.categoryList = categoryList;
     }
 }
