@@ -16,6 +16,10 @@ public class ObjectSearchResult {
     private Float score;
     private Float rerankScore;
     private List<Integer> box;
+
+    @JsonProperty("box_type")
+    private String boxType;
+
     private Map<String, List<String>> attributes;
     private Map<String, List<String>> attributesList;
     private int total;
@@ -46,6 +50,10 @@ public class ObjectSearchResult {
 
     public List<Integer> getBox() {
         return box;
+    }
+
+    public String getBoxType() {
+        return boxType;
     }
 
     public Map<String, List<String>> getAttributes() {
@@ -82,6 +90,10 @@ public class ObjectSearchResult {
 
     public void setBox(List<Integer> box) {
         this.box = box;
+    }
+
+    public void setBoxType(String boxType) {
+        this.boxType = boxType;
     }
 
     public void setAttributes(Map<String, List<String>> attributes) {
