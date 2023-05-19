@@ -29,6 +29,9 @@ public class ObjectProductResult {
     @JsonProperty("box")
     private List<Integer> box;
 
+    @JsonProperty("box_type")
+    private String boxType;
+
     @JsonProperty("attributes")
     public Map<String, String> attributes;
 
@@ -62,6 +65,18 @@ public class ObjectProductResult {
     public Float getScore() { return score; }
 
     public List<Integer> getBox() { return box; }
+
+    public void setBox(List<Integer> box) {
+        this.box = box;
+    }
+
+    public String getBoxType() {
+        return boxType;
+    }
+
+    public void setBoxType(String boxType) {
+        this.boxType = boxType;
+    }
 
     public Map<String,String> getAttributes() { return attributes; }
 
