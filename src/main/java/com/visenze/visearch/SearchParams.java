@@ -14,7 +14,6 @@ public class SearchParams extends BaseSearchParams<SearchParams> {
     }
 
     private SearchParams setImName(String imName) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(imName), "im_name must not be null or empty for pre-indexed search.");
         this.imName = imName;
         return this;
     }
@@ -26,7 +25,9 @@ public class SearchParams extends BaseSearchParams<SearchParams> {
     @Override
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
-        map.put("im_name", imName);
+        if (imName != null) {
+            map.put("im_name", imName);
+        }
         return map;
     }
 }
