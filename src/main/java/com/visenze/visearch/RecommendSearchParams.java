@@ -31,6 +31,9 @@ public class RecommendSearchParams extends SearchParams {
     private List<String> boxList;
     private List<String> categoryList;
 
+    // for SBR only, if true, will ignore the query imName, and only check the session
+    private Boolean nonProductBasedRecs;
+
     public RecommendSearchParams(String imName) {
         super(imName);
     }
@@ -50,6 +53,7 @@ public class RecommendSearchParams extends SearchParams {
         putIfNotNull(map, "use_set_based_ctl", useSetBasedCtl);
         putIfNotNull(map, "set_limit", setLimit);
         putIfNotNull(map, SHOW_BEST_PRODUCT_IMAGES, showBestProductImages );
+        putIfNotNull(map, "non_product_based_recs", nonProductBasedRecs);
 
         if (boxList != null) {
             for(String box: boxList) {
@@ -166,5 +170,13 @@ public class RecommendSearchParams extends SearchParams {
 
     public void setCategoryList(List<String> categoryList) {
         this.categoryList = categoryList;
+    }
+
+    public Boolean getNonProductBasedRecs() {
+        return nonProductBasedRecs;
+    }
+
+    public void setNonProductBasedRecs(Boolean nonProductBasedRecs) {
+        this.nonProductBasedRecs = nonProductBasedRecs;
     }
 }

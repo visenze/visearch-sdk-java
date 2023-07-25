@@ -45,6 +45,8 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     protected Optional<Boolean> showExcludedPids = Optional.absent();
 
+    protected Optional<Boolean> nonProductBasedRecs = Optional.absent();
+
     protected Optional<Integer> setLimit = Optional.absent();
     protected Optional<Boolean> useSetBasedCtl = Optional.absent();
 
@@ -79,6 +81,7 @@ public class SearchByIdParam extends BaseProductSearchParam {
         putIfPresent(multimap, strategyId, STRATEGY_ID);
         putIfPresent(multimap, showExcludedPids, SHOW_EXCLUDED_PIDS);
         putIfPresent(multimap, showPinnedPids, SHOW_PINNED_PIDS);
+        putIfPresent(multimap, nonProductBasedRecs, "non_product_based_recs");
 
         putIfPresent(multimap, useSetBasedCtl, USE_SET_BASED_CTL);
         putIfPresent(multimap, setLimit, SET_LIMIT);
@@ -161,6 +164,14 @@ public class SearchByIdParam extends BaseProductSearchParam {
 
     public void setShowPinnedPids(Boolean showPinnedPids) {
         this.showPinnedPids =  Optional.fromNullable(showPinnedPids);
+    }
+
+    public Boolean getNonProductBasedRecs() {
+        return nonProductBasedRecs.orNull();
+    }
+
+    public void setNonProductBasedRecs(Boolean nonProductBasedRecs) {
+        this.nonProductBasedRecs =  Optional.fromNullable(nonProductBasedRecs);
     }
 
     public Boolean getShowExcludedPids() {
