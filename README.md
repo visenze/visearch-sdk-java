@@ -37,7 +37,7 @@
 
 This SDK contains two sets of APIs that provide accurate, reliable and scalable search. It is an open source software to provide easy integration of ViSearch APIs and ProductSearch APIs. 
 
- * Current stable version: 1.13.2
+ * Current stable version: 1.13.7
  * Minimum JDK version: 1.6
 
 Please refer to [Product Search & Recommendations API](src/main/java/com/visenze/productsearch/README.md) if you are using ViSenze Console ([https://console.visenze.com](https://console.visenze.com))
