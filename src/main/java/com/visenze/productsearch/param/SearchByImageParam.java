@@ -42,6 +42,12 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     protected File image;
 
+
+    /**
+     * Text query (optional), only for multisearch
+     */
+    protected String q;
+
     /**
      * Optional parameter for restricting the image area x1,y1,x2,y2. The
      * upper-left corner of an image is (0,0).
@@ -152,6 +158,10 @@ public class SearchByImageParam extends BaseProductSearchParam {
             multimap.put(IM_ID, imId);
         }
 
+        if (q != null) {
+            multimap.put(Q, q);
+        }
+
         setDetectionParams(multimap);
 
         putIfPresent(multimap, searchAllObjects, SEARCH_ALL_OBJECTS);
@@ -225,6 +235,14 @@ public class SearchByImageParam extends BaseProductSearchParam {
      */
     public void setImage(File image) {
         this.image = image;
+    }
+
+    public String getQ() {
+        return q;
+    }
+
+    public void setQ(String q) {
+        this.q = q;
     }
 
     /**

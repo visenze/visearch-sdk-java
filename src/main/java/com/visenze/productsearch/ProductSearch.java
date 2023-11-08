@@ -29,6 +29,8 @@ public class ProductSearch {
      */
     static final String DEFAULT_ENDPOINT = "https://search.visenze.com";
     static final String DEFAULT_IMAGE_SEARCH_PATH = "/v1/product/search_by_image";
+    static final String DEFAULT_MULTI_SEARCH_PATH = "/v1/product/multisearch";
+
     static final String DEFAULT_VISUAL_SIMILAR_PATH = "/v1/product/search_by_id";
     static final String DEFAULT_RECOMMENDATION_PATH = "/v1/product/recommendations";
     public static final String APP_KEY = "app_key";
@@ -163,6 +165,10 @@ public class ProductSearch {
         this.httpClient   = new ProductSearchHttpClientImpl(this.endpoint, config);
     }
 
+    public ProductSearchResponse multiSearch(SearchByImageParam params) {
+        return postImageSearch(params, DEFAULT_MULTI_SEARCH_PATH);
+    }
+
     /**
      * Calls the POST method for the image search API
      *
@@ -171,20 +177,24 @@ public class ProductSearch {
      * @return ViSearchHttpResponse http response of search results
      */
     public ProductSearchResponse imageSearch(SearchByImageParam params) {
+        return postImageSearch(params, DEFAULT_IMAGE_SEARCH_PATH);
+    }
+
+    private ProductSearchResponse postImageSearch(SearchByImageParam params, String apiPath) {
         Multimap<String, String> paramMap = addAuth2Map(params);
 
-        // test for image parameter validity
         final File imageFile = params.getImage();
         // attempt search using image file
         if (imageFile != null) {
             try {
-                return ProductSearchResponse.fromResponse(httpClient.postImage(DEFAULT_IMAGE_SEARCH_PATH, paramMap, new FileInputStream(imageFile), imageFile.getName()));
+                return ProductSearchResponse.fromResponse(httpClient.postImage(apiPath, paramMap, new FileInputStream(imageFile), imageFile.getName()));
             } catch (FileNotFoundException e) {
                 throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
             }
         }
+
         // attempt using post for image url or image id
-        return ProductSearchResponse.fromResponse(httpClient.post(DEFAULT_IMAGE_SEARCH_PATH, paramMap));
+        return ProductSearchResponse.fromResponse(httpClient.post(apiPath, paramMap));
     }
 
     /**
@@ -194,6 +204,7 @@ public class ProductSearch {
      *
      * @return ViSearchHttpResponse http response of search results
      */
+    @Deprecated
     public ProductSearchResponse visualSimilarSearch(SearchByIdParam params) {
         // append the product id after the visual similar path
         final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
@@ -208,6 +219,12 @@ public class ProductSearch {
      *
      * @return ViSearchHttpResponse http response of search results
      */
+    public ProductSearchResponse recommendations(SearchByIdParam params) {
+        return recomendation(params);
+    }
+
+
+    @Deprecated
     public ProductSearchResponse recomendation(SearchByIdParam params) {
         // append the product id after the recommendation
         final String path = DEFAULT_RECOMMENDATION_PATH + '/' + params.getProductId();
