@@ -23,6 +23,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
 
     private static final String ENDPOINT_DISCOVER_SEARCH = "/discoversearch";
     private static final String ENDPOINT_UPLOAD_SEARCH = "/uploadsearch";
+    private static final String ENDPOINT_MULTI_SEARCH = "/multisearch";
     private static final String ENDPOINT_SEARCH = "/search";
     private static final String ENDPOINT_RECOMMENDATION = "/recommendations";
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
@@ -73,6 +74,14 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         }
     }
 
+    @Override
+    public PagedSearchResult multiSearch(UploadSearchParams uploadSearchParams) {
+        try {
+            return postImageSearch(uploadSearchParams, ENDPOINT_MULTI_SEARCH);
+        } catch (InternalViSearchException e) {
+            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
 
     /**
      * Perform real discover search
