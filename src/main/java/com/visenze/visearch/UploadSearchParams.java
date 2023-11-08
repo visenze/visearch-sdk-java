@@ -28,6 +28,9 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
     private Integer resultLimit ;
     private String detectionSensitivity ;
 
+    // multisearch
+    private String q;
+
     public UploadSearchParams(File imageFile) {
         super();
         Preconditions.checkNotNull(imageFile, "The image file must not be null.");
@@ -64,6 +67,11 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         return this;
     }
 
+    public UploadSearchParams setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+        return this;
+    }
+
     public UploadSearchParams setImId(String imId) {
         this.imId = imId;
         return this;
@@ -91,6 +99,16 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
 
     public UploadSearchParams setDetectionSensitivity(String detectionSensitivity) {
         this.detectionSensitivity = detectionSensitivity;
+        return this;
+    }
+
+    public UploadSearchParams setQ(String q) {
+        this.q = q;
+        return this;
+    }
+
+    public UploadSearchParams setImageStream(InputStream imageStream) {
+        this.imageStream = imageStream;
         return this;
     }
 
@@ -134,6 +152,10 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         return detectionSensitivity;
     }
 
+    public String getQ() {
+        return q;
+    }
+
     @Override
     public Multimap<String, String> toMap() {
         Multimap<String, String> map = super.toMap();
@@ -157,6 +179,9 @@ public class UploadSearchParams extends BaseSearchParams<UploadSearchParams> {
         }
         if (detectionSensitivity != null) {
             map.put(DETECTION_SENSITIVITY, detectionSensitivity.toString());
+        }
+        if (q != null) {
+            map.put(Q, q);
         }
 
         return map;

@@ -12,6 +12,9 @@ public interface SearchOperations {
 
     PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams);
 
+    PagedSearchResult multiSearch(UploadSearchParams uploadSearchParams);
+
+
     PagedSearchResult discoverSearch(UploadSearchParams discoverSearchParams);
 
     FeatureResponseResult extractFeature(UploadSearchParams uploadSearchParams);
