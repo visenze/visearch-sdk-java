@@ -64,6 +64,7 @@ public class ProductSearchResponseTest {
         AutoCompleteResponse response = GetMockedAutoCompleteResponse(json);
 
         assertEquals(1, response.getPage());
+        assertEquals("14952330933117065212", response.getRequestId());
 
         AutoCompleteResultItem item = response.getResult().get(0);
         assertEquals("red1", item.getText());
