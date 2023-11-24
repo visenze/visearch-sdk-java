@@ -10,10 +10,7 @@ import com.visenze.productsearch.response.GroupProductResult;
 import com.visenze.productsearch.response.ObjectProductResult;
 import com.visenze.productsearch.response.Product;
 import com.visenze.productsearch.response.Strategy;
-import com.visenze.visearch.BestImage;
-import com.visenze.visearch.Facet;
-import com.visenze.visearch.ProductType;
-import com.visenze.visearch.SetInfo;
+import com.visenze.visearch.*;
 import com.visenze.visearch.internal.http.ViSearchHttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +37,47 @@ public class ProductSearchResponseTest {
     final String JSON_LIST_FIELDS = "{\"product_types\":[{\"type\":\"top\",\"score\":0.912,\"box\":[1,2,3,4]},{\"type\":\"bottom\",\"box\":[5,6,7,8],\"score\":0}],\"result\":[{\"product_id\":\"RESULT_PRODUCT_ID_1\"},{\"product_id\":\"RESULT_PRODUCT_ID_2\"}]}";
     final String JSON_MAP_FIELDS = "{\"catalog_fields_mapping\":{\"product_id\":\"sku\",\"title\":\"product_name\"}}";
     final String JSON_OTHER_FIELDS = "{\"error\":{\"code\": 100,\"message\":\"Parameter required\"}}";
+
+    @Test
+    public void testAutoCompleteResponse() {
+        String json = "{\n" +
+                "    \"result\": [\n" +
+                "        {\n" +
+                "            \"text\": \"red1\",\n" +
+                "            \"score\": 898.0\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"text\": \"red valentino\",\n" +
+                "            \"score\": 188.0\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"text\": \"oscar de la renta\",\n" +
+                "            \"score\": 46.0\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"method\": \"multisearch/autocomplete\",\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"page\": 1,\n" +
+                "    \"reqid\": \"14952330933117065212\"\n" +
+                "}";;
+
+        AutoCompleteResponse response = GetMockedAutoCompleteResponse(json);
+
+        assertEquals(1, response.getPage());
+        assertEquals("14952330933117065212", response.getRequestId());
+
+        AutoCompleteResultItem item = response.getResult().get(0);
+        assertEquals("red1", item.getText());
+        assertTrue(898.0 == item.getScore());
+
+        AutoCompleteResultItem item2 = response.getResult().get(1);
+        assertEquals("red valentino", item2.getText());
+        assertTrue(188.0 == item2.getScore());
+
+        AutoCompleteResultItem item3 = response.getResult().get(2);
+        assertEquals("oscar de la renta", item3.getText());
+        assertTrue(46.0 == item3.getScore());
+    }
 
     @Test
     public void testGroupResponse() {
@@ -831,6 +869,20 @@ public class ProductSearchResponseTest {
         ProductSearch sdk = new ProductSearch.Builder("dummy",0).setApiEndPoint("dummy").build();
         sdk.setHttpClient(mockClient);
         return sdk.imageSearch(dummyParams);
+    }
+
+    private AutoCompleteResponse GetMockedAutoCompleteResponse(String mockedBodyResponse) {
+        ViSearchHttpResponse mockResponse = mock(ViSearchHttpResponse.class);
+        when(mockResponse.getBody()).thenReturn(mockedBodyResponse);
+        // create mock http client, to skip any actual http calls/operations,
+        // just jump straight to returning mocked response
+        ProductSearchHttpClientImpl mockClient = mock(ProductSearchHttpClientImpl.class);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(mockResponse);
+        // set ProductSearch to use the mock client for mock responses
+        SearchByImageParam dummyParams = SearchByImageParam.newFromImageUrl("dummy");
+        ProductSearch sdk = new ProductSearch.Builder("dummy",0).setApiEndPoint("dummy").build();
+        sdk.setHttpClient(mockClient);
+        return sdk.multiSearchAutocomplete(dummyParams);
     }
 
     /**

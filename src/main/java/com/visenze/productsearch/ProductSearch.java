@@ -30,6 +30,7 @@ public class ProductSearch {
     static final String DEFAULT_ENDPOINT = "https://search.visenze.com";
     static final String DEFAULT_IMAGE_SEARCH_PATH = "/v1/product/search_by_image";
     static final String DEFAULT_MULTI_SEARCH_PATH = "/v1/product/multisearch";
+    static final String DEFAULT_MULTI_SEARCH_AUTOCOMPLETE_PATH = "/v1/product/multisearch/autocomplete";
 
     static final String DEFAULT_VISUAL_SIMILAR_PATH = "/v1/product/search_by_id";
     static final String DEFAULT_RECOMMENDATION_PATH = "/v1/product/recommendations";
@@ -167,6 +168,22 @@ public class ProductSearch {
 
     public ProductSearchResponse multiSearch(SearchByImageParam params) {
         return postImageSearch(params, DEFAULT_MULTI_SEARCH_PATH);
+    }
+
+    public AutoCompleteResponse multiSearchAutocomplete(SearchByImageParam params) {
+        Multimap<String, String> paramMap = addAuth2Map(params);
+
+        final File imageFile = params.getImage();
+
+        if (imageFile != null) {
+            try {
+                return AutoCompleteResponse.fromResponse(httpClient.postImage(DEFAULT_MULTI_SEARCH_AUTOCOMPLETE_PATH, paramMap, new FileInputStream(imageFile), imageFile.getName()));
+            } catch (FileNotFoundException e) {
+                throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
+            }
+        }
+
+        return AutoCompleteResponse.fromResponse(httpClient.post(DEFAULT_MULTI_SEARCH_AUTOCOMPLETE_PATH, paramMap));
     }
 
     /**
