@@ -14,6 +14,8 @@ public interface SearchOperations {
 
     PagedSearchResult multiSearch(UploadSearchParams uploadSearchParams);
 
+    AutoCompleteResult multiSearchAutoComplete(UploadSearchParams uploadSearchParams);
+
 
     PagedSearchResult discoverSearch(UploadSearchParams discoverSearchParams);
 

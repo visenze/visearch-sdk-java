@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     private static final String ENDPOINT_DISCOVER_SEARCH = "/discoversearch";
     private static final String ENDPOINT_UPLOAD_SEARCH = "/uploadsearch";
     private static final String ENDPOINT_MULTI_SEARCH = "/multisearch";
+    private static final String ENDPOINT_MULTI_SEARCH_AUTOCOMPLETE = "/multisearch/autocomplete";
+
     private static final String ENDPOINT_SEARCH = "/search";
     private static final String ENDPOINT_RECOMMENDATION = "/recommendations";
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
@@ -80,6 +83,15 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             return postImageSearch(uploadSearchParams, ENDPOINT_MULTI_SEARCH);
         } catch (InternalViSearchException e) {
             return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
+
+    @Override
+    public AutoCompleteResult multiSearchAutoComplete(UploadSearchParams uploadSearchParams) {
+        try {
+            return postMultiSearchAutoComplete(uploadSearchParams);
+        } catch (InternalViSearchException e) {
+            return new AutoCompleteResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
         }
     }
 
@@ -148,33 +160,48 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         return getPagedResult(response);
     }
 
+    private AutoCompleteResult postMultiSearchAutoComplete(UploadSearchParams uploadSearchParams) {
+        ViSearchHttpResponse response = getPostImageSearchHttpResponse(uploadSearchParams, ENDPOINT_MULTI_SEARCH_AUTOCOMPLETE);
+        return getAutoCompleteResult(response);
+    }
+
     private ViSearchHttpResponse getPostImageSearchHttpResponse(UploadSearchParams uploadSearchParams, String endpointMethod) {
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
         ViSearchHttpResponse response;
 
+        boolean isMultiSearch = ENDPOINT_MULTI_SEARCH.equals(endpointMethod);
+
         // if im_id is available no need to check for image
         if(!Strings.isNullOrEmpty(uploadSearchParams.getImFeature())){
-            response = viSearchHttpClient.postImFeature(endpointMethod, uploadSearchParams.toMap(), uploadSearchParams.getImFeature() , uploadSearchParams.getTransId() );
-        } else if (!Strings.isNullOrEmpty(uploadSearchParams.getImId())){
-            response = viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
-        } else if (imageFile == null && imageStream == null && (Strings.isNullOrEmpty(imageUrl))) {
+            return viSearchHttpClient.postImFeature(endpointMethod, uploadSearchParams.toMap(), uploadSearchParams.getImFeature() , uploadSearchParams.getTransId() );
+        }
+
+        if (!Strings.isNullOrEmpty(uploadSearchParams.getImId())){
+            return viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
+        }
+
+        boolean isImageMissing = imageFile == null && imageStream == null && Strings.isNullOrEmpty(imageUrl);
+        if (isImageMissing && (!isMultiSearch)) {
             throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_SOURCE);
             // throw new IllegalArgumentException("Must provide either an image File, InputStream of the image, or a valid image url to perform upload search");
-        } else if (imageFile != null) {
+        }
+
+        if (imageFile != null) {
             try {
-                response = viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), new FileInputStream(imageFile), imageFile.getName());
+                return viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), new FileInputStream(imageFile), imageFile.getName());
             } catch (FileNotFoundException e) {
                 throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
                 // throw new IllegalArgumentException("Could not open the image file.", e);
             }
-        } else if (imageStream != null) {
-            response = viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), imageStream, ViSearchHttpConstants.IMAGE_STREAM);
-        } else {
-            response = viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
         }
-        return response;
+
+        if (imageStream != null) {
+            return viSearchHttpClient.postImage(endpointMethod, uploadSearchParams.toMap(), imageStream, ViSearchHttpConstants.IMAGE_STREAM);
+        }
+
+        return viSearchHttpClient.post(endpointMethod, uploadSearchParams.toMap());
     }
 
     private FeatureResponseResult getFeatureResponseResult(ViSearchHttpResponse httpResponse){
@@ -204,6 +231,53 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         result.setRawJson(node.toString());
         result.setHeaders(headers);
         return result;
+    }
+
+    private AutoCompleteResult getAutoCompleteResult(ViSearchHttpResponse httpResponse) {
+        String rawResponse = httpResponse.getBody();
+        Map<String, String> headers = httpResponse.getHeaders();
+        JsonNode node;
+        try {
+            node = objectMapper.readTree(rawResponse);
+        } catch (JsonProcessingException e) {
+            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
+        } catch (IOException e) {
+            throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, rawResponse);
+        }
+        checkResponseStatus(node);
+
+        List<AutoCompleteResultItem> result = new ArrayList<AutoCompleteResultItem>();
+
+        if(node.has(ViSearchHttpConstants.RESULT)) {
+            result = deserializeListResult(rawResponse, node.get(ViSearchHttpConstants.RESULT), AutoCompleteResultItem.class);
+        }
+
+        AutoCompleteResult autoCompleteResult = new AutoCompleteResult(result);
+
+        JsonNode pageNode = node.get(ViSearchHttpConstants.PAGE);
+        JsonNode limitNode = node.get(ViSearchHttpConstants.LIMIT);
+        JsonNode totalNode = node.get(ViSearchHttpConstants.TOTAL);
+
+        if(pageNode!=null) {
+            autoCompleteResult.setPage(pageNode.asInt());
+        }
+
+        if(limitNode!=null) {
+            autoCompleteResult.setLimit(limitNode.asInt());
+        }
+
+        if(totalNode!=null) {
+            autoCompleteResult.setTotal(totalNode.asInt());
+        }
+
+        JsonNode reqidNode = node.get(ViSearchHttpConstants.REQID);
+        if (reqidNode != null) {
+            autoCompleteResult.setReqId(reqidNode.asText());
+        }
+
+        autoCompleteResult.setRawJson(node.toString());
+        autoCompleteResult.setHeaders(headers);
+        return autoCompleteResult;
     }
 
     private PagedSearchResult getPagedResult(ViSearchHttpResponse httpResponse) {

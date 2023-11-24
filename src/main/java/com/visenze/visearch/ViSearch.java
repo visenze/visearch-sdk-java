@@ -208,9 +208,20 @@ public class ViSearch implements DataOperations, SearchOperations {
     }
 
 
+    /**
+     * Search for similar images from the ViSearch App given image and/or text query.
+     *
+     * @param uploadSearchParams request parameters
+     * @return the page of upload search result
+     */
     @Override
     public PagedSearchResult multiSearch(UploadSearchParams uploadSearchParams) {
         return searchOperations.multiSearch(uploadSearchParams);
+    }
+
+    @Override
+    public AutoCompleteResult multiSearchAutoComplete(UploadSearchParams uploadSearchParams) {
+        return searchOperations.multiSearchAutoComplete(uploadSearchParams);
     }
 
     /**
