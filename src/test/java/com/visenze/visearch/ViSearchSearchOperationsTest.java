@@ -1890,7 +1890,6 @@ public class ViSearchSearchOperationsTest {
         assertNull(autoCompleteResult.getLimit());
         assertNull(autoCompleteResult.getTotal());
 
-
         AutoCompleteResultItem item = autoCompleteResult.getResult().get(0);
         assertEquals("red", item.getText());
         assertTrue(898.0 == item.getScore());
