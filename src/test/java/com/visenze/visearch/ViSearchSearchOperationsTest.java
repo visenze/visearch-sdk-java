@@ -1845,7 +1845,62 @@ public class ViSearchSearchOperationsTest {
         assertEquals("category", facet.getKey());
         assertEquals(1, facet.getFacetItems().size());
         assertEquals("Women > Women's Sunglasses", facet.getFacetItems().get(0).getValue());
+    }
+
+    @Test
+    public void testAutoComplete() {
+        String responseBody = "{\n" +
+                "    \"result\": [\n" +
+                "        {\n" +
+                "            \"text\": \"red\",\n" +
+                "            \"score\": 898.0\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"text\": \"red valentino\",\n" +
+                "            \"score\": 188.0\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"text\": \"oscar de la renta\",\n" +
+                "            \"score\": 46.0\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"method\": \"multisearch/autocomplete\",\n" +
+                "    \"status\": \"OK\",\n" +
+                "    \"error\": [],\n" +
+                "    \"page\": 1,\n" +
+                "    \"reqid\": \"1495233093311706521\"\n" +
+                "}";
+        ViSearchHttpResponse response = mock(ViSearchHttpResponse.class);
+        when(response.getBody()).thenReturn(responseBody);
+        when(mockClient.post(anyString(), Matchers.<Multimap<String, String>>any())).thenReturn(response);
+        SearchOperations searchOperations = new SearchOperationsImpl(mockClient, objectMapper);
+        UploadSearchParams uploadSearchParams = new UploadSearchParams("http://www.example.com/random.jpeg");
+        assertEquals("http://www.example.com/random.jpeg", uploadSearchParams.getImageUrl());
+        AutoCompleteResult autoCompleteResult = searchOperations.multiSearchAutoComplete(uploadSearchParams);
+
+        Multimap<String, String> expectedParams = HashMultimap.create();
+        expectedParams.put("im_url", "http://www.example.com/random.jpeg");
+        verify(mockClient).post("/multisearch/autocomplete", expectedParams);
+
+        assertEquals(3, autoCompleteResult.getResult().size());
+
+        assertNotNull(autoCompleteResult.getRawJson());
+
+        assertEquals(new Integer(1), autoCompleteResult.getPage());
+        assertNull(autoCompleteResult.getLimit());
+        assertNull(autoCompleteResult.getTotal());
 
 
+        AutoCompleteResultItem item = autoCompleteResult.getResult().get(0);
+        assertEquals("red", item.getText());
+        assertTrue(898.0 == item.getScore());
+
+        AutoCompleteResultItem item2 = autoCompleteResult.getResult().get(1);
+        assertEquals("red valentino", item2.getText());
+        assertTrue(188.0 == item2.getScore());
+
+        AutoCompleteResultItem item3 = autoCompleteResult.getResult().get(2);
+        assertEquals("oscar de la renta", item3.getText());
+        assertTrue(46.0 == item3.getScore());
     }
 }

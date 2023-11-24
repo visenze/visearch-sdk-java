@@ -169,9 +169,8 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         File imageFile = uploadSearchParams.getImageFile();
         InputStream imageStream = uploadSearchParams.getImageStream();
         String imageUrl = uploadSearchParams.getImageUrl();
-        ViSearchHttpResponse response;
 
-        boolean isMultiSearch = ENDPOINT_MULTI_SEARCH.equals(endpointMethod);
+        boolean isMultiSearch = ENDPOINT_MULTI_SEARCH.equals(endpointMethod) || ENDPOINT_MULTI_SEARCH_AUTOCOMPLETE.equals(endpointMethod);
 
         // if im_id is available no need to check for image
         if(!Strings.isNullOrEmpty(uploadSearchParams.getImFeature())){
@@ -237,6 +236,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         String rawResponse = httpResponse.getBody();
         Map<String, String> headers = httpResponse.getHeaders();
         JsonNode node;
+
         try {
             node = objectMapper.readTree(rawResponse);
         } catch (JsonProcessingException e) {
@@ -258,15 +258,15 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
         JsonNode limitNode = node.get(ViSearchHttpConstants.LIMIT);
         JsonNode totalNode = node.get(ViSearchHttpConstants.TOTAL);
 
-        if(pageNode!=null) {
+        if(pageNode != null) {
             autoCompleteResult.setPage(pageNode.asInt());
         }
 
-        if(limitNode!=null) {
+        if(limitNode != null) {
             autoCompleteResult.setLimit(limitNode.asInt());
         }
 
-        if(totalNode!=null) {
+        if(totalNode != null) {
             autoCompleteResult.setTotal(totalNode.asInt());
         }
 
