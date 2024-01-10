@@ -38,6 +38,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<String> excludedImNames;
 
+    private List<String> hiddenCategories;
+
     private List<SetInfo> setInfoList;
 
     private String reqId;
@@ -173,6 +175,14 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public void setExcludedImNames(List<String> excludedImNames) {
         this.excludedImNames = excludedImNames;
+    }
+
+    public List<String> getHiddenCategories() {
+        return hiddenCategories;
+    }
+
+    public void setHiddenCategories(List<String> hiddenCategories) {
+        this.hiddenCategories = hiddenCategories;
     }
 
     public List<SetInfo> getSetInfoList() {

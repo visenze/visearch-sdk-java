@@ -349,6 +349,12 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setExcludedImNames(excludedImNames);
         }
 
+        JsonNode hiddenCategoriesNode = node.get(ViSearchHttpConstants.HIDDEN_CATEGORIES);
+        if (hiddenCategoriesNode != null) {
+            List<String> hiddenCategories = deserializeListResult(response, hiddenCategoriesNode, String.class);
+            result.setHiddenCategories(hiddenCategories);
+        }
+
         JsonNode setInfoListNode = node.get(ViSearchHttpConstants.SET_INFO);
         if (setInfoListNode != null) {
             List<SetInfo> setInfoList = deserializeListResult(response, setInfoListNode, SetInfo.class);
