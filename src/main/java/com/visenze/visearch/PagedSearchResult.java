@@ -40,6 +40,8 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     private List<String> hiddenCategories;
 
+    private Map<String, String> pinCategoryPidMap;
+
     private List<SetInfo> setInfoList;
 
     private String reqId;
@@ -183,6 +185,14 @@ public class PagedSearchResult extends PagedResult<ImageResult> {
 
     public void setHiddenCategories(List<String> hiddenCategories) {
         this.hiddenCategories = hiddenCategories;
+    }
+
+    public Map<String, String> getPinCategoryPidMap() {
+        return pinCategoryPidMap;
+    }
+
+    public void setPinCategoryPidMap(Map<String, String> pinCategoryPidMap) {
+        this.pinCategoryPidMap = pinCategoryPidMap;
     }
 
     public List<SetInfo> getSetInfoList() {

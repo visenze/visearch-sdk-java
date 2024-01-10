@@ -355,6 +355,12 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setHiddenCategories(hiddenCategories);
         }
 
+        JsonNode pinCategoryPidMapNode = node.get(ViSearchHttpConstants.PIN_CATEGORY_PID_MAP);
+        if (pinCategoryPidMapNode != null) {
+            Map<String, String> pinCategoryPidMap = deserializeMapResult(response, pinCategoryPidMapNode, String.class, String.class);
+            result.setPinCategoryPidMap(pinCategoryPidMap);
+        }
+
         JsonNode setInfoListNode = node.get(ViSearchHttpConstants.SET_INFO);
         if (setInfoListNode != null) {
             List<SetInfo> setInfoList = deserializeListResult(response, setInfoListNode, SetInfo.class);

@@ -122,6 +122,9 @@ public class ProductSearchResponse extends BaseProductSearchResponse {
     @JsonProperty("hidden_categories")
     private List<String> hiddenCategories;
 
+    @JsonProperty("pin_category_pid_map")
+    private Map<String, String> pinCategoryPidMap;
+
     @JsonProperty("set_info")
     private List<SetInfo> setInfoList;
 
@@ -268,6 +271,14 @@ public class ProductSearchResponse extends BaseProductSearchResponse {
 
     public void setHiddenCategories(List<String> hiddenCategories) {
         this.hiddenCategories = hiddenCategories;
+    }
+
+    public Map<String, String> getPinCategoryPidMap() {
+        return pinCategoryPidMap;
+    }
+
+    public void setPinCategoryPidMap(Map<String, String> pinCategoryPidMap) {
+        this.pinCategoryPidMap = pinCategoryPidMap;
     }
 
     public List<SetInfo> getSetInfoList() {

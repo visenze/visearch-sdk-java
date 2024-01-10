@@ -1361,6 +1361,11 @@ public class ViSearchSearchOperationsTest {
                 "        }\n" +
                 "    ],\n" +
                 "    \"excluded_im_names\" : [\"im1\", \"im2\"],\n" +
+                "    \"hidden_categories\" : [\"top\", \"shoe\"],\n" +
+                "    \"pin_category_pid_map\": {\n" +
+                "                \"top\": \"top1\",\n" +
+                "                \"shoe\": \"shoe2\"\n" +
+                "    },\n" +
                 "    \"reqid\": \"1317439821672620035\"\n" +
                 "}";
         when(response.getBody()).thenReturn(responseBody);
@@ -1395,6 +1400,14 @@ public class ViSearchSearchOperationsTest {
         assertEquals(2, result.getExcludedImNames().size());
         assertEquals("im1" , result.getExcludedImNames().get(0));
         assertEquals("im2" , result.getExcludedImNames().get(1));
+
+        assertEquals(2, result.getHiddenCategories().size());
+        assertEquals("top" , result.getHiddenCategories().get(0));
+        assertEquals("shoe" , result.getHiddenCategories().get(1));
+
+        assertEquals(2, result.getPinCategoryPidMap().size());
+        assertEquals("top1", result.getPinCategoryPidMap().get("top"));
+        assertEquals("shoe2", result.getPinCategoryPidMap().get("shoe"));
 
     }
 
