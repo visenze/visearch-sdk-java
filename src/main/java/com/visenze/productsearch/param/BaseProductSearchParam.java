@@ -132,6 +132,10 @@ public class BaseProductSearchParam {
     protected Optional<Map<String, String>> vsConfig = Optional.absent();
     protected Optional<List<String>> vsAttrsToGet = Optional.absent();
 
+    // allow override of default app key and placement ID
+    private String appKey;
+    private Integer placementId;
+
 
     public Multimap<String, String> toMultimap() {
         Multimap<String, String> multimap = HashMultimap.create();
@@ -700,5 +704,21 @@ public class BaseProductSearchParam {
             return Optional.absent();
         }
         return Optional.of(list);
+    }
+
+    public String getAppKey() {
+        return appKey;
+    }
+
+    public void setAppKey(String appKey) {
+        this.appKey = appKey;
+    }
+
+    public Integer getPlacementId() {
+        return placementId;
+    }
+
+    public void setPlacementId(Integer placementId) {
+        this.placementId = placementId;
     }
 }

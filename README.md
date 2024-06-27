@@ -37,7 +37,7 @@
 
 This SDK contains two sets of APIs that provide accurate, reliable and scalable search. It is an open source software to provide easy integration of ViSearch APIs and ProductSearch APIs. 
 
- * Current stable version: 1.13.7
+ * Current stable version: 1.14.3
  * Minimum JDK version: 1.6
 
 Please refer to [Product Search & Recommendations API](src/main/java/com/visenze/productsearch/README.md) if you are using ViSenze Console ([https://console.visenze.com](https://console.visenze.com))
@@ -57,18 +57,18 @@ For Maven projects, include the dependency in ```pom.xml```:
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.13.2</version>
+  <version>1.14.3</version>
 </dependency>
 ```
 
 For Gradle projects, include this line in your ```build.gradle``` dependencies block:
 ```
-compile 'com.visenze:visearch-java-sdk:1.13.2'
+compile 'com.visenze:visearch-java-sdk:1.14.3'
 ```
 
 For SBT projects, add the following line to ```build.sbt```:
 ```
-libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.13.1"
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.14.3"
 ```
 
 ## 3. Initialization
@@ -100,9 +100,18 @@ For searches in China, please set the endpoint to `https://search.visenze.com.cn
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
                      .build();
                       
-// set CN API endpoint for searches in China
-new ProductSearch.Builder(APP_KEY, PLACEMENT_ID).setApiEndPoint("https://search.visenze.com.cn")
+// for custom endpoint
+new ProductSearch.Builder(APP_KEY, PLACEMENT_ID).setApiEndPoint("https://your_endpoint.com")
                      .build()
+                     
+// for custom settings (timeout, proxy)
+ClientConfig config = new ClientConfig();
+config.setConnectionTimeout(...);
+config.setSocketTimeout(...);
+config.setProxy(...);
+
+new ProductSearch.Builder(APP_KEY, PLACEMENT_ID).setClientConfig(config)
+                     .build();
 ```
 
 ## 4. Indexing Images
