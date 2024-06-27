@@ -258,8 +258,12 @@ public class ProductSearch {
      */
     private Multimap<String, String> addAuth2Map(BaseProductSearchParam params) {
         Multimap<String, String> paramMap = params.toMultimap();
-        paramMap.put(APP_KEY, this.appKey);
-        paramMap.put(PLACEMENT_ID, this.placementId.toString());
+
+        String appKeyParam = params.getAppKey() == null ? this.appKey : params.getAppKey();
+        paramMap.put(APP_KEY, appKeyParam);
+
+        Integer placementIdParam = params.getPlacementId() == null ? this.placementId : params.getPlacementId();
+        paramMap.put(PLACEMENT_ID, placementIdParam.toString());
         return paramMap;
     }
 
