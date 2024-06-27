@@ -1,5 +1,7 @@
 package com.visenze.visearch;
 
+import org.apache.http.HttpHost;
+
 /**
  * Client config for http connection timeouts, max connections, etc.
  */
@@ -22,6 +24,8 @@ public class ClientConfig {
     private int maxConnection = DEFAULT_MAX_CONNECTIONS;
 
     private String userAgent = DEFAULT_USER_AGENT;
+
+    private HttpHost proxy;
 
     public static String getDefaultUserAgent() {
         String version = ViSearch.VISEACH_JAVA_SDK_VERSION;
@@ -73,5 +77,13 @@ public class ClientConfig {
 
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public HttpHost getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(HttpHost proxy) {
+        this.proxy = proxy;
     }
 }

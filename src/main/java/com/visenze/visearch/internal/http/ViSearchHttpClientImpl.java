@@ -58,11 +58,17 @@ public class ViSearchHttpClientImpl implements ViSearchHttpClient {
     public ViSearchHttpClientImpl(String endpoint, String accessKey, String secretKey, ClientConfig clientConfig) {
         this.endpoint = endpoint;
         this.clientConfig = clientConfig;
-        RequestConfig conf = RequestConfig
+
+        RequestConfig.Builder configBuilder = RequestConfig
                 .custom()
                 .setConnectTimeout(clientConfig.getConnectionTimeout())
-                .setSocketTimeout(clientConfig.getSocketTimeout())
-                .build();
+                .setSocketTimeout(clientConfig.getSocketTimeout());
+
+        if (clientConfig.getProxy() != null) {
+            configBuilder.setProxy(clientConfig.getProxy());
+        }
+
+        RequestConfig conf = configBuilder.build();
         credentials = new UsernamePasswordCredentials(accessKey, secretKey);
         this.httpClient = HttpClientBuilder
                 .create()

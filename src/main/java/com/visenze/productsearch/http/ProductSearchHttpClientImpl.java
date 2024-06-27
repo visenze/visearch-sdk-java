@@ -25,7 +25,7 @@ public class ProductSearchHttpClientImpl extends ViSearchHttpClientImpl {
 
     @Override
     protected ViSearchHttpResponse getResponse(HttpUriRequest request) {
-        // for Product SEarch, auth is via app_key
+        // for Product Search, auth is via app_key
         addOtherHeaders(request);
         return getViSearchHttpResponse(request);
     }
