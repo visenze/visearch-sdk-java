@@ -28,6 +28,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     private static final String ENDPOINT_MULTI_SEARCH_AUTOCOMPLETE = "/multisearch/autocomplete";
 
     private static final String ENDPOINT_SEARCH = "/search";
+    private static final String ENDPOINT_BROWSE_LINKED_GALLERY = "/linked/gallery/browse";
     private static final String ENDPOINT_RECOMMENDATION = "/recommendations";
     private static final String ENDPOINT_COLOR_SEARCH = "/colorsearch";
     private static final String ENDPOINT_SIMILAR_PRODUCTS_SEARCH = "/similarproducts";
@@ -42,6 +43,16 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     public PagedSearchResult search(SearchParams searchParams) {
         try {
             ViSearchHttpResponse response = viSearchHttpClient.get(ENDPOINT_SEARCH, searchParams.toMap());
+            return getPagedResult(response);
+        } catch (InternalViSearchException e) {
+            return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
+        }
+    }
+
+    @Override
+    public PagedSearchResult browseLinkedGalleryImages(BrowseLinkedGalleryParams params) {
+        try {
+            ViSearchHttpResponse response = viSearchHttpClient.get(ENDPOINT_BROWSE_LINKED_GALLERY, params.toMap());
             return getPagedResult(response);
         } catch (InternalViSearchException e) {
             return new PagedSearchResult(e.getMessage(), e.getCause(), e.getServerRawResponse());
@@ -126,7 +137,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
     /**
      * Extract feature string (encoded in base 64) given an image file or url.
      *
-     * @param uploadSearchParams the upload search parameters, must contain a image file or a url
+     * @param uploadSearchParams the upload search parameters, must contain an image file or url
      * @return the feature response string result
      */
     @Override
@@ -367,7 +378,7 @@ public class SearchOperationsImpl extends BaseViSearchOperations implements Sear
             result.setSetInfoList(setInfoList);
         }
 
-        // For similarproducts search, try to cover it's result into discoversearch result.
+        // For similarproducts search, try to convert its result into discoversearch result.
         JsonNode groupResult = node.get(ViSearchHttpConstants.GROUP_RESULT);
         if (groupResult != null && groupResult instanceof ArrayNode) {
             List<ProductType> productTypes = result.getProductTypes();
