@@ -207,6 +207,10 @@ public class ViSearch implements DataOperations, SearchOperations {
         return searchOperations.search(searchParams);
     }
 
+    @Override
+    public PagedSearchResult browseLinkedGalleryImages(BrowseLinkedGalleryParams params) {
+        return searchOperations.browseLinkedGalleryImages(params);
+    }
 
     /**
      * Search for similar images from the ViSearch App given image and/or text query.

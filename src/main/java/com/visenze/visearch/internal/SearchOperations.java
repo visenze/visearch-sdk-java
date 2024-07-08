@@ -8,6 +8,8 @@ public interface SearchOperations {
 
     PagedSearchResult recommendation(RecommendSearchParams searchParams);
 
+    PagedSearchResult browseLinkedGalleryImages(BrowseLinkedGalleryParams params);
+
     PagedSearchResult colorSearch(ColorSearchParams colorSearchParams);
 
     PagedSearchResult uploadSearch(UploadSearchParams uploadSearchParams);
