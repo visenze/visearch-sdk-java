@@ -47,7 +47,6 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
                 JsonNode statusNode = responseNode.get("status");
                 if (statusNode == null) {
                     throw new InternalViSearchException(ResponseMessages.INVALID_RESPONSE_FORMAT, response);
-                    // throw new ViSearchException("There was a malformed ViSearch response: " + response, response);
                 } else {
                     InsertTrans insertTrans = deserializeObjectResult(response, response, InsertTrans.class);
                     insertTrans.setHeaders(headers);
@@ -55,10 +54,8 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
                 }
             } catch (JsonProcessingException e) {
                 throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, response);
-                //throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
             } catch (IOException e) {
                 throw new InternalViSearchException(ResponseMessages.PARSE_RESPONSE_ERROR, e, response);
-                //throw new ViSearchException("Could not parse the ViSearch response: " + response, e, response);
             }
         } catch (InternalViSearchException e) {
             return new InsertTrans(e.getMessage(), e.getCause(), e.getServerRawResponse());
@@ -67,7 +64,6 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
 
     @Override
     public InsertStatus insertStatus(String transId) {
-
         return insertStatus(transId, Maps.<String, String>newHashMap());
     }
 
@@ -187,11 +183,16 @@ public class DataOperationsImpl extends BaseViSearchOperations implements DataOp
             Image image = imageList.get(i);
             if (image != null) {
                 params.put("im_name" + "[" + i + "]", image.getImName());
-                params.put("im_url" + "[" + i + "]", image.getImUrl());
+                if (image.getImUrl() != null) {
+                    params.put("im_url" + "[" + i + "]", image.getImUrl());
+                }
+
                 Map<String, String> metadata = image.getMetadata();
                 if (metadata != null) {
                     for (Map.Entry<String, String> entry : metadata.entrySet()) {
-                        params.put(entry.getKey() + "[" + i + "]", entry.getValue());
+                        if (entry.getValue() != null) {
+                            params.put(entry.getKey() + "[" + i + "]", entry.getValue());
+                        }
                     }
                 }
             }
