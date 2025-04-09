@@ -57,6 +57,8 @@ public class BaseProductSearchParam {
 
     protected Optional<String> sortBy = Optional.absent();
 
+    protected Optional<String> locale = Optional.absent();
+
     protected Optional<String> groupBy = Optional.absent();
 
     protected Optional<Integer> groupLimit = Optional.absent();
@@ -145,6 +147,7 @@ public class BaseProductSearchParam {
         putIfPresent(multimap, facetsLimit, FACETS_LIMIT);
         putIfPresent(multimap, facetsShowCount, FACETS_SHOW_COUNT);
         putIfPresent(multimap, sortBy, SORT_BY);
+        putIfPresent(multimap, locale, LOCALE);
         putIfPresent(multimap, groupBy, GROUP_BY);
         putIfPresent(multimap, groupLimit, GROUP_LIMIT);
         putIfPresent(multimap, sortGroupBy, SORT_GROUP_BY);
@@ -427,6 +430,14 @@ public class BaseProductSearchParam {
      */
     public void setGroupBy(String groupBy) {
         this.groupBy = Optional.fromNullable(groupBy);
+    }
+
+    public String getLocale() {
+        return locale.orNull();
+    }
+
+    public void setLocale(String locale) {
+        this.locale = Optional.fromNullable(locale);
     }
 
     /**

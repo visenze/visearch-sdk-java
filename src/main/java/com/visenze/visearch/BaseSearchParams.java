@@ -60,9 +60,9 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     protected Optional<String> sortBy = Optional.absent();
     protected Optional<String> sortGroupBy = Optional.absent();
     protected Optional<String> sortGroupStrategy = Optional.absent();
-
-
     protected Optional<List<DiversityQuery>> diversityQueries = Optional.absent();
+
+    protected Optional<String> locale = Optional.absent();
 
     /**
      * Unique string that can identify the user/app, e.g. device serial number,
@@ -197,6 +197,12 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
     }
 
     @SuppressWarnings("unchecked")
+    public P setLocale(String locale) {
+        this.locale = Optional.fromNullable(locale);
+        return (P) this;
+    }
+
+    @SuppressWarnings("unchecked")
     public P setGroupLimit(Integer groupLimit) {
         this.groupLimit = Optional.fromNullable(groupLimit);
         return (P) this;
@@ -287,6 +293,10 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
         return facetsShowCount.orNull();
     }
 
+    public String getLocale() {
+        return locale.orNull();
+    }
+
     public String getGroupBy() { return groupBy.orNull(); }
 
     public Integer getGroupLimit() { return groupLimit.orNull(); }
@@ -349,6 +359,7 @@ public class BaseSearchParams<P extends BaseSearchParams<P>> {
 
         putIfPresent(map, page, PAGE);
         putIfPresent(map, limit, LIMIT);
+        putIfPresent(map, locale, LOCALE);
         putIfPresent(map, groupBy, GROUP_BY);
         putIfPresent(map, groupLimit, GROUP_LIMIT);
 
