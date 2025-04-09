@@ -51,6 +51,7 @@ public abstract class ViSearchHttpConstants {
     public static final String FACETS_LIMIT = "facets_limit";
     public static final String FACETS_SHOW_COUNT = "facets_show_count";
     public static final String SORT_BY = "sort_by";
+    public static final String LOCALE = "locale";
     public static final String GROUP_BY = "group_by";
     public static final String GROUP_LIMIT = "group_limit";
     public static final String SORT_GROUP_BY = "sort_group_by";
