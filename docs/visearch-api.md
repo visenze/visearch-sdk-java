@@ -2,6 +2,8 @@
 
 ViSearch is a legacy image search API available through the [ViSenze Dashboard](https://dashboard.visenze.com). It provides fast, accurate, and scalable image search by letting you index images and query them visually, by color, or by metadata.
 
+This guide covers client setup, indexing images, running searches, and working with results.
+
 > **Note:** If you are using the newer [Rezolve Console](https://ms.console.rezolve.com), use the [Product Search API](./product-search-api.md) instead.
 
 ---
@@ -45,6 +47,8 @@ ViSearch client = new ViSearch("https://custom-visearch.yourdomain.com", "access
 ---
 
 ## 2. Indexing Images
+
+Before you can run searches, your images need to be indexed. ViSearch fetches each image from a public URL and stores it for fast retrieval. The sections below cover inserting, updating, and removing images.
 
 ### 2.1 Insert Images
 
@@ -161,6 +165,8 @@ if (status.getFailCount() > 0) {
 ---
 
 ## 3. Search APIs
+
+Once your images are indexed, you can search in several ways — by image similarity, file upload, color, or across multiple detected objects.
 
 ### 3.1 Visually Similar Recommendations
 
@@ -286,6 +292,8 @@ PagedSearchResult nextPage = client.search(params);
 ---
 
 ## 5. Advanced Parameters
+
+These parameters give you finer control over what is returned — including specific metadata fields, filters, relevance scores, and deduplication.
 
 ### 5.1 Retrieving Metadata
 

@@ -2,6 +2,8 @@
 
 The Product Search API is part of the [Discovery Suite](https://ms.console.rezolve.com) — a modern product search and recommendations platform built on top of Rezolve's Catalog system. It provides product-level search aggregation, intelligent image selection for indexing, and a consistent schema across all API responses.
 
+This guide covers initialization, the search and recommendations APIs, reading result data, and advanced filtering.
+
 > **Legacy API users:** If you are using the older dashboard, see the [ViSearch API](./visearch-api.md) instead.
 
 ---
@@ -66,6 +68,8 @@ ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
 
 ## 3. Search APIs
 
+The SDK supports two discovery flows: finding products visually similar to an image, and fetching recommendations for a known product.
+
 ### 3.1 Search by Image
 
 `POST /v1/product/search_by_image`
@@ -120,7 +124,7 @@ ProductSearchResponse result = api.recomendation(params);
 
 ## 4. Search Results
 
-All searches return a `ProductSearchResponse` object. See [ProductSearchResponse.java](../src/main/java/com/visenze/productsearch/ProductSearchResponse.java) for the full reference.
+All searches return a `ProductSearchResponse` object. The sections below show how to access products, map catalog fields, and read typed values. See [ProductSearchResponse.java](../src/main/java/com/visenze/productsearch/ProductSearchResponse.java) for the full reference.
 
 ### 4.1 Accessing Products
 
@@ -135,7 +139,7 @@ for (Product product : products) {
 
 ### 4.2 Catalog Field Mapping
 
-Rezolve uses standardized internal field names, which are mapped to each client's own catalog field names. For example:
+Rezolve uses standardized internal field names that map to your catalog's own field names. This means you use your own naming conventions to look up product data, rather than Rezolve's internal ones. For example:
 
 | Catalog Field     | Example Client Field |
 |-------------------|----------------------|
@@ -146,7 +150,7 @@ Rezolve uses standardized internal field names, which are mapped to each client'
 | `price`           | `sale_price`         |
 | `brand`           | `brand`              |
 
-Please refer to (https://msdocs.rezolve.com/docs/catalog-data-schema)[https://msdocs.rezolve.com/docs/catalog-data-schema] for complete guide.
+See the [Catalog Data Schema](https://msdocs.rezolve.com/docs/catalog-data-schema) for the complete guide.
 
 The mapping is included in the response:
 
@@ -187,6 +191,8 @@ map.get("value");    // "120"
 ---
 
 ## 5. Search Parameters
+
+The following parameters let you control what data is returned, how results are sorted, and what filters are applied.
 
 ### 5.1 Common Parameters
 
@@ -233,6 +239,8 @@ These parameters are specific to `SearchByIdParam`:
 ---
 
 ## 6. Advanced Parameters
+
+Use these parameters to group or filter results after the main query runs.
 
 ### 6.1 Grouping
 
