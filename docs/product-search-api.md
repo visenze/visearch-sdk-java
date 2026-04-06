@@ -1,8 +1,8 @@
 # Product Search API
 
-The Product Search API is part of the [Discovery Suite](https://ms.console.rezolve.com) — a modern product search and recommendations platform built on top of ViSenze's Catalog system. It provides product-level search aggregation, intelligent image selection for indexing, and a consistent schema across all API responses.
+The Product Search API is part of the [Discovery Suite](https://ms.console.rezolve.com) — a modern product search and recommendations platform built on top of Rezolve's Catalog system. It provides product-level search aggregation, intelligent image selection for indexing, and a consistent schema across all API responses.
 
-> **Legacy API users:** If you are using the older ViSenze Dashboard, see the [ViSearch API](./visearch-api.md) instead.
+> **Legacy API users:** If you are using the older dashboard, see the [ViSearch API](./visearch-api.md) instead.
 
 ---
 
@@ -135,9 +135,9 @@ for (Product product : products) {
 
 ### 4.2 Catalog Field Mapping
 
-ViSenze uses standardized internal field names, which are mapped to each client's own catalog field names. For example:
+Rezolve uses standardized internal field names, which are mapped to each client's own catalog field names. For example:
 
-| ViSenze Field     | Example Client Field |
+| Catalog Field     | Example Client Field |
 |-------------------|----------------------|
 | `product_id`      | `sku`                |
 | `main_image_url`  | `medium_image`       |
@@ -146,12 +146,14 @@ ViSenze uses standardized internal field names, which are mapped to each client'
 | `price`           | `sale_price`         |
 | `brand`           | `brand`              |
 
+Please refer to (https://msdocs.rezolve.com/docs/catalog-data-schema)[https://msdocs.rezolve.com/docs/catalog-data-schema] for complete guide.
+
 The mapping is included in the response:
 
 ```java
 Map<String, String> fieldMapping = result.getCatalogFieldsMapping();
 
-// Translate ViSenze field name → client's field name
+// Translate Rezolve field name → client's field name
 String priceKey = fieldMapping.get("price"); // e.g. "sale_price"
 ```
 
@@ -242,10 +244,10 @@ params.setGroupBy("product_group_id");
 
 ### 6.2 Filtering
 
-Filter results using catalog field values. Use client-side field names (not ViSenze's internal names).
+Filter results using catalog field values. Use client-side field names (not catalog's internal names).
 
 ```java
-// Look up the client's key name for a ViSenze field
+// Look up the client's key name for a Rezolve catalog field
 String priceKey = result.getCatalogFieldsMapping().get("price");
 
 Map<String, String> filters = new HashMap<>();
