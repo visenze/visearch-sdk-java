@@ -128,6 +128,12 @@ public class ProductSearchResponse extends BaseProductSearchResponse {
     @JsonProperty("set_info")
     private List<SetInfo> setInfoList;
 
+    @JsonProperty("similar_score")
+    private Map<String, Float> similarScore;
+
+    @JsonProperty("qinfo")
+    private Product qinfo;
+
     /**
      * Delegated construction with a ViHttpResponse will automatically parse the
      * response into data members.
@@ -287,6 +293,14 @@ public class ProductSearchResponse extends BaseProductSearchResponse {
 
     public void setSetInfoList(List<SetInfo> setInfoList) {
         this.setInfoList = setInfoList;
+    }
+
+    public Map<String, Float> getSimilarScore() {
+        return similarScore;
+    }
+
+    public Product getQinfo() {
+        return qinfo;
     }
 
     /**

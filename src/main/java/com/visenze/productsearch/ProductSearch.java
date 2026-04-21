@@ -11,6 +11,9 @@ import com.visenze.visearch.internal.InternalViSearchException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <h1> ProductSearch </h1>
@@ -27,15 +30,64 @@ public class ProductSearch {
     /**
      * Default endpoint if none is set
      */
-    static final String DEFAULT_ENDPOINT = "https://search.visenze.com";
-    static final String DEFAULT_IMAGE_SEARCH_PATH = "/v1/product/search_by_image";
-    static final String DEFAULT_MULTI_SEARCH_PATH = "/v1/product/multisearch";
-    static final String DEFAULT_MULTI_SEARCH_AUTOCOMPLETE_PATH = "/v1/product/multisearch/autocomplete";
+    static final String DEFAULT_ENDPOINT = "https://multimodal.search.rezolve.com";
+    static final String ENDPOINT_AWS = "https://multisearch-aw.rezolve.com";
+    static final String ENDPOINT_AZURE = "https://multisearch-az.rezolve.com";
 
-    static final String DEFAULT_VISUAL_SIMILAR_PATH = "/v1/product/search_by_id";
-    static final String DEFAULT_RECOMMENDATION_PATH = "/v1/product/recommendations";
     public static final String APP_KEY = "app_key";
     public static final String PLACEMENT_ID = "placement_id";
+
+    private static final Set<String> NEW_ENDPOINTS = new HashSet<String>(Arrays.asList(
+            ENDPOINT_AWS,
+            ENDPOINT_AZURE
+    ));
+
+    static final EndpointPathConfig LEGACY_PATHS = new EndpointPathConfig(
+            "/v1/product/search_by_image",
+            "/v1/product/multisearch",
+            "/v1/product/multisearch/autocomplete",
+            "/v1/product/search_by_id",
+            "/v1/product/recommendations",
+            "/v1/product/multisearch/outfit-recommendations",
+            "/v1/product/multisearch/complementary"
+    );
+
+    static final EndpointPathConfig NEW_PATHS = new EndpointPathConfig(
+            "/v1/visearch/search_by_image",
+            "/v1/search",
+            "/v1/autocomplete",
+            "/v1/visearch/search_by_id",
+            "/v1/visearch/recommendations",
+            "/v1/search/outfit-recommendations",
+            "/v1/search/complementary"
+    );
+
+    static class EndpointPathConfig {
+        final String imageSearchPath;
+        final String multiSearchPath;
+        final String multiSearchAutocompletePath;
+        final String visualSimilarPath;
+        final String recommendationPath;
+        final String outfitRecommendationsPath;
+        final String complementarySearchPath;
+
+        EndpointPathConfig(String imageSearchPath, String multiSearchPath,
+                           String multiSearchAutocompletePath, String visualSimilarPath,
+                           String recommendationPath, String outfitRecommendationsPath,
+                           String complementarySearchPath) {
+            this.imageSearchPath = imageSearchPath;
+            this.multiSearchPath = multiSearchPath;
+            this.multiSearchAutocompletePath = multiSearchAutocompletePath;
+            this.visualSimilarPath = visualSimilarPath;
+            this.recommendationPath = recommendationPath;
+            this.outfitRecommendationsPath = outfitRecommendationsPath;
+            this.complementarySearchPath = complementarySearchPath;
+        }
+    }
+
+    private static boolean isNewEndpoint(String endpoint) {
+        return NEW_ENDPOINTS.contains(endpoint.replaceAll("/$", ""));
+    }
 
     /**
      * App key, required field that also acts as authentication element
@@ -53,6 +105,11 @@ public class ProductSearch {
      * Endpoint to use for all ViHttpClient calls
      */
     private String endpoint;
+
+    /**
+     * API paths selected based on the configured endpoint
+     */
+    private EndpointPathConfig pathConfig;
 
     /**
      * The Http wrapper class for easy functionalities
@@ -133,6 +190,26 @@ public class ProductSearch {
         }
 
         /**
+         * Use the AWS Rezolve endpoint (https://multisearch-aw.rezolve.com)
+         *
+         * @return this 'itself'
+         */
+        public Builder useAws() {
+            this.endpoint = ENDPOINT_AWS;
+            return this;
+        }
+
+        /**
+         * Use the Azure Rezolve endpoint (https://multisearch-az.rezolve.com)
+         *
+         * @return this 'itself'
+         */
+        public Builder useAzure() {
+            this.endpoint = ENDPOINT_AZURE;
+            return this;
+        }
+
+        /**
          * Set custom client configurations for http connections
          *
          * @param config custom client http configurations
@@ -163,11 +240,20 @@ public class ProductSearch {
         this.appKey       = appKey;
         this.placementId  = placementId;
         this.endpoint     = endpoint;
+        this.pathConfig   = isNewEndpoint(endpoint) ? NEW_PATHS : LEGACY_PATHS;
         this.httpClient   = new ProductSearchHttpClientImpl(this.endpoint, config);
     }
 
     public ProductSearchResponse multiSearch(SearchByImageParam params) {
-        return postImageSearch(params, DEFAULT_MULTI_SEARCH_PATH);
+        return postImageSearch(params, pathConfig.multiSearchPath);
+    }
+
+    public ProductSearchResponse outfitRecommendations(SearchByImageParam params) {
+        return postImageSearch(params, pathConfig.outfitRecommendationsPath);
+    }
+
+    public ProductSearchResponse complementarySearch(SearchByImageParam params) {
+        return postImageSearch(params, pathConfig.complementarySearchPath);
     }
 
     public AutoCompleteResponse multiSearchAutocomplete(SearchByImageParam params) {
@@ -177,13 +263,13 @@ public class ProductSearch {
 
         if (imageFile != null) {
             try {
-                return AutoCompleteResponse.fromResponse(httpClient.postImage(DEFAULT_MULTI_SEARCH_AUTOCOMPLETE_PATH, paramMap, new FileInputStream(imageFile), imageFile.getName()));
+                return AutoCompleteResponse.fromResponse(httpClient.postImage(pathConfig.multiSearchAutocompletePath, paramMap, new FileInputStream(imageFile), imageFile.getName()));
             } catch (FileNotFoundException e) {
                 throw new InternalViSearchException(ResponseMessages.INVALID_IMAGE_OR_URL, e);
             }
         }
 
-        return AutoCompleteResponse.fromResponse(httpClient.post(DEFAULT_MULTI_SEARCH_AUTOCOMPLETE_PATH, paramMap));
+        return AutoCompleteResponse.fromResponse(httpClient.post(pathConfig.multiSearchAutocompletePath, paramMap));
     }
 
     /**
@@ -194,7 +280,7 @@ public class ProductSearch {
      * @return ViSearchHttpResponse http response of search results
      */
     public ProductSearchResponse imageSearch(SearchByImageParam params) {
-        return postImageSearch(params, DEFAULT_IMAGE_SEARCH_PATH);
+        return postImageSearch(params, pathConfig.imageSearchPath);
     }
 
     private ProductSearchResponse postImageSearch(SearchByImageParam params, String apiPath) {
@@ -223,8 +309,7 @@ public class ProductSearch {
      */
     @Deprecated
     public ProductSearchResponse visualSimilarSearch(SearchByIdParam params) {
-        // append the product id after the visual similar path
-        final String path = DEFAULT_VISUAL_SIMILAR_PATH + '/' + params.getProductId();
+        final String path = pathConfig.visualSimilarPath + '/' + params.getProductId();
         Multimap<String, String> paramMap = addAuth2Map(params);
         return ProductSearchResponse.fromResponse(httpClient.get(path, paramMap));
     }
@@ -243,8 +328,7 @@ public class ProductSearch {
 
     @Deprecated
     public ProductSearchResponse recomendation(SearchByIdParam params) {
-        // append the product id after the recommendation
-        final String path = DEFAULT_RECOMMENDATION_PATH + '/' + params.getProductId();
+        final String path = pathConfig.recommendationPath + '/' + params.getProductId();
         Multimap<String, String> paramMap = addAuth2Map(params);
         return ProductSearchResponse.fromResponse(httpClient.get(path, paramMap));
     }

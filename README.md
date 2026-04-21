@@ -4,7 +4,7 @@
 
 ---
 
-- **Current stable version:** 1.14.6
+- **Current stable version:** 1.15.0
 - **Minimum JDK version:** 1.6
 
 This SDK provides two sets of APIs for image search and product discovery:
@@ -25,18 +25,18 @@ Add the dependency for your build tool. Replace the version with the latest avai
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.14.6</version>
+  <version>1.15.0</version>
 </dependency>
 ```
 
 **Gradle** (`build.gradle`):
 ```groovy
-compile 'com.visenze:visearch-java-sdk:1.14.6'
+compile 'com.visenze:visearch-java-sdk:1.15.0'
 ```
 
 **SBT** (`build.sbt`):
 ```scala
-libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.14.6"
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.15.0"
 ```
 
 ---
@@ -58,15 +58,36 @@ For full documentation see **[docs/visearch-api.md](docs/visearch-api.md)**.
 ### Product Search API
 
 ```java
-// Basic
+// Default endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID).build();
 
-// Custom endpoint (e.g. Azure region endpoint for Azure apps)
+// AWS endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
-    .setApiEndPoint("https://multimodal.search.rezolve.com")
+    .useAws()
+    .build();
+
+// Azure endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .useAzure()
+    .build();
+
+// Custom endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .setApiEndPoint("https://custom.endpoint.example.com")
     .build();
 ```
 
 `APP_KEY` and `PLACEMENT_ID` can be found in the [Rezolve Console](https://ms.console.rezolve.com) under your app's Integration section.
+
+Available methods:
+
+| Method | Description |
+|--------|-------------|
+| `api.imageSearch(params)` | Search by image (URL, file, or image ID) |
+| `api.multiSearch(params)` | Combine visual and text signals |
+| `api.multiSearchAutocomplete(params)` | Autocomplete suggestions for multisearch |
+| `api.outfitRecommendations(params)` | Find products that complete an outfit |
+| `api.complementarySearch(params)` | Find products that complement a query product |
+| `api.recommendations(params)` | Recommendations for a known product ID |
 
 For full documentation see **[docs/product-search-api.md](docs/product-search-api.md)**.

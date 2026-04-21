@@ -49,6 +49,11 @@ public class SearchByImageParam extends BaseProductSearchParam {
     protected String q;
 
     /**
+     * Product ID (optional), only for multisearch and multisearch autocomplete
+     */
+    protected String pid;
+
+    /**
      * Optional parameter for restricting the image area x1,y1,x2,y2. The
      * upper-left corner of an image is (0,0).
      */
@@ -134,6 +139,22 @@ public class SearchByImageParam extends BaseProductSearchParam {
     }
 
     /**
+     * Method to get constructor using a product ID, for multisearch and
+     * multisearch autocomplete
+     *
+     * @param productId product ID from catalog
+     * @return image param
+     */
+    public static SearchByImageParam newFromProductId(String productId) {
+        SearchByImageParam param = new SearchByImageParam();
+        if (productId == null || productId.isEmpty()) {
+            throw new InternalViSearchException(ResponseMessages.MISSING_IMAGE_ID);
+        }
+        param.setPid(productId);
+        return param;
+    }
+
+    /**
      * Convert this object into it's multimap representation.
      *
      * @return multimap of class variable to value
@@ -160,6 +181,10 @@ public class SearchByImageParam extends BaseProductSearchParam {
 
         if (q != null) {
             multimap.put(Q, q);
+        }
+
+        if (pid != null) {
+            multimap.put(PID, pid);
         }
 
         setDetectionParams(multimap);
@@ -243,6 +268,14 @@ public class SearchByImageParam extends BaseProductSearchParam {
 
     public void setQ(String q) {
         this.q = q;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 
     /**

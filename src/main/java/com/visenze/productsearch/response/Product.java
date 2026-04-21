@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.visenze.common.util.ViJsonAny;
 import com.visenze.visearch.BestImage;
+import com.visenze.visearch.ProductType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +89,18 @@ public class Product {
     @JsonProperty("best_images")
     protected List<BestImage> bestImages;
 
+    @JsonProperty("similar_score")
+    private Float similarScore;
+
+    @JsonProperty("image_s3_url")
+    private String imageS3Url;
+
+    @JsonProperty("sys")
+    private Map<String, ViJsonAny> sys = new HashMap<String, ViJsonAny>();
+
+    @JsonProperty("query_product_type")
+    private ProductType queryProductType;
+
     /**
      * Get the unique identifier of this product
      *
@@ -169,5 +182,21 @@ public class Product {
 
     public void setBestImages(List<BestImage> bestImages) {
         this.bestImages = bestImages;
+    }
+
+    public Float getSimilarScore() {
+        return similarScore;
+    }
+
+    public String getImageS3Url() {
+        return imageS3Url;
+    }
+
+    public Map<String, ViJsonAny> getSys() {
+        return sys;
+    }
+
+    public ProductType getQueryProductType() {
+        return queryProductType;
     }
 }

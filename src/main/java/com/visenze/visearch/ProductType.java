@@ -39,8 +39,12 @@ public class ProductType {
 
     private Map<String, List<String>> attributesList;
 
-    public ProductType(String type, Float score, List<Integer> box,
-                       Map<String, List<String>> attributes, Map<String, List<String>> attributesList) {
+    @JsonCreator
+    public ProductType(@JsonProperty("type") String type,
+                       @JsonProperty("score") Float score,
+                       @JsonProperty("box") List<Integer> box,
+                       @JsonProperty("attributes") Map<String, List<String>> attributes,
+                       @JsonProperty("attributes_list") Map<String, List<String>> attributesList) {
         this.type = type;
         this.score = score;
         this.box = box;

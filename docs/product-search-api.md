@@ -14,7 +14,10 @@ This guide covers initialization, the search and recommendations APIs, reading r
 2. [Initialization](#2-initialization)
 3. [Search APIs](#3-search-apis)
    - 3.1 [Search by Image](#31-search-by-image)
-   - 3.2 [Recommendations](#32-recommendations)
+   - 3.2 [Multisearch](#32-multisearch)
+   - 3.3 [Outfit Recommendations](#33-outfit-recommendations)
+   - 3.4 [Complementary Search](#34-complementary-search)
+   - 3.5 [Recommendations](#35-recommendations)
 4. [Search Results](#4-search-results)
    - 4.1 [Accessing Products](#41-accessing-products)
    - 4.2 [Catalog Field Mapping](#42-catalog-field-mapping)
@@ -43,14 +46,34 @@ This guide covers initialization, the search and recommendations APIs, reading r
 
 `ProductSearch` requires an **App Key** and **Placement ID**, both found in the [Rezolve Console](https://ms.console.rezolve.com) under your app's Integration section.
 
+### Endpoints
+
+| Method | Endpoint | Cloud |
+|--------|----------|-------|
+| `.useAws()` | `https://multisearch-aw.rezolve.com` | AWS |
+| `.useAzure()` | `https://multisearch-az.rezolve.com` | Azure |
+| `.setApiEndPoint(url)` | Custom URL | Any / Legacy |
+
+The default endpoint (`https://multimodal.search.rezolve.com`) is used when no endpoint method is called.
+
 ```java
-// Basic initialization
+// Default endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
     .build();
 
-// Custom endpoint (e.g. for Azure region)
+// AWS endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
-    .setApiEndPoint("https://multimodal.search.rezolve.com")
+    .useAws()
+    .build();
+
+// Azure endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .useAzure()
+    .build();
+
+// Custom endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .setApiEndPoint("https://custom.endpoint.example.com")
     .build();
 
 // Custom client configuration (timeouts, proxy)
@@ -60,9 +83,12 @@ config.setSocketTimeout(10000);
 config.setProxy(myProxy);
 
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .useAws()
     .setClientConfig(config)
     .build();
 ```
+
+> **Note:** When using `.useAws()` or `.useAzure()`, the SDK automatically routes each API call to the correct path for that endpoint. Existing code using `.setApiEndPoint(...)` with a legacy URL continues to work unchanged.
 
 ---
 
@@ -72,7 +98,10 @@ The SDK supports two discovery flows: finding products visually similar to an im
 
 ### 3.1 Search by Image
 
-`POST /v1/product/search_by_image`
+| Endpoint | Path |
+|----------|------|
+| Default / Legacy | `POST /v1/product/search_by_image` |
+| AWS / Azure | `POST /v1/visearch/search_by_image` |
 
 Search the Catalog for products visually similar to a provided image. Three input methods are supported:
 
@@ -105,9 +134,63 @@ SearchByImageParam params = SearchByImageParam.newFromImageId(imageId);
 ProductSearchResponse result = api.imageSearch(params);
 ```
 
-### 3.2 Recommendations
+### 3.2 Multisearch
 
-`GET /v1/product/recommendations/{product_id}`
+| Endpoint | Path |
+|----------|------|
+| Default / Legacy | `POST /v1/product/multisearch` |
+| AWS / Azure | `POST /v1/search` |
+
+Combine visual and text signals in a single query. Accepts the same input methods as Search by Image (URL, file, image ID), plus a text query (`q`) or a product ID (`pid`).
+
+```java
+// Search by image URL with a text query
+SearchByImageParam params = SearchByImageParam.newFromImageUrl("https://example.com/product.jpg");
+params.setQ("blue dress");
+ProductSearchResponse result = api.multiSearch(params);
+
+// Search using a known product ID
+SearchByImageParam params = SearchByImageParam.newFromProductId("PRODUCT_ID");
+ProductSearchResponse result = api.multiSearch(params);
+```
+
+### 3.3 Outfit Recommendations
+
+| Endpoint | Path |
+|----------|------|
+| Default / Legacy | `POST /v1/product/multisearch/outfit-recommendations` |
+| AWS / Azure | `POST /v1/search/outfit-recommendations` |
+
+Find products that complete an outfit based on a query image or product. Accepts the same `SearchByImageParam` input as `multiSearch`.
+
+```java
+SearchByImageParam params = SearchByImageParam.newFromImageUrl("https://example.com/outfit.jpg");
+ProductSearchResponse result = api.outfitRecommendations(params);
+```
+
+### 3.4 Complementary Search
+
+| Endpoint | Path |
+|----------|------|
+| Default / Legacy | `POST /v1/product/multisearch/complementary` |
+| AWS / Azure | `POST /v1/search/complementary` |
+
+Find products that complement a query product. Accepts the same `SearchByImageParam` input as `multiSearch`. The response includes a top-level `qinfo` field containing the metadata of the query product.
+
+```java
+SearchByImageParam params = SearchByImageParam.newFromProductId("PRODUCT_ID");
+ProductSearchResponse result = api.complementarySearch(params);
+
+// Access the query product info
+Product queryProduct = result.getQinfo();
+```
+
+### 3.5 Recommendations
+
+| Endpoint | Path |
+|----------|------|
+| Default / Legacy | `GET /v1/product/recommendations/{product_id}` |
+| AWS / Azure | `GET /v1/visearch/recommendations/{product_id}` |
 
 Find products similar to a specific product using its Catalog product ID. Product IDs are returned in search results.
 
@@ -117,7 +200,7 @@ String productId = searchResult.getResult().get(0).getProductId();
 
 // Search for recommendations
 SearchByIdParam params = new SearchByIdParam(productId);
-ProductSearchResponse result = api.recomendation(params);
+ProductSearchResponse result = api.recommendations(params);
 ```
 
 ---
@@ -218,14 +301,17 @@ These parameters are specific to `SearchByImageParam`:
 | `imUrl`              | Image URL to search with                                                                                       |
 | `imId`               | Previously used image ID (avoids re-uploading)                                                                 |
 | `image`              | Image file to upload                                                                                           |
+| `pid`                | Product ID to search with (used by `multiSearch`, `outfitRecommendations`, `complementarySearch`)              |
+| `q`                  | Text query to combine with the visual signal (used by `multiSearch`)                                           |
 | `box`                | Restrict search to a region: `x1,y1,x2,y2` (origin is top-left)                                               |
 | `detection`          | Enable automatic object detection — the API will detect and search for the main object in the image            |
 | `detectionLimit`     | Max number of objects to detect (1–30, default: 5). Higher-confidence objects are returned first               |
 | `detectionSensitivity` | Detection sensitivity level. Default is `low`                                                                |
 | `searchAllObjects`   | Set to `true` to return results for all detected objects (equivalent to ViSearch's `/discoversearch`)          |
 | `point`              | Point coordinate for targeted search                                                                           |
+| `locale`             | Locale string (e.g. `en`, `zh-TW`) for localized results                                                       |
 
-> Use one of the `newFromImage*()` static constructors to ensure `imUrl`, `imId`, or `image` is set correctly.
+> Use one of the `newFromImage*()` or `newFromProductId()` static constructors to ensure the primary input field is set correctly. At least one of `imUrl`, `imId`, `image`, `q`, or `pid` must be provided.
 
 ### 5.3 Recommendations Parameters
 

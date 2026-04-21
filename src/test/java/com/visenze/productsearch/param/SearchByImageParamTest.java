@@ -23,6 +23,13 @@ import static org.junit.Assert.*;
 public class SearchByImageParamTest {
     final String PARAM_URL = "box=1,1,5,5&im_url=SOME_URL";
     final String PARAM_ID = "box=2,3,4,5&im_id=SOME_ID";
+    final String PARAM_PID = "pid=SOME_PID";
+
+    @Test
+    public void newFromProductId_setsPid() {
+        SearchByImageParam param = SearchByImageParam.newFromProductId("PRODUCT_ID");
+        assertEquals("PRODUCT_ID", param.getPid());
+    }
 
     @Test
     public void setterGetter() {
@@ -68,6 +75,15 @@ public class SearchByImageParamTest {
         try{
             URI uri = new URIBuilder("www.example.com").addParameters(paramUrl).build();
             assertEquals(PARAM_ID, uri.getQuery());
+        } catch (URISyntaxException e) {
+            fail("Failed to create proper query");
+        }
+
+        param = SearchByImageParam.newFromProductId("SOME_PID");
+        paramUrl = sort(ViSearchHttpClientImpl.mapToNameValuePair(param.toMultimap()));
+        try{
+            URI uri = new URIBuilder("www.example.com").addParameters(paramUrl).build();
+            assertEquals(PARAM_PID, uri.getQuery());
         } catch (URISyntaxException e) {
             fail("Failed to create proper query");
         }
