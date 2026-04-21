@@ -4,7 +4,7 @@
 
 ---
 
-- **Current stable version:** 1.14.6
+- **Current stable version:** 1.15.0
 - **Minimum JDK version:** 1.6
 
 This SDK provides two sets of APIs for image search and product discovery:
@@ -25,18 +25,18 @@ Add the dependency for your build tool. Replace the version with the latest avai
 <dependency>
   <groupId>com.visenze</groupId>
   <artifactId>visearch-java-sdk</artifactId>
-  <version>1.14.6</version>
+  <version>1.15.0</version>
 </dependency>
 ```
 
 **Gradle** (`build.gradle`):
 ```groovy
-compile 'com.visenze:visearch-java-sdk:1.14.6'
+compile 'com.visenze:visearch-java-sdk:1.15.0'
 ```
 
 **SBT** (`build.sbt`):
 ```scala
-libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.14.6"
+libraryDependencies += "com.visenze" % "visearch-java-sdk" % "1.15.0"
 ```
 
 ---
