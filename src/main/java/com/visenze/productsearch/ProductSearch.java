@@ -47,7 +47,8 @@ public class ProductSearch {
             "/v1/product/multisearch",
             "/v1/product/multisearch/autocomplete",
             "/v1/product/search_by_id",
-            "/v1/product/recommendations"
+            "/v1/product/recommendations",
+            "/v1/product/multisearch/outfit-recommendations"
     );
 
     static final EndpointPathConfig NEW_PATHS = new EndpointPathConfig(
@@ -55,7 +56,8 @@ public class ProductSearch {
             "/v1/search",
             "/v1/autocomplete",
             "/v1/visearch/search_by_id",
-            "/v1/visearch/recommendations"
+            "/v1/visearch/recommendations",
+            "/v1/search/outfit-recommendations"
     );
 
     static class EndpointPathConfig {
@@ -64,15 +66,17 @@ public class ProductSearch {
         final String multiSearchAutocompletePath;
         final String visualSimilarPath;
         final String recommendationPath;
+        final String outfitRecommendationsPath;
 
         EndpointPathConfig(String imageSearchPath, String multiSearchPath,
                            String multiSearchAutocompletePath, String visualSimilarPath,
-                           String recommendationPath) {
+                           String recommendationPath, String outfitRecommendationsPath) {
             this.imageSearchPath = imageSearchPath;
             this.multiSearchPath = multiSearchPath;
             this.multiSearchAutocompletePath = multiSearchAutocompletePath;
             this.visualSimilarPath = visualSimilarPath;
             this.recommendationPath = recommendationPath;
+            this.outfitRecommendationsPath = outfitRecommendationsPath;
         }
     }
 
@@ -237,6 +241,10 @@ public class ProductSearch {
 
     public ProductSearchResponse multiSearch(SearchByImageParam params) {
         return postImageSearch(params, pathConfig.multiSearchPath);
+    }
+
+    public ProductSearchResponse outfitRecommendations(SearchByImageParam params) {
+        return postImageSearch(params, pathConfig.outfitRecommendationsPath);
     }
 
     public AutoCompleteResponse multiSearchAutocomplete(SearchByImageParam params) {
