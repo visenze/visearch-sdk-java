@@ -30,6 +30,8 @@ Legacy image search. Entry point: `ViSearch` — implements both `DataOperations
 ### Product Search API (`com.visenze.productsearch`)
 Modern product discovery. Entry point: `ProductSearch` — built via `ProductSearch.Builder`. Auth is via `app_key` query param (no header auth). Uses `ProductSearchHttpClientImpl` which extends `ViSearchHttpClientImpl` but skips the Basic Auth header.
 
+`Builder` supports `.useAws()`, `.useAzure()`, and `.setApiEndPoint(url)` to configure the endpoint. When the endpoint is `https://multisearch-aw.rezolve.com` or `https://multisearch-az.rezolve.com`, the SDK selects `NEW_PATHS` (e.g. `/v1/search`, `/v1/visearch/search_by_image`); all other endpoints use `LEGACY_PATHS` (e.g. `/v1/product/multisearch`, `/v1/product/search_by_image`). Path selection is handled by `EndpointPathConfig` — a static inner class in `ProductSearch.java` with two pre-built instances (`LEGACY_PATHS`, `NEW_PATHS`) chosen at construction time via `isNewEndpoint()`.
+
 ### Shared Infrastructure
 - **`com.visenze.visearch.internal.http`**: Apache HttpComponents-based HTTP layer. `ViSearchHttpClientImpl` handles GET/POST (including multipart for image uploads). `ViSearchHttpResponse` wraps the raw response.
 - **`com.visenze.visearch.internal`**: `SearchOperationsImpl` and `DataOperationsImpl` contain endpoint routing and JSON deserialization. `BaseViSearchOperations` holds the shared `ViSearchHttpClient` + `ObjectMapper`.
@@ -43,7 +45,9 @@ Search params (e.g. `SearchByImageParam`, `SearchParams`) serialize to a `Multim
 | API | Constant location | Default base |
 |-----|-------------------|--------------|
 | ViSearch | `ViSearch.java` | `http://visearch.visenze.com` |
-| Product Search | `ProductSearch.java` | `https://search.visenze.com` |
+| Product Search (default) | `ProductSearch.java` | `https://search.visenze.com` |
+| Product Search (AWS) | `ProductSearch.ENDPOINT_AWS` | `https://multisearch-aw.rezolve.com` |
+| Product Search (Azure) | `ProductSearch.ENDPOINT_AZURE` | `https://multisearch-az.rezolve.com` |
 
 ### Testing
 Tests use JUnit 4 + Mockito + PowerMock. HTTP responses are mocked via `ViSearchHttpClient` stubs. Test JSON fixtures are inline strings within test classes.

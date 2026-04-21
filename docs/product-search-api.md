@@ -43,14 +43,34 @@ This guide covers initialization, the search and recommendations APIs, reading r
 
 `ProductSearch` requires an **App Key** and **Placement ID**, both found in the [Rezolve Console](https://ms.console.rezolve.com) under your app's Integration section.
 
+### Endpoints
+
+| Method | Endpoint | Cloud |
+|--------|----------|-------|
+| `.useAws()` | `https://multisearch-aw.rezolve.com` | AWS |
+| `.useAzure()` | `https://multisearch-az.rezolve.com` | Azure |
+| `.setApiEndPoint(url)` | Custom URL | Any / Legacy |
+
+The default endpoint (`https://search.visenze.com`) is used when no endpoint method is called.
+
 ```java
-// Basic initialization
+// Default endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
     .build();
 
-// Custom endpoint (e.g. for Azure region)
+// AWS endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
-    .setApiEndPoint("https://multimodal.search.rezolve.com")
+    .useAws()
+    .build();
+
+// Azure endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .useAzure()
+    .build();
+
+// Custom endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .setApiEndPoint("https://custom.endpoint.example.com")
     .build();
 
 // Custom client configuration (timeouts, proxy)
@@ -60,9 +80,12 @@ config.setSocketTimeout(10000);
 config.setProxy(myProxy);
 
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .useAws()
     .setClientConfig(config)
     .build();
 ```
+
+> **Note:** When using `.useAws()` or `.useAzure()`, the SDK automatically routes each API call to the correct path for that endpoint. Existing code using `.setApiEndPoint(...)` with a legacy URL continues to work unchanged.
 
 ---
 
@@ -72,7 +95,10 @@ The SDK supports two discovery flows: finding products visually similar to an im
 
 ### 3.1 Search by Image
 
-`POST /v1/product/search_by_image`
+| Endpoint | Path |
+|----------|------|
+| Default / Legacy | `POST /v1/product/search_by_image` |
+| AWS / Azure | `POST /v1/visearch/search_by_image` |
 
 Search the Catalog for products visually similar to a provided image. Three input methods are supported:
 
@@ -107,7 +133,10 @@ ProductSearchResponse result = api.imageSearch(params);
 
 ### 3.2 Recommendations
 
-`GET /v1/product/recommendations/{product_id}`
+| Endpoint | Path |
+|----------|------|
+| Default / Legacy | `GET /v1/product/recommendations/{product_id}` |
+| AWS / Azure | `GET /v1/visearch/recommendations/{product_id}` |
 
 Find products similar to a specific product using its Catalog product ID. Product IDs are returned in search results.
 

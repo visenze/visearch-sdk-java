@@ -58,12 +58,22 @@ For full documentation see **[docs/visearch-api.md](docs/visearch-api.md)**.
 ### Product Search API
 
 ```java
-// Basic
+// Default endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID).build();
 
-// Custom endpoint (e.g. Azure region endpoint for Azure apps)
+// AWS endpoint
 ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
-    .setApiEndPoint("https://multimodal.search.rezolve.com")
+    .useAws()
+    .build();
+
+// Azure endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .useAzure()
+    .build();
+
+// Custom endpoint
+ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
+    .setApiEndPoint("https://custom.endpoint.example.com")
     .build();
 ```
 
