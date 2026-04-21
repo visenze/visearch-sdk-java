@@ -30,7 +30,7 @@ public class ProductSearch {
     /**
      * Default endpoint if none is set
      */
-    static final String DEFAULT_ENDPOINT = "https://search.visenze.com";
+    static final String DEFAULT_ENDPOINT = "https://multimodal.search.rezolve.com";
     static final String ENDPOINT_AWS = "https://multisearch-aw.rezolve.com";
     static final String ENDPOINT_AZURE = "https://multisearch-az.rezolve.com";
 

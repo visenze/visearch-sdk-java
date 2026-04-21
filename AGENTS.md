@@ -45,7 +45,7 @@ Search params (e.g. `SearchByImageParam`, `SearchParams`) serialize to a `Multim
 | API | Constant location | Default base |
 |-----|-------------------|--------------|
 | ViSearch | `ViSearch.java` | `http://visearch.visenze.com` |
-| Product Search (default) | `ProductSearch.java` | `https://search.visenze.com` |
+| Product Search (default) | `ProductSearch.java` | `https://multimodal.search.rezolve.com` |
 | Product Search (AWS) | `ProductSearch.ENDPOINT_AWS` | `https://multisearch-aw.rezolve.com` |
 | Product Search (Azure) | `ProductSearch.ENDPOINT_AZURE` | `https://multisearch-az.rezolve.com` |
 

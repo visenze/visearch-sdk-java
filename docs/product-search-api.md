@@ -51,7 +51,7 @@ This guide covers initialization, the search and recommendations APIs, reading r
 | `.useAzure()` | `https://multisearch-az.rezolve.com` | Azure |
 | `.setApiEndPoint(url)` | Custom URL | Any / Legacy |
 
-The default endpoint (`https://search.visenze.com`) is used when no endpoint method is called.
+The default endpoint (`https://multimodal.search.rezolve.com`) is used when no endpoint method is called.
 
 ```java
 // Default endpoint
