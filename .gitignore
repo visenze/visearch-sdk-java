@@ -30,3 +30,4 @@ log/
 target/
 
 .vscode
+.claude
