@@ -79,4 +79,15 @@ ProductSearch api = new ProductSearch.Builder(APP_KEY, PLACEMENT_ID)
 
 `APP_KEY` and `PLACEMENT_ID` can be found in the [Rezolve Console](https://ms.console.rezolve.com) under your app's Integration section.
 
+Available methods:
+
+| Method | Description |
+|--------|-------------|
+| `api.imageSearch(params)` | Search by image (URL, file, or image ID) |
+| `api.multiSearch(params)` | Combine visual and text signals |
+| `api.multiSearchAutocomplete(params)` | Autocomplete suggestions for multisearch |
+| `api.outfitRecommendations(params)` | Find products that complete an outfit |
+| `api.complementarySearch(params)` | Find products that complement a query product |
+| `api.recommendations(params)` | Recommendations for a known product ID |
+
 For full documentation see **[docs/product-search-api.md](docs/product-search-api.md)**.

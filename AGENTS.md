@@ -32,6 +32,8 @@ Modern product discovery. Entry point: `ProductSearch` — built via `ProductSea
 
 `Builder` supports `.useAws()`, `.useAzure()`, and `.setApiEndPoint(url)` to configure the endpoint. When the endpoint is `https://multisearch-aw.rezolve.com` or `https://multisearch-az.rezolve.com`, the SDK selects `NEW_PATHS` (e.g. `/v1/search`, `/v1/visearch/search_by_image`); all other endpoints use `LEGACY_PATHS` (e.g. `/v1/product/multisearch`, `/v1/product/search_by_image`). Path selection is handled by `EndpointPathConfig` — a static inner class in `ProductSearch.java` with two pre-built instances (`LEGACY_PATHS`, `NEW_PATHS`) chosen at construction time via `isNewEndpoint()`.
 
+Available methods: `imageSearch`, `multiSearch`, `multiSearchAutocomplete`, `outfitRecommendations`, `complementarySearch`, `recommendations`, `visualSimilarSearch` (deprecated). `SearchByImageParam` accepts `imUrl`, `imId`, `image`, `pid`, or `q` as the primary input. `complementarySearch` returns `qinfo` (the query product metadata) as a top-level field on `ProductSearchResponse`.
+
 ### Shared Infrastructure
 - **`com.visenze.visearch.internal.http`**: Apache HttpComponents-based HTTP layer. `ViSearchHttpClientImpl` handles GET/POST (including multipart for image uploads). `ViSearchHttpResponse` wraps the raw response.
 - **`com.visenze.visearch.internal`**: `SearchOperationsImpl` and `DataOperationsImpl` contain endpoint routing and JSON deserialization. `BaseViSearchOperations` holds the shared `ViSearchHttpClient` + `ObjectMapper`.
